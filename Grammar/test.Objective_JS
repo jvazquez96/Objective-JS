@@ -1,8 +1,11 @@
 Class Test {
 	Test ();
 	Attributes {
-		public : var hola : string; adios : int ;
-		private : var adios : string ;
+		public : 
+			var hola : string; adios : int ;
+			var tele : float ;
+		private :
+			var adios : string ;
 	}
 	Methods {
 		public : function jamon (int a) returns ;

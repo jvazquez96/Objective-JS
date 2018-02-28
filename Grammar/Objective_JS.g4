@@ -107,12 +107,21 @@ atributos :
 	;
 
 atributosPublic :
-	PUBLIC COLON vars_
+	PUBLIC COLON vars_ atributosPublicAux
+	|
+	;
+atributosPublicAux :
+	vars_ atributosPublicAux
 	|
 	;
 
 atributosPrivate :
 	PRIVATE COLON vars_
+	|
+	;
+
+atributosPrivateAux:
+	vars_ atributosPrivateAux
 	|
 	;
 

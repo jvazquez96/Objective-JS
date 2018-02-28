@@ -89,6 +89,15 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#atributosPublicAux.
+    def enterAtributosPublicAux(self, ctx:Objective_JSParser.AtributosPublicAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#atributosPublicAux.
+    def exitAtributosPublicAux(self, ctx:Objective_JSParser.AtributosPublicAuxContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#atributosPrivate.
     def enterAtributosPrivate(self, ctx:Objective_JSParser.AtributosPrivateContext):
         pass
