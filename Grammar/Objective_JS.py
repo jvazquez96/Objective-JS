@@ -8,7 +8,7 @@ def main(argv):
     lexer = Objective_JSLexer(input)
     stream = CommonTokenStream(lexer)
     parser = Objective_JSParser(stream)
-    tree = parser.tipo()
+    tree = parser.inicio()
  
 if __name__ == '__main__':
 	main(sys.argv)

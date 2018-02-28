@@ -1,1 +1,20 @@
-    "Zasd"
+Class Test {
+	Test ();
+	Attributes {
+		public : var hola : string; adios : int ;
+		private : var adios : string ;
+	}
+	Methods {
+		public : function jamon (int a) returns ;
+		private : function torta () ;
+	}
+}
+
+function hola (int alfa) returns {
+	print("Test");
+	return 1;
+}
+
+function torta () {
+	print("2nd test");
+}

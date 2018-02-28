@@ -32,22 +32,25 @@ RIGHT_CURLY_BRACKET : '}';
 DOT : '.';
 COLON : ':';
 SEMICOLON : ';';
+COMMA : ',';
 // Reserved words
 PRINT : 'print';
 THIS : 'this';
 CLASS : 'Class';
 INHERITS : 'Inherits';
 ATTRIBUTES : 'Attributes';
-PUBLIC : 'Public';
-PRIVATE : 'Private';
-PROTECTED : 'Protected';
-METHODS : 'METHODS';
+PUBLIC : 'public';
+PRIVATE : 'private';
+PROTECTED : 'protected';
+METHODS : 'Methods';
 FUNCTION : 'function';
 RETURNS : 'returns';
+RETURN : 'return';
 IMPORT : 'import';
 MAIN : 'main';
 LIST : 'list';
 READ : 'read';
+VAR : 'var';
 // Data types
 TYPE_INT : ('0' .. '9')+;
 TYPE_FLOAT : ('0' .. '9')+'.'('0' .. '9')+;
@@ -67,8 +70,154 @@ WHITESPACE : [ \n\t\r]+ -> skip;
 
 // Test rule just so that ANTLR doesn't complain
 // Delete this when actually doing the real rules.
+
+inicio:
+	clase
+	;
+
+clase :
+	CLASS CLASSNAME claseAux bloqueClase
+	;
+
+claseAux :
+	INHERITS CLASSNAME
+	|
+	;
+
+bloqueClase :
+	LEFT_CURLY_BRACKET constructor atributos metodos RIGHT_CURLY_BRACKET impFunc
+	;
+
+constructor :
+	CLASSNAME LEFT_PARENTHESIS constructorAux RIGHT_PARENTHESIS SEMICOLON constructorAux2
+	;
+
+constructorAux :
+	argumentos
+	|
+	;
+
+constructorAux2 :
+	constructor
+	| 
+	;
+
+atributos :
+	ATTRIBUTES LEFT_CURLY_BRACKET atributosPublic atributosPrivate RIGHT_CURLY_BRACKET
+	;
+
+atributosPublic :
+	PUBLIC COLON vars_
+	|
+	;
+
+atributosPrivate :
+	PRIVATE COLON vars_
+	|
+	;
+
+atributosProtected :
+	PROTECTED COLON vars_
+	|
+	;
+
+metodos :
+	METHODS LEFT_CURLY_BRACKET metodosPublicos metodosPrivados RIGHT_CURLY_BRACKET
+	;
+
+metodosPublicos :
+	PUBLIC COLON func SEMICOLON metodosPublicosAux
+	| PUBLIC COLON
+	;
+
+metodosPublicosAux :
+	func SEMICOLON metodosPublicosAux
+	|
+	;
+
+metodosPrivados :
+	PRIVATE COLON func SEMICOLON metodosPrivadosAux
+	| PRIVATE SEMICOLON
+	;
+
+metodosPrivadosAux :
+	func SEMICOLON metodosPrivadosAux
+	|
+	;
+
+func :
+	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS funcAux;
+
+funcAux:
+	RETURNS
+	|
+	;
+
+impFunc :
+	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS impFuncAux2 bloqueFunc
+	;
+
+impFuncAux2 :
+	RETURNS
+	|
+	;
+
+argumentos:
+	tipo_dato ID argumentosAux
+	|
+	;
+
+argumentosAux:
+	COMMA tipo_dato ID argumentosAux
+	|
+	;
+
+bloqueFunc :
+	LEFT_CURLY_BRACKET bloqueFuncAux bloqueFuncAux2 RIGHT_CURLY_BRACKET
+	;
+
+bloqueFuncAux :
+	estatuto bloqueFuncAux
+	|
+	;
+
+bloqueFuncAux2 :
+	RETURN TYPE_INT SEMICOLON
+	|
+	;
+
+vars_ :
+	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
+	;
+
+varsAux:
+	COMMA ID varsAux
+	|
+	;
+
+varsRepeated:
+	ID varsAux COLON tipo_dato SEMICOLON varsRepeated
+	|
+	;
+
+tipo_dato:
+	INT
+	| FLOAT
+	| CHAR
+	| STRING
+	;
+
 tipo : 
 	TYPE_INT
 	| TYPE_FLOAT
 	| TYPE_CHAR
-	| TYPE_STRING;
+	| TYPE_STRING
+	;
+
+estatuto:
+	escritura
+	;
+
+escritura:
+	PRINT LEFT_PARENTHESIS TYPE_STRING RIGHT_PARENTHESIS SEMICOLON
+	;
