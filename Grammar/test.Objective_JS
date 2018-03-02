@@ -1,15 +1,18 @@
 Class Test {
 	Test ();
+	Test (int a, string alfa);
 	Attributes {
 		public : 
-			var hola : string; adios : int ;
+			var hola : string; var adios : int ;
 			var tele : float ;
 		private :
 			var adios : string ;
 	}
 	Methods {
-		public : function jamon (int a) returns ;
-		private : function torta () ;
+		public : 
+			function jamon (int a) returns ;
+		private : 
+			function torta () ;
 	}
 }
 

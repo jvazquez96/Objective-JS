@@ -205,7 +205,7 @@ varsAux:
 	;
 
 varsRepeated:
-	ID varsAux COLON tipo_dato SEMICOLON varsRepeated
+	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
 	|
 	;
 
