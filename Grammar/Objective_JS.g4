@@ -10,7 +10,8 @@ WHILE : 'while';
 INCREMENT_OPERATOR : '++';
 DECREMENT_OPERATOR : '--';
 SUM_OPERATOR : '+';
-SUBSTRACTION_OPERATOR : '*';
+SUBSTRACTION_OPERATOR : '-';
+MULTIPLICATION_OPERATOR : '*';
 DIVISION_OPERATOR : '/';
 MODULUS_OPERATOR : '%';
 POWER_OPERATOR : '^';
@@ -56,6 +57,7 @@ TYPE_INT : ('0' .. '9')+;
 TYPE_FLOAT : ('0' .. '9')+'.'('0' .. '9')+;
 TYPE_CHAR : '"'[a-zA-Z]'"';
 TYPE_STRING : '"'~('"')*'"';
+TYPE_BOOL : ('true'|'false');
 // Types literal
 INT : 'int';
 FLOAT : 'float';
@@ -191,7 +193,7 @@ bloqueFuncAux :
 	;
 
 bloqueFuncAux2 :
-	RETURN TYPE_INT SEMICOLON
+	RETURN megaExpresion SEMICOLON
 	|
 	;
 
@@ -223,10 +225,86 @@ tipo :
 	| TYPE_STRING
 	;
 
-estatuto:
+estatuto :
 	escritura
 	;
 
-escritura:
-	PRINT LEFT_PARENTHESIS TYPE_STRING RIGHT_PARENTHESIS SEMICOLON
+escritura :
+	PRINT LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS SEMICOLON
+	;
+
+objeto :
+	objetoAux
+	;
+	
+objetoAux:
+	THIS
+	| ID
+	;
+
+megaExpresion : 
+	superExpresion megaExpresionAux
+	;
+
+megaExpresionAux :
+	LOGICAL_AND_OPERATOR megaExpresion
+	| LOGICAL_OR_OPERATOR megaExpresion
+	;
+
+superExpresion :
+	expresion superExpresionOperadores
+	;
+
+superExpresionOperadores :
+	GREATER_THAN_OPERATOR expresion
+	| GREATER_OR_EQUAL_THAN_OPERATOR expresion
+	| LESS_THAN_OPERATOR expresion
+	| LESS_THAN_OR_EQUAL_OPERATOR expresion
+	| NOT_EQUAL_OPERATOR expresion
+	| EQUAL_OPERATOR expresion
+	|
+	;
+
+expresion :
+	termino expresionOperadores
+	;
+
+expresionOperadores :
+	SUM_OPERATOR termino
+	| SUBSTRACTION_OPERATOR termino
+	|
+	;
+
+termino :
+	factor terminoOperadores
+	;
+
+terminoOperadores :
+	MULTIPLICATION_OPERATOR termino
+	| DIVISION_OPERATOR termino
+	|
+	;
+
+factor :
+	varCte
+	| factorParentesis
+	;
+
+factorParentesis :
+	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS
+	;
+
+varCte :
+	objeto
+	| TYPE_INT
+	| TYPE_FLOAT
+	| TYPE_STRING
+	| TYPE_CHAR
+	| TYPE_BOOL
+	| ID LEFT_SQUARE_BRACKET megaExpresion RIGHT_SQUARE_BRACKET matrix
+	;
+
+matrix :
+	LEFT_SQUARE_BRACKET megaExpresion RIGHT_SQUARE_BRACKET
+	|
 	;

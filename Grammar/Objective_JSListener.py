@@ -314,3 +314,129 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#objeto.
+    def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#objeto.
+    def exitObjeto(self, ctx:Objective_JSParser.ObjetoContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#objetoAux.
+    def enterObjetoAux(self, ctx:Objective_JSParser.ObjetoAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#objetoAux.
+    def exitObjetoAux(self, ctx:Objective_JSParser.ObjetoAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#megaExpresion.
+    def enterMegaExpresion(self, ctx:Objective_JSParser.MegaExpresionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#megaExpresion.
+    def exitMegaExpresion(self, ctx:Objective_JSParser.MegaExpresionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#megaExpresionAux.
+    def enterMegaExpresionAux(self, ctx:Objective_JSParser.MegaExpresionAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#megaExpresionAux.
+    def exitMegaExpresionAux(self, ctx:Objective_JSParser.MegaExpresionAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#superExpresion.
+    def enterSuperExpresion(self, ctx:Objective_JSParser.SuperExpresionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#superExpresion.
+    def exitSuperExpresion(self, ctx:Objective_JSParser.SuperExpresionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#superExpresionOperadores.
+    def enterSuperExpresionOperadores(self, ctx:Objective_JSParser.SuperExpresionOperadoresContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#superExpresionOperadores.
+    def exitSuperExpresionOperadores(self, ctx:Objective_JSParser.SuperExpresionOperadoresContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#expresion.
+    def enterExpresion(self, ctx:Objective_JSParser.ExpresionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#expresion.
+    def exitExpresion(self, ctx:Objective_JSParser.ExpresionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#expresionOperadores.
+    def enterExpresionOperadores(self, ctx:Objective_JSParser.ExpresionOperadoresContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#expresionOperadores.
+    def exitExpresionOperadores(self, ctx:Objective_JSParser.ExpresionOperadoresContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#termino.
+    def enterTermino(self, ctx:Objective_JSParser.TerminoContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#termino.
+    def exitTermino(self, ctx:Objective_JSParser.TerminoContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#terminoOperadores.
+    def enterTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#terminoOperadores.
+    def exitTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#factor.
+    def enterFactor(self, ctx:Objective_JSParser.FactorContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#factor.
+    def exitFactor(self, ctx:Objective_JSParser.FactorContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#factorParentesis.
+    def enterFactorParentesis(self, ctx:Objective_JSParser.FactorParentesisContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#factorParentesis.
+    def exitFactorParentesis(self, ctx:Objective_JSParser.FactorParentesisContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#varCte.
+    def enterVarCte(self, ctx:Objective_JSParser.VarCteContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#varCte.
+    def exitVarCte(self, ctx:Objective_JSParser.VarCteContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#matrix.
+    def enterMatrix(self, ctx:Objective_JSParser.MatrixContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#matrix.
+    def exitMatrix(self, ctx:Objective_JSParser.MatrixContext):
+        pass
+
+
