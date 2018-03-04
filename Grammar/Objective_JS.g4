@@ -212,6 +212,24 @@ varsRepeated:
 	;
 
 tipo_dato:
+	tipo_dato_list tipo_dato_no_list
+	| tipo_dato_no_list
+	;
+
+tipo_dato_list:
+	LIST dim 
+	;
+
+dim :
+	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_CURLY_BRACKET dimMatrix
+	;
+
+dimMatrix :
+	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_CURLY_BRACKET
+	|
+	;
+
+tipo_dato_no_list:
 	INT
 	| FLOAT
 	| CHAR

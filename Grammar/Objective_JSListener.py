@@ -287,6 +287,42 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#tipo_dato_list.
+    def enterTipo_dato_list(self, ctx:Objective_JSParser.Tipo_dato_listContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#tipo_dato_list.
+    def exitTipo_dato_list(self, ctx:Objective_JSParser.Tipo_dato_listContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#dim.
+    def enterDim(self, ctx:Objective_JSParser.DimContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#dim.
+    def exitDim(self, ctx:Objective_JSParser.DimContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#dimMatrix.
+    def enterDimMatrix(self, ctx:Objective_JSParser.DimMatrixContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#dimMatrix.
+    def exitDimMatrix(self, ctx:Objective_JSParser.DimMatrixContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#tipo_dato_no_list.
+    def enterTipo_dato_no_list(self, ctx:Objective_JSParser.Tipo_dato_no_listContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#tipo_dato_no_list.
+    def exitTipo_dato_no_list(self, ctx:Objective_JSParser.Tipo_dato_no_listContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#tipo.
     def enterTipo(self, ctx:Objective_JSParser.TipoContext):
         pass
