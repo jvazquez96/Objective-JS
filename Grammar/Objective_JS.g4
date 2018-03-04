@@ -56,8 +56,8 @@ LIST : 'list';
 READ : 'read';
 VAR : 'var';
 // Data types
-TYPE_INT : ('0' .. '9')+;
-TYPE_FLOAT : ('0' .. '9')+'.'('0' .. '9')+;
+TYPE_INT : [0-9]+;
+TYPE_FLOAT : [0-9]+'.'[0-9]+;
 TYPE_CHAR : '"'[a-zA-Z]'"';
 TYPE_STRING : '"'~('"')*'"';
 TYPE_BOOL : ('true'|'false');
@@ -224,6 +224,12 @@ argumentosAux:
 
 // AQUI HAY QUE PONER LA REGLA ASIGNACION MUCHAS VECES
 bloqueConstructor :
+	asignacion bloqueConstructorMultipleAsignaciones
+	;
+
+bloqueConstructorMultipleAsignaciones :
+	asignacion bloqueConstructor
+	|
 	;
 
 bloqueFunc :
@@ -377,6 +383,7 @@ megaExpresion :
 megaExpresionAux :
 	LOGICAL_AND_OPERATOR megaExpresion
 	| LOGICAL_OR_OPERATOR megaExpresion
+	|
 	;
 
 superExpresion :
