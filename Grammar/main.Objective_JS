@@ -1,0 +1,54 @@
+import "hola"
+import "nala"
+import "escuela"
+
+Class HolaMundo {
+	var morgan, luis, paco : int;
+	var cecy, andrea, miguel : float;
+	var quique, raul, cora : string;
+
+	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres) returns {
+		argumentoUno = argumentoDos / 5;
+		return argumentoUno;
+	}
+
+	function funcionDos() {
+		morgan = luis - paco;
+		cecy  = andrea * miguel;
+		quique = "Hola Mundo";
+	}
+
+	main(){
+		var nala : int;
+		this.morgan = nala;
+		cora.nombre = "Cora";
+		nala = (morgan * luis (paco - nala)) / (5 + 25) * 30.25;
+
+		if(luis != paco){
+			luis = paco;
+		}elsif(luis < paco){
+			luis = luis + 1;
+		}else{
+			paco = 25;
+		}
+
+		print("Hola Mundo: " + cecy);
+
+		var i : int;
+		i = 0;
+
+		do 25 times{
+			print(i);
+			i = i + 1;
+		}
+
+		while(true){
+			print("Ciclo infinito");
+		}
+
+		funcionUno(morgan * nala, cecy + andrea, quique);
+		raul.funcionTres((morgan + nala) / (nala - luis * paco));
+
+		read >> nala >> morgan >> quique;
+	}
+}

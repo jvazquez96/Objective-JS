@@ -2,6 +2,7 @@ grammar Objective_JS;
 
 // Conditionals and loops
 IF : 'if';
+ELSE : 'else';
 ELSE_IF : 'elsif';
 DO : 'do';
 TIMES : 'times';
@@ -16,6 +17,7 @@ DIVISION_OPERATOR : '/';
 MODULUS_OPERATOR : '%';
 POWER_OPERATOR : '^';
 EQUAL_OPERATOR : '==';
+ASSIGNMENT : '=';
 NOT_EQUAL_OPERATOR : '!=';
 GREATER_THAN_OPERATOR : '>';
 GREATER_OR_EQUAL_THAN_OPERATOR : '>=';
@@ -34,6 +36,7 @@ DOT : '.';
 COLON : ':';
 SEMICOLON : ';';
 COMMA : ',';
+INPUT_STREAM : '>>';
 // Reserved words
 PRINT : 'print';
 THIS : 'this';
@@ -75,10 +78,33 @@ WHITESPACE : [ \n\t\r]+ -> skip;
 
 inicio:
 	clase
+	| main
+	;
+
+main :
+	imports class_declaration
 	;
 
 clase :
 	CLASS CLASSNAME claseAux bloqueClase
+	;
+
+imports :
+	IMPORT SINGLE_QUOTES ID SINGLE_QUOTES imports
+	|
+	;
+
+class_declaration :
+	CLASS CLASSNAME LEFT_CURLY_BRACKET preVars impFunc MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque RIGHT_CURLY_BRACKET
+	;
+
+bloque :
+	LEFT_CURLY_BRACKET preEstatuto RIGHT_CURLY_BRACKET
+	;
+
+preEstatuto :
+	estatuto preEstatuto
+	|
 	;
 
 claseAux :
@@ -214,6 +240,11 @@ bloqueFuncAux2 :
 	|
 	;
 
+preVars :
+	vars_
+	|
+	;
+
 vars_ :
 	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
 	;
@@ -261,11 +292,73 @@ tipo :
 	;
 
 estatuto :
-	escritura
+	asignacion
+	| condicion
+	| escritura
+	| ciclos
+	| vars_
+	| llamadaFunc
+	| lectura
+	;
+
+asignacion :
+	objeto ASSIGNMENT megaExpresion SEMICOLON
+	;
+
+condicion :
+	IF condicionAux
+	;
+
+condicionAux :
+	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque condicionChoice
+	;
+
+condicionChoice :
+	ELSE_IF condicionAux
+	| ELSE bloque
+	|
 	;
 
 escritura :
-	PRINT LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS SEMICOLON
+	PRINT LEFT_PARENTHESIS megaExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	;
+
+escrituraAux :
+	SUM_OPERATOR megaExpresion escrituraAux
+	|
+	;
+
+ciclos :
+	DO doAux TIMES bloque
+	WHILE LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque
+	;
+
+doAux :
+	objeto
+	TYPE_INT
+	;
+
+llamadaFunc :
+	objeto LEFT_PARENTHESIS argumentosLlamada RIGHT_PARENTHESIS SEMICOLON
+	;
+
+argumentosLlamada :
+	objeto argumentosLlamadaAux
+	megaExpresion argumentosLlamadaAux
+	;
+
+argumentosLlamadaAux :
+	COMMA argumentosLlamada
+	|
+	;
+
+lectura :
+	READ INPUT_STREAM ID lecturaAux SEMICOLON
+	;
+
+lecturaAux :
+	INPUT_STREAM ID lecturaAux
+	|
 	;
 
 objeto :
