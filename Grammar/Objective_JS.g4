@@ -87,7 +87,7 @@ claseAux :
 	;
 
 bloqueClase :
-	LEFT_CURLY_BRACKET constructor atributos metodos RIGHT_CURLY_BRACKET impFunc
+	LEFT_CURLY_BRACKET constructor atributos metodos RIGHT_CURLY_BRACKET impConstructores impFunc
 	;
 
 constructor :
@@ -164,6 +164,19 @@ funcAux:
 	|
 	;
 
+impConstructores :
+	impConstructor impConstructoresMultiples
+	;
+
+impConstructoresMultiples :
+	impConstructor
+	|
+	;
+
+impConstructor :
+	CLASSNAME LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS LEFT_CURLY_BRACKET bloqueConstructor RIGHT_CURLY_BRACKET
+	;
+
 impFunc :
 	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS impFuncAux2 bloqueFunc
 	;
@@ -181,6 +194,10 @@ argumentos:
 argumentosAux:
 	COMMA tipo_dato ID argumentosAux
 	|
+	;
+
+// AQUI HAY QUE PONER LA REGLA ASIGNACION MUCHAS VECES
+bloqueConstructor :
 	;
 
 bloqueFunc :

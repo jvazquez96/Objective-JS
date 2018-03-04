@@ -188,6 +188,33 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#impConstructores.
+    def enterImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#impConstructores.
+    def exitImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#impConstructoresMultiples.
+    def enterImpConstructoresMultiples(self, ctx:Objective_JSParser.ImpConstructoresMultiplesContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#impConstructoresMultiples.
+    def exitImpConstructoresMultiples(self, ctx:Objective_JSParser.ImpConstructoresMultiplesContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#impConstructor.
+    def enterImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#impConstructor.
+    def exitImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#impFunc.
     def enterImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
         pass
@@ -221,6 +248,15 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#argumentosAux.
     def exitArgumentosAux(self, ctx:Objective_JSParser.ArgumentosAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#bloqueConstructor.
+    def enterBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#bloqueConstructor.
+    def exitBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
         pass
 
 
