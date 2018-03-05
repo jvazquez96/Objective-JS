@@ -17,12 +17,57 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#main.
+    def enterMain(self, ctx:Objective_JSParser.MainContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#main.
+    def exitMain(self, ctx:Objective_JSParser.MainContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#clase.
     def enterClase(self, ctx:Objective_JSParser.ClaseContext):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#imports.
+    def enterImports(self, ctx:Objective_JSParser.ImportsContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#imports.
+    def exitImports(self, ctx:Objective_JSParser.ImportsContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#class_declaration.
+    def enterClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#class_declaration.
+    def exitClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#bloque.
+    def enterBloque(self, ctx:Objective_JSParser.BloqueContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#bloque.
+    def exitBloque(self, ctx:Objective_JSParser.BloqueContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#preEstatuto.
+    def enterPreEstatuto(self, ctx:Objective_JSParser.PreEstatutoContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#preEstatuto.
+    def exitPreEstatuto(self, ctx:Objective_JSParser.PreEstatutoContext):
         pass
 
 
@@ -287,6 +332,15 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#preVars.
+    def enterPreVars(self, ctx:Objective_JSParser.PreVarsContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#preVars.
+    def exitPreVars(self, ctx:Objective_JSParser.PreVarsContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#vars_.
     def enterVars_(self, ctx:Objective_JSParser.Vars_Context):
         pass
@@ -377,12 +431,138 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#asignacion.
+    def enterAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#asignacion.
+    def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#condicion.
+    def enterCondicion(self, ctx:Objective_JSParser.CondicionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#condicion.
+    def exitCondicion(self, ctx:Objective_JSParser.CondicionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#condicionAux.
+    def enterCondicionAux(self, ctx:Objective_JSParser.CondicionAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#condicionAux.
+    def exitCondicionAux(self, ctx:Objective_JSParser.CondicionAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#condicionChoice.
+    def enterCondicionChoice(self, ctx:Objective_JSParser.CondicionChoiceContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#condicionChoice.
+    def exitCondicionChoice(self, ctx:Objective_JSParser.CondicionChoiceContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#escritura.
     def enterEscritura(self, ctx:Objective_JSParser.EscrituraContext):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#escritura.
     def exitEscritura(self, ctx:Objective_JSParser.EscrituraContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#escrituraAux.
+    def enterEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#escrituraAux.
+    def exitEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#ciclos.
+    def enterCiclos(self, ctx:Objective_JSParser.CiclosContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#ciclos.
+    def exitCiclos(self, ctx:Objective_JSParser.CiclosContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#doAux.
+    def enterDoAux(self, ctx:Objective_JSParser.DoAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#doAux.
+    def exitDoAux(self, ctx:Objective_JSParser.DoAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#llamadaFunc.
+    def enterLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#llamadaFunc.
+    def exitLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#argumentosLlamada.
+    def enterArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#argumentosLlamada.
+    def exitArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
+    def enterArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
+    def exitArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#lectura.
+    def enterLectura(self, ctx:Objective_JSParser.LecturaContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#lectura.
+    def exitLectura(self, ctx:Objective_JSParser.LecturaContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#lecturaAux.
+    def enterLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#lecturaAux.
+    def exitLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#decInc.
+    def enterDecInc(self, ctx:Objective_JSParser.DecIncContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#decInc.
+    def exitDecInc(self, ctx:Objective_JSParser.DecIncContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#decIncAux.
+    def enterDecIncAux(self, ctx:Objective_JSParser.DecIncAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#decIncAux.
+    def exitDecIncAux(self, ctx:Objective_JSParser.DecIncAuxContext):
         pass
 
 

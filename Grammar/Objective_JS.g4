@@ -10,14 +10,14 @@ WHILE : 'while';
 // Operators
 INCREMENT_OPERATOR : '++';
 DECREMENT_OPERATOR : '--';
-SUM_OPERATOR : '+';
-SUBSTRACTION_OPERATOR : '-';
 MULTIPLICATION_OPERATOR : '*';
 DIVISION_OPERATOR : '/';
 MODULUS_OPERATOR : '%';
 POWER_OPERATOR : '^';
 EQUAL_OPERATOR : '==';
 ASSIGNMENT : '=';
+SUM_OPERATOR : '+';
+SUBSTRACTION_OPERATOR : '-';
 NOT_EQUAL_OPERATOR : '!=';
 GREATER_THAN_OPERATOR : '>';
 GREATER_OR_EQUAL_THAN_OPERATOR : '>=';
@@ -55,6 +55,7 @@ MAIN : 'main';
 LIST : 'list';
 READ : 'read';
 VAR : 'var';
+SINGLE_QUOTES : '"';
 // Data types
 TYPE_INT : ('0' .. '9')+;
 TYPE_FLOAT : ('0' .. '9')+'.'('0' .. '9')+;
@@ -66,7 +67,6 @@ INT : 'int';
 FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
-SINGLE_QUOTES : '"';
 // Classifiers
 CLASSNAME : [A-Z][a-zA-Z]*;
 ID : [a-zA-Z0-9]+;
@@ -90,7 +90,7 @@ clase :
 	;
 
 imports :
-	IMPORT SINGLE_QUOTES ID SINGLE_QUOTES imports
+	IMPORT ID imports
 	|
 	;
 
@@ -204,7 +204,8 @@ impConstructor :
 	;
 
 impFunc :
-	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS impFuncAux2 bloqueFunc
+	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS impFuncAux2 bloqueFunc impFunc
+	|
 	;
 
 impFuncAux2 :
@@ -299,6 +300,7 @@ estatuto :
 	| vars_
 	| llamadaFunc
 	| lectura
+	| decInc
 	;
 
 asignacion :
@@ -330,12 +332,12 @@ escrituraAux :
 
 ciclos :
 	DO doAux TIMES bloque
-	WHILE LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque
+	| WHILE LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque
 	;
 
 doAux :
 	objeto
-	TYPE_INT
+	| TYPE_INT
 	;
 
 llamadaFunc :
@@ -344,7 +346,7 @@ llamadaFunc :
 
 argumentosLlamada :
 	objeto argumentosLlamadaAux
-	megaExpresion argumentosLlamadaAux
+	| megaExpresion argumentosLlamadaAux
 	;
 
 argumentosLlamadaAux :
@@ -361,12 +363,22 @@ lecturaAux :
 	|
 	;
 
+decInc :
+	objeto decIncAux SEMICOLON
+	;
+
+decIncAux :
+	INCREMENT_OPERATOR
+	| DECREMENT_OPERATOR
+	;
+
 objeto :
 	objetoAux
 	;
 	
 objetoAux:
-	THIS
+	THIS DOT ID
+	| ID DOT ID
 	| ID
 	;
 
@@ -377,6 +389,7 @@ megaExpresion :
 megaExpresionAux :
 	LOGICAL_AND_OPERATOR megaExpresion
 	| LOGICAL_OR_OPERATOR megaExpresion
+	|
 	;
 
 superExpresion :

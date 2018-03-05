@@ -1,6 +1,6 @@
-import "hola"
-import "nala"
-import "escuela"
+import hola
+import nala
+import escuela
 
 Class HolaMundo {
 	var morgan, luis, paco : int;
@@ -22,7 +22,7 @@ Class HolaMundo {
 		var nala : int;
 		this.morgan = nala;
 		cora.nombre = "Cora";
-		nala = (morgan * luis (paco - nala)) / (5 + 25) * 30.25;
+		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
 
 		if(luis != paco){
 			luis = paco;
@@ -39,7 +39,7 @@ Class HolaMundo {
 
 		do 25 times{
 			print(i);
-			i = i + 1;
+			i--;
 		}
 
 		while(true){
@@ -50,5 +50,6 @@ Class HolaMundo {
 		raul.funcionTres((morgan + nala) / (nala - luis * paco));
 
 		read >> nala >> morgan >> quique;
+
 	}
 }
