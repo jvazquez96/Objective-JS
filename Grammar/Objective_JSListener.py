@@ -305,6 +305,15 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#bloqueConstructorAux.
+    def enterBloqueConstructorAux(self, ctx:Objective_JSParser.BloqueConstructorAuxContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#bloqueConstructorAux.
+    def exitBloqueConstructorAux(self, ctx:Objective_JSParser.BloqueConstructorAuxContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#bloqueFunc.
     def enterBloqueFunc(self, ctx:Objective_JSParser.BloqueFuncContext):
         pass

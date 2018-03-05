@@ -15,16 +15,18 @@ Class Test {
 			function torta () ;
 	}
 }
+
 Test() {
 	hola = 2;
 }
 
-function hola (int alfa) returns {
+function hola (list [2][2] int alfa, list[5] float jefe) returns {
 	print("Test");
 	return "a";
 }
 
 function torta () {
 	print(2);
+	this.hola(a[2][3], tele[1]);
 	return "b";
 }

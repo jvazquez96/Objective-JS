@@ -225,6 +225,12 @@ argumentosAux:
 
 // AQUI HAY QUE PONER LA REGLA ASIGNACION MUCHAS VECES
 bloqueConstructor :
+	asignacion bloqueConstructorAux
+	;
+
+bloqueConstructorAux:
+	asignacion bloqueConstructor
+	|
 	;
 
 bloqueFunc :
@@ -270,11 +276,11 @@ tipo_dato_list:
 	;
 
 dim :
-	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_CURLY_BRACKET dimMatrix
+	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_SQUARE_BRACKET dimMatrix
 	;
 
 dimMatrix :
-	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_CURLY_BRACKET
+	LEFT_SQUARE_BRACKET TYPE_INT RIGHT_SQUARE_BRACKET
 	|
 	;
 
