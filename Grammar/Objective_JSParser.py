@@ -522,6 +522,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitInicio" ):
                 listener.exitInicio(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitInicio" ):
+                return visitor.visitInicio(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -579,6 +585,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitMain" ):
                 listener.exitMain(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMain" ):
+                return visitor.visitMain(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -631,6 +643,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitClase" ):
                 listener.exitClase(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitClase" ):
+                return visitor.visitClase(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -682,6 +700,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitImports" ):
                 listener.exitImports(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImports" ):
+                return visitor.visitImports(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -768,6 +792,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitClass_declaration" ):
                 listener.exitClass_declaration(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitClass_declaration" ):
+                return visitor.visitClass_declaration(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -832,6 +862,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitBloque" ):
                 listener.exitBloque(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloque" ):
+                return visitor.visitBloque(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -879,6 +915,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitPreEstatuto" ):
                 listener.exitPreEstatuto(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPreEstatuto" ):
+                return visitor.visitPreEstatuto(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -935,6 +977,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitClaseAux" ):
                 listener.exitClaseAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitClaseAux" ):
+                return visitor.visitClaseAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1012,6 +1060,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitBloqueClase" ):
                 listener.exitBloqueClase(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueClase" ):
+                return visitor.visitBloqueClase(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1080,6 +1134,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitConstructor" ):
                 listener.exitConstructor(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitConstructor" ):
+                return visitor.visitConstructor(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1129,6 +1189,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitConstructorAux" ):
                 listener.exitConstructorAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitConstructorAux" ):
+                return visitor.visitConstructorAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1181,6 +1247,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitConstructorAux2" ):
                 listener.exitConstructorAux2(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitConstructorAux2" ):
+                return visitor.visitConstructorAux2(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1247,6 +1319,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitAtributos" ):
                 listener.exitAtributos(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributos" ):
+                return visitor.visitAtributos(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1304,6 +1382,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAtributosPublic" ):
                 listener.exitAtributosPublic(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributosPublic" ):
+                return visitor.visitAtributosPublic(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1367,6 +1451,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitAtributosPublicAux" ):
                 listener.exitAtributosPublicAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributosPublicAux" ):
+                return visitor.visitAtributosPublicAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1426,6 +1516,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAtributosPrivate" ):
                 listener.exitAtributosPrivate(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributosPrivate" ):
+                return visitor.visitAtributosPrivate(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1487,6 +1583,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitAtributosPrivateAux" ):
                 listener.exitAtributosPrivateAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributosPrivateAux" ):
+                return visitor.visitAtributosPrivateAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1546,6 +1648,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitAtributosProtected" ):
                 listener.exitAtributosProtected(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAtributosProtected" ):
+                return visitor.visitAtributosProtected(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1616,6 +1724,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitMetodos" ):
                 listener.exitMetodos(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMetodos" ):
+                return visitor.visitMetodos(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1676,6 +1790,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitMetodosPublicos" ):
                 listener.exitMetodosPublicos(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMetodosPublicos" ):
+                return visitor.visitMetodosPublicos(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1747,6 +1867,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitMetodosPublicosAux" ):
                 listener.exitMetodosPublicosAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMetodosPublicosAux" ):
+                return visitor.visitMetodosPublicosAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -1815,6 +1941,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitMetodosPrivados" ):
                 listener.exitMetodosPrivados(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMetodosPrivados" ):
+                return visitor.visitMetodosPrivados(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1885,6 +2017,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitMetodosPrivadosAux" ):
                 listener.exitMetodosPrivadosAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMetodosPrivadosAux" ):
+                return visitor.visitMetodosPrivadosAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1958,6 +2096,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitFunc" ):
                 listener.exitFunc(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunc" ):
+                return visitor.visitFunc(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2006,6 +2150,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFuncAux" ):
                 listener.exitFuncAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFuncAux" ):
+                return visitor.visitFuncAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2063,6 +2213,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitImpConstructores" ):
                 listener.exitImpConstructores(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImpConstructores" ):
+                return visitor.visitImpConstructores(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2104,6 +2260,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitImpConstructoresMultiples" ):
                 listener.exitImpConstructoresMultiples(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImpConstructoresMultiples" ):
+                return visitor.visitImpConstructoresMultiples(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2175,6 +2337,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitImpConstructor" ):
                 listener.exitImpConstructor(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImpConstructor" ):
+                return visitor.visitImpConstructor(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2252,6 +2420,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitImpFunc" ):
                 listener.exitImpFunc(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImpFunc" ):
+                return visitor.visitImpFunc(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2317,6 +2491,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitImpFuncAux2" ):
                 listener.exitImpFuncAux2(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitImpFuncAux2" ):
+                return visitor.visitImpFuncAux2(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2375,6 +2555,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitArgumentos" ):
                 listener.exitArgumentos(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArgumentos" ):
+                return visitor.visitArgumentos(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2442,6 +2628,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitArgumentosAux" ):
                 listener.exitArgumentosAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArgumentosAux" ):
+                return visitor.visitArgumentosAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2504,6 +2696,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitBloqueConstructor" ):
                 listener.exitBloqueConstructor(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueConstructor" ):
+                return visitor.visitBloqueConstructor(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2549,6 +2747,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitBloqueConstructorAux" ):
                 listener.exitBloqueConstructorAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueConstructorAux" ):
+                return visitor.visitBloqueConstructorAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2614,6 +2818,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitBloqueFunc" ):
                 listener.exitBloqueFunc(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueFunc" ):
+                return visitor.visitBloqueFunc(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2663,6 +2873,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitBloqueFuncAux" ):
                 listener.exitBloqueFuncAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueFuncAux" ):
+                return visitor.visitBloqueFuncAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2724,6 +2940,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitBloqueFuncAux2" ):
                 listener.exitBloqueFuncAux2(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitBloqueFuncAux2" ):
+                return visitor.visitBloqueFuncAux2(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2779,6 +3001,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitPreVars" ):
                 listener.exitPreVars(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPreVars" ):
+                return visitor.visitPreVars(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2852,6 +3080,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitVars_" ):
                 listener.exitVars_(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVars_" ):
+                return visitor.visitVars_(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -2909,6 +3143,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitVarsAux" ):
                 listener.exitVarsAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVarsAux" ):
+                return visitor.visitVarsAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2986,6 +3226,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitVarsRepeated" ):
                 listener.exitVarsRepeated(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVarsRepeated" ):
+                return visitor.visitVarsRepeated(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3054,6 +3300,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitTipo_dato" ):
                 listener.exitTipo_dato(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTipo_dato" ):
+                return visitor.visitTipo_dato(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3112,6 +3364,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitTipo_dato_list" ):
                 listener.exitTipo_dato_list(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTipo_dato_list" ):
+                return visitor.visitTipo_dato_list(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3163,6 +3421,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitDim" ):
                 listener.exitDim(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDim" ):
+                return visitor.visitDim(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3213,6 +3477,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitDimMatrix" ):
                 listener.exitDimMatrix(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDimMatrix" ):
+                return visitor.visitDimMatrix(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3278,6 +3548,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitTipo_dato_no_list" ):
                 listener.exitTipo_dato_no_list(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTipo_dato_no_list" ):
+                return visitor.visitTipo_dato_no_list(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3331,6 +3607,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitTipo" ):
                 listener.exitTipo(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTipo" ):
+                return visitor.visitTipo(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3405,6 +3687,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitEstatuto" ):
                 listener.exitEstatuto(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitEstatuto" ):
+                return visitor.visitEstatuto(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3505,6 +3793,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitAsignacion" ):
                 listener.exitAsignacion(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAsignacion" ):
+                return visitor.visitAsignacion(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3553,6 +3847,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCondicion" ):
                 listener.exitCondicion(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCondicion" ):
+                return visitor.visitCondicion(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3609,6 +3909,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCondicionAux" ):
                 listener.exitCondicionAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCondicionAux" ):
+                return visitor.visitCondicionAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3667,6 +3973,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCondicionChoice" ):
                 listener.exitCondicionChoice(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCondicionChoice" ):
+                return visitor.visitCondicionChoice(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3745,6 +4057,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitEscritura" ):
                 listener.exitEscritura(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitEscritura" ):
+                return visitor.visitEscritura(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3801,6 +4119,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitEscrituraAux" ):
                 listener.exitEscrituraAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitEscrituraAux" ):
+                return visitor.visitEscrituraAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3881,6 +4205,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitCiclos" ):
                 listener.exitCiclos(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCiclos" ):
+                return visitor.visitCiclos(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -3951,6 +4281,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitDoAux" ):
                 listener.exitDoAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDoAux" ):
+                return visitor.visitDoAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4017,6 +4353,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitLlamadaFunc" ):
                 listener.exitLlamadaFunc(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLlamadaFunc" ):
+                return visitor.visitLlamadaFunc(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4072,6 +4414,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitArgumentosLlamada" ):
                 listener.exitArgumentosLlamada(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArgumentosLlamada" ):
+                return visitor.visitArgumentosLlamada(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4132,6 +4480,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitArgumentosLlamadaAux" ):
                 listener.exitArgumentosLlamadaAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArgumentosLlamadaAux" ):
+                return visitor.visitArgumentosLlamadaAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4199,6 +4553,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitLectura" ):
                 listener.exitLectura(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLectura" ):
+                return visitor.visitLectura(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4252,6 +4612,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitLecturaAux" ):
                 listener.exitLecturaAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLecturaAux" ):
+                return visitor.visitLecturaAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4316,6 +4682,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitDecInc" ):
                 listener.exitDecInc(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDecInc" ):
+                return visitor.visitDecInc(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4362,6 +4734,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitDecIncAux" ):
                 listener.exitDecIncAux(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDecIncAux" ):
+                return visitor.visitDecIncAux(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4407,6 +4785,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitObjeto" ):
                 listener.exitObjeto(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitObjeto" ):
+                return visitor.visitObjeto(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4455,6 +4839,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitObjetoAux" ):
                 listener.exitObjetoAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitObjetoAux" ):
+                return visitor.visitObjetoAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4527,6 +4917,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitMegaExpresion" ):
                 listener.exitMegaExpresion(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMegaExpresion" ):
+                return visitor.visitMegaExpresion(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4574,6 +4970,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitMegaExpresionAux" ):
                 listener.exitMegaExpresionAux(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMegaExpresionAux" ):
+                return visitor.visitMegaExpresionAux(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4640,6 +5042,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitSuperExpresion" ):
                 listener.exitSuperExpresion(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSuperExpresion" ):
+                return visitor.visitSuperExpresion(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4699,6 +5107,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitSuperExpresionOperadores" ):
                 listener.exitSuperExpresionOperadores(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSuperExpresionOperadores" ):
+                return visitor.visitSuperExpresionOperadores(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4793,6 +5207,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitExpresion" ):
                 listener.exitExpresion(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExpresion" ):
+                return visitor.visitExpresion(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4840,6 +5260,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitExpresionOperadores" ):
                 listener.exitExpresionOperadores(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExpresionOperadores" ):
+                return visitor.visitExpresionOperadores(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -4907,6 +5333,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitTermino" ):
                 listener.exitTermino(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTermino" ):
+                return visitor.visitTermino(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -4954,6 +5386,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitTerminoOperadores" ):
                 listener.exitTerminoOperadores(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTerminoOperadores" ):
+                return visitor.visitTerminoOperadores(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -5020,6 +5458,12 @@ class Objective_JSParser ( Parser ):
             if hasattr( listener, "exitFactor" ):
                 listener.exitFactor(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFactor" ):
+                return visitor.visitFactor(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -5078,6 +5522,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFactorParentesis" ):
                 listener.exitFactorParentesis(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFactorParentesis" ):
+                return visitor.visitFactorParentesis(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -5150,6 +5600,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitVarCte" ):
                 listener.exitVarCte(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVarCte" ):
+                return visitor.visitVarCte(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -5246,6 +5702,12 @@ class Objective_JSParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitMatrix" ):
                 listener.exitMatrix(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMatrix" ):
+                return visitor.visitMatrix(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 

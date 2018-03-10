@@ -29,7 +29,7 @@ Class HolaMundo {
 		}elsif(luis < paco){
 			luis = luis + 1;
 		}else{
-			paco = 25;
+			paco = 25.5;
 		}
 
 		print("Hola Mundo: " + cecy);
