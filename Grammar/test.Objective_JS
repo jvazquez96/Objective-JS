@@ -3,7 +3,7 @@ Class Test {
 	Test (int a, string alfa);
 	Attributes {
 		public : 
-			var hola : string; var adios : int ;
+			var hola : string; var misa : int ;
 			var tele : float ;
 		private :
 			var adios : string ;
