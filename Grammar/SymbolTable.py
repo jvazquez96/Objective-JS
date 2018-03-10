@@ -25,17 +25,3 @@ class SymbolTable(object):
 			return []
 	def getTable(self):
 		return self._symbols
-
-if __name__ == '__main__':
-    inputs  = FileStream(sys.argv[1])
-    lexer   = Objective_JSLexer(inputs)
-    tokens  = CommonTokenStream(lexer)
-    parser  = Objective_JSParser(tokens)
-    tree    = parser.inicio()
-    codegen = SemanticAnalysis()
-    walker = ParseTreeWalker()
-    walker.walk(codegen, tree)
-    for key, value in codegen.getSymbolsTable().items():
-    	print("Key: " + str(key))
-    	print("Tipo: "  + str(value.getType()))
-    	print("Visibility: " + str(value.getVisibility()))

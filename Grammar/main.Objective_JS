@@ -5,7 +5,7 @@ import escuela
 Class HolaMundo {
 	var morgan, luis, paco : int;
 	var cecy, andrea, miguel : float;
-	var quique, raul, morgan : string;
+	var quique, raul, jaime : string;
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres) returns {
 		argumentoUno = argumentoDos / 5;
