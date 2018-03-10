@@ -10,7 +10,9 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def __init__(self):
 		self.symbols = SymbolTable()
-		self.type = ""
+		self.type = None
+		# Default visibility
+		self.visibility = "private"
 
 	def getSymbolsTable(self):
 		return self.symbols.getTable()
@@ -19,12 +21,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.symbols.push_frame(className)
 
 	def newVars(self, id, type, visibility):
+		if id in self.symbols.getTable():
+			print("Syntax error!! Variable: " + id + " is already defined")
+			sys.exit(0)
 		self.symbols.push_frame(id, type, visibility)
 
 	def enterVars_(self, ctx):
 		id = ctx.ID().getText()
 		self.type = ctx.tipo_dato().getText()
-		self.newVars(id, self.type, "protected")
+		self.newVars(id, self.type, self.visibility)
 
 	def enterClase(self, ctx):
 		className = ctx.CLASSNAME().getText()
@@ -33,12 +38,16 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	def enterVarsAux(self, ctx):
 		if ctx.ID() is not None:
 			id = ctx.ID().getText()
-			# print("ID: " + id)
-			# print("self.type: " + self.type)
-			self.newVars(id, self.type, "private")
+			self.newVars(id, self.type, self.visibility)
 
 	def enterVarsRepeated(self, ctx):
 		if ctx.ID() is not None:
 			id = ctx.ID().getText()
 			self.type = ctx.tipo_dato().getText()
-			self.newVars(id, self.type, "public")
+			self.newVars(id, self.type, self.visibility)
+
+	def enterAtributosPublic(self, ctx):
+		self.visibility = ctx.PUBLIC().getText()
+
+	def enterAtributosPrivate(self, ctx):
+		self.visibility = ctx.PRIVATE().getText()

@@ -223,7 +223,6 @@ argumentosAux:
 	|
 	;
 
-// AQUI HAY QUE PONER LA REGLA ASIGNACION MUCHAS VECES
 bloqueConstructor :
 	asignacion bloqueConstructorAux
 	;
