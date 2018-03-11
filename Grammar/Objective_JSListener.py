@@ -53,6 +53,15 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#main_header.
+    def enterMain_header(self, ctx:Objective_JSParser.Main_headerContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#main_header.
+    def exitMain_header(self, ctx:Objective_JSParser.Main_headerContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#bloque.
     def enterBloque(self, ctx:Objective_JSParser.BloqueContext):
         pass

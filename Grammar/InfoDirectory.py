@@ -14,3 +14,5 @@ class InfoDirectory(object):
 		return self._info[0]
 	def getReturnType(self):
 		return self._info[1]
+	def deleteTable(self):
+		self._info[0] = SymbolTable()

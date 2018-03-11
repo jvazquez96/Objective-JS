@@ -8,18 +8,20 @@ Class HolaMundo {
 	var quique, raul, jaime : string;
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres) returns {
+		var morgan, luis, paco : int;
 		argumentoUno = argumentoDos / 5;
 		return argumentoUno;
 	}
 
 	function funcionDos() {
+		var quique, raul, jaime : string;
 		morgan = luis - paco;
 		cecy  = andrea * miguel;
 		quique = "Hola Mundo";
 	}
-
 	main(){
 		var nala : int;
+		var cecy, andrea, miguel : float;
 		this.morgan = nala;
 		cora.nombre = "Cora";
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;

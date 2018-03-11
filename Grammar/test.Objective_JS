@@ -3,8 +3,10 @@ Class Test {
 	Test (int a, string alfa);
 	Attributes {
 		public : 
-			var hola : string; var tele : int ;
+			var hola : string; var miscursos : int ;
 			var tele : float ;
+			var jorge : bool;
+			var irvel : int;
 		private :
 			var adios : string ;
 	}
@@ -26,6 +28,7 @@ function hola (list [2][2] int alfa, list[5] float jefe) returns {
 }
 
 function torta () {
+	var hola, adios : string;
 	print(2);
 	this.hola(a[2][3], tele[1]);
 	return "b";

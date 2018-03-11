@@ -67,6 +67,7 @@ INT : 'int';
 FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
+BOOL : 'bool';
 // Classifiers
 CLASSNAME : [A-Z][a-zA-Z]*;
 ID : [a-zA-Z0-9]+;
@@ -95,7 +96,11 @@ imports :
 	;
 
 class_declaration :
-	CLASS CLASSNAME LEFT_CURLY_BRACKET preVars impFunc MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque RIGHT_CURLY_BRACKET
+	CLASS CLASSNAME LEFT_CURLY_BRACKET preVars impFunc main_header LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque RIGHT_CURLY_BRACKET
+	;
+
+main_header :
+	MAIN
 	;
 
 bloque :
@@ -288,6 +293,7 @@ tipo_dato_no_list:
 	| FLOAT
 	| CHAR
 	| STRING
+	| BOOL
 	;
 
 tipo : 
@@ -295,6 +301,7 @@ tipo :
 	| TYPE_FLOAT
 	| TYPE_CHAR
 	| TYPE_STRING
+	| TYPE_BOOL
 	;
 
 estatuto :

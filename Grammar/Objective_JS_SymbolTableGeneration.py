@@ -12,7 +12,6 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def __init__(self):
 		self.functions_directory = FunctionsDirectory()
-		self.symbols = SymbolTable()
 		self.type = None
 		# Default visibility
 		self.visibility = "private"
@@ -23,24 +22,24 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		return self.functions_directory
 
 	def getSymbolsTables(self):
-		return self.functions_directory.getAllSymbolsTables()
+		return self.functions_directory.getDirectory()
 
 	def newClass(self, className):
-		self.functions_directory.create_table(className, InfoDirectory())
-		# self.symbols.push_frame(className)
+		self.function_name = className
+		self.functions_directory.create_table(self.function_name, InfoDirectory())
 
 	def newVars(self, id, type, visibility):
-		if id in self.symbols.getTable():
+		if id in self.functions_directory.getSymbolTable(self.function_name).getTable():
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
-		self.symbols.push_frame(id, type, visibility)
+		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility)
 
 	def newFunction(self):
-		# if self.function_name not in self.functions_directory.getAllSymbolsTables():
-		self.functions_directory.create_table(self.function_name, self.does_returns)
-		# else:
-			# print("Syntax error!! Function: " + id + " is already defined")
-			# sys.exit(0)
+		if self.function_name not in self.functions_directory.getDirectory():
+			self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable(), self.does_returns))
+		else:
+			print("Syntax error!! Function: " + self.function_name + " is already defined")
+			sys.exit(0)
 			
 
 	def enterVars_(self, ctx):
@@ -81,6 +80,13 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.newFunction()
 
 	def enterClass_declaration(self, ctx):
-		className = ctx.CLASSNAME().getText()
-		self.functions_directory.create_table(className, InfoDirectory())
+		self.function_name = ctx.CLASSNAME().getText()
+		self.functions_directory.create_table(self.function_name, InfoDirectory())
+
+	def enterMain_header(self, ctx):
+		self.function_name = "main"
 		self.functions_directory.create_table("main", InfoDirectory())
+
+	def exitBloqueFuncAux2(self, ctx):
+		self.functions_directory.remove_info(self.function_name)
+		self.function_name = None

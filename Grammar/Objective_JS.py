@@ -13,10 +13,10 @@ def main(argv):
     analysis = Objective_JS_SymbolTableGeneration()
     walker = ParseTreeWalker()
     walker.walk(analysis, tree)
-    for key, value in analysis.getFunctionDirectory().getAllSymbolsTables().items():
-    	print("Function name: " + str(key))
-    	print("Symbol table: "  + str(value.getSymbolTable()))
-    	print("Returns?: " + str(value.getReturnType()))
+    # for key, value in analysis.getFunctionDirectory().getDirectory().items():
+    # 	print("Function name: " + str(key))
+    # 	print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))
+    # 	print("Returns?: " + str(value.getReturnType()))
  
 if __name__ == '__main__':
 	main(sys.argv)

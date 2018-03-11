@@ -15,9 +15,10 @@ class FunctionsDirectory(object):
 			print("Error")
 			sys.exit(0)
 		else:
-			return_type = self.directory.getReturnType()
-			self.directory[id] = InfoDirectory(SymbolTable(), return_type)
+			# return_type = self.directory.getReturnType()
+			# self.directory[id] = InfoDirectory(SymbolTable(), return_type)
+			self.directory[id].deleteTable()
 	def getSymbolTable(self, id):
-		return self.directory[id].getSymboltable()
-	def getAllSymbolsTables(self):
+		return self.directory[id].getSymbolTable()
+	def getDirectory(self):
 		return self.directory
