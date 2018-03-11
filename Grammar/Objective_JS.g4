@@ -126,7 +126,7 @@ constructor :
 	;
 
 constructorAux :
-	argumentos
+	argumentosDecl
 	|
 	;
 
@@ -169,7 +169,7 @@ metodos :
 
 metodosPublicos :
 	PUBLIC COLON func SEMICOLON metodosPublicosAux
-	| PUBLIC COLON
+	| PUBLIC SEMICOLON
 	;
 
 metodosPublicosAux :
@@ -188,24 +188,35 @@ metodosPrivadosAux :
 	;
 
 func :
-	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS funcAux;
+	FUNCTION ID LEFT_PARENTHESIS argumentosDecl RIGHT_PARENTHESIS funcAux
+	;
 
 funcAux:
 	RETURNS
 	|
 	;
 
-impConstructores :
-	impConstructor impConstructoresMultiples
+argumentosDecl:
+	tipo_dato ID argumentosDeclAux
+	|
 	;
 
-impConstructoresMultiples :
-	impConstructor
+argumentosDeclAux:
+	COMMA tipo_dato ID argumentosDeclAux
+	|
+	;
+
+impConstructores :
+	impConstructor impConstructores
 	|
 	;
 
 impConstructor :
-	CLASSNAME LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS LEFT_CURLY_BRACKET bloqueConstructor RIGHT_CURLY_BRACKET
+	CLASSNAME LEFT_PARENTHESIS argumentos emptyRule RIGHT_PARENTHESIS LEFT_CURLY_BRACKET bloqueConstructor RIGHT_CURLY_BRACKET
+	;
+
+emptyRule :
+	|
 	;
 
 impFunc :
@@ -229,10 +240,6 @@ argumentosAux:
 	;
 
 bloqueConstructor :
-	asignacion bloqueConstructorAux
-	;
-
-bloqueConstructorAux:
 	asignacion bloqueConstructor
 	|
 	;

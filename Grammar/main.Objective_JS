@@ -13,7 +13,7 @@ Class HolaMundo {
 		return argumentoUno;
 	}
 
-	function funcionDos() {
+	function funcionDos(int argumentoUno, int unoYMedio, float argumentoDos, string argumentoTres, bool nuevoArgumento) {
 		var quique, raul, jaime : string;
 		morgan = luis - paco;
 		cecy  = andrea * miguel;
