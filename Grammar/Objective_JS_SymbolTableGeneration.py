@@ -8,6 +8,14 @@ from SymbolTable import SymbolTable
 from InfoDirectory import InfoDirectory
 from FunctionsDirectory import FunctionsDirectory
 
+
+
+PLUS = 101
+MINUS = 102
+MULTIPLICATION = 103
+DIVISION = 104
+
+
 class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def __init__(self):
