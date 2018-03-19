@@ -23,7 +23,7 @@ class Cube(object):
 	AND = 12
 	OR = 13
 	def __init__(self):
-		self.cube = {}
+		self.cube = []
 		# INT + Data types
 		self.cube[self.INT, self.SUM, self.INT] = self.INT
 		self.cube[self.INT, self.SUM, self.FLOAT] = self.FLOAT
@@ -54,7 +54,7 @@ class Cube(object):
 		self.cube[self.INT, self.DIVISION, self.NULL] = self.ERROR
 
 	def getDataType(self, operand1, operation, operand2):
-		return self.cube{operand1, operation, operand2}
+		return self.cube[operand1, operation, operand2]
 
 if __name__ == "__main__":
 	cube = Cube()
