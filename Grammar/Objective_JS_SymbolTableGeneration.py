@@ -7,6 +7,8 @@ from Objective_JSListener import Objective_JSListener
 from SymbolTable import SymbolTable
 from InfoDirectory import InfoDirectory
 from FunctionsDirectory import FunctionsDirectory
+from Stack import Stack
+from Quadruple import Quadruple
 
 
 
@@ -27,12 +29,20 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.function_name = None
 		self.argumentos = SymbolTable()
 		self.constructores = 0
+		self.cuadruplos = []
+		self.operadores = Stack()
+		self.operandos = Stack()
+		self.asignacion = False
+		self.registros = 1
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
 
 	def getSymbolsTables(self):
 		return self.functions_directory.getDirectory()
+
+	def getCuadruplos(self):
+		return self.cuadruplos
 
 	# Se crea una clase en el directorio de funciones
 	def newClass(self, className):
@@ -153,3 +163,83 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def enterEmptyRule(self, ctx):
 		self.newFunction()
+
+	#def exitSuperExpresion(self, ctx):
+
+	# Se introducen los operandos en la pila
+	def enterFactor(self, ctx):
+		if ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
+			id = ctx.varCte().getText()
+			if self.asignacion:
+				self.operandos.push(id)
+		elif ctx.factorParentesis() is not None:
+			# Fondo falso
+			if self.asignacion:
+				self.operadores.push('(')
+
+	# Sirve para activar o desactivar la bandera de asignacion
+	def enterAsignacion(self, ctx):
+		self.asignacion = True
+
+	def exitAsignacion(self, ctx):
+		string = True
+		char = True
+		if ctx.megaExpresion().superExpresion().expresion().termino().factor().varCte() is not None:
+			string = ctx.megaExpresion().superExpresion().expresion().termino().factor().varCte().TYPE_STRING()
+			char = ctx.megaExpresion().superExpresion().expresion().termino().factor().varCte().TYPE_CHAR()
+		if string is None and char is None:
+			id = ctx.objeto().getText()
+			valor = self.operandos.pop()
+			cuadruplo = Quadruple("=", valor, "", id)
+			cuadruplo.print()
+			self.cuadruplos.append(cuadruplo)
+			self.asignacion = False
+
+	# Se saca el fondo falso
+	def exitFactorParentesis(self, ctx):
+		self.operadores.pop()
+
+	# Se resuelven y meten multiplicaciones y divisiones
+	def exitFactor(self, ctx):
+		if self.asignacion:
+			if self.operadores.top() == '/' or self.operadores.top() == '*':
+				operando2 = self.operandos.pop()
+				operando1 = self.operandos.pop()
+				operador = self.operadores.pop()
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				#Verificar
+				cuadruplo = Quadruple(operador, operando1, operando2, registro)
+				cuadruplo.print()
+				self.cuadruplos.append(cuadruplo)
+				self.registros += 1
+
+
+	# Sumas y restas
+	def exitTermino(self, ctx):
+		if self.asignacion:
+			if self.operadores.top() == '+' or self.operadores.top() == '-':
+				operando2 = self.operandos.pop()
+				operando1 = self.operandos.pop()
+				operador = self.operadores.pop()
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				#Verificar
+				cuadruplo = Quadruple(operador, operando1, operando2, registro)
+				cuadruplo.print()
+				self.cuadruplos.append(cuadruplo)
+				self.registros += 1
+
+	def enterTerminoOperadores(self, ctx):
+		if self.asignacion:
+			if ctx.MULTIPLICATION_OPERATOR() is not None:
+				self.operadores.push('*')
+			elif ctx.DIVISION_OPERATOR() is not None:
+				self.operadores.push('/')
+
+	def enterExpresionOperadores(self, ctx):
+		if self.asignacion:
+			if ctx.SUM_OPERATOR() is not None:
+				self.operadores.push('+')
+			elif ctx.SUBSTRACTION_OPERATOR() is not None:
+				self.operadores.push('-')

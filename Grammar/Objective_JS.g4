@@ -59,7 +59,7 @@ SINGLE_QUOTES : '"';
 // Data types
 TYPE_INT : ('0' .. '9')+;
 TYPE_FLOAT : ('0' .. '9')+'.'('0' .. '9')+;
-TYPE_CHAR : '"'[a-zA-Z]'"';
+TYPE_CHAR : '"'[a-zA-Z]'"'; //Cambiar
 TYPE_STRING : '"'~('"')*'"';
 TYPE_BOOL : ('true'|'false');
 // Types literal

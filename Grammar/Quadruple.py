@@ -1,6 +1,6 @@
 class Quadruple(object):
 
-	def __init__(self, int operator, string operand1=None, string operand2=None, string result=None):
+	def __init__(self, operator=None, operand1=None, operand2=None, result=None):
 		self.operator = operator
 		self.operand1 = operand1
 		self.operand2 = operand2
@@ -17,3 +17,6 @@ class Quadruple(object):
 
 	def getResult(self):
 		return self.result
+
+	def print(self):
+		print(str(self.operator) + " " + str(self.operand1) + " " + str(self.operand2) + " " + str(self.result))
