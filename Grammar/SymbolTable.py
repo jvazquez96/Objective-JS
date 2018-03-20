@@ -25,3 +25,5 @@ class SymbolTable(object):
 			return []
 	def getTable(self):
 		return self._symbols
+	def test(self):
+		print(1)

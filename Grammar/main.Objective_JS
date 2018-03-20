@@ -3,7 +3,7 @@ import nala
 import escuela
 
 Class HolaMundo {
-	var morgan, luis, paco : int;
+	var morgan, luis, paco, santiago : int;
 	var cecy, andrea, miguel : float;
 	var quique, raul, jaime : string;
 
@@ -15,15 +15,15 @@ Class HolaMundo {
 
 	function funcionDos(int argumentoUno, int unoYMedio, float argumentoDos, string argumentoTres, bool nuevoArgumento) {
 		var quique, raul, jaime : string;
-		morgan = luis - paco;
-		cecy  = andrea * miguel;
+		jaime = luis - paco;
+		cecy  = quique * miguel;
 		quique = "Hola Mundo";
+		santiago = "Jefe";
 	}
 	main(){
 		var nala : int;
-		var cecy, andrea, miguel : float;
-		this.morgan = nala;
-		cora.nombre = "Cora";
+		var cecy, andrea, hola : float;
+		morgan = nala;
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
 
 		if(luis != paco){

@@ -9,6 +9,7 @@ from InfoDirectory import InfoDirectory
 from FunctionsDirectory import FunctionsDirectory
 from Stack import Stack
 from Quadruple import Quadruple
+from Cube import Cube
 
 
 
@@ -32,11 +33,43 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.cuadruplos = []
 		self.operadores = Stack()
 		self.operandos = Stack()
+		self.types = Stack()
 		self.asignacion = False
 		self.registros = 1
+		self.oraculo = Cube()
+		self.is_locale = False
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
+
+	def isVarDeclared(self, var):
+		exist = False
+		tabla = self.functions_directory.getSymbolTable(self.function_name)
+
+		if var in tabla.getTable():
+			exist = True
+			#self.is_locale = True
+		else:
+			for key, value in self.functions_directory.getDirectory().items():
+				if var in value.getSymbolTable().getTable():
+					exist = True
+					#self.is_locale = False
+					break
+
+		if not exist:
+			print(var + " is used but not defined!")
+			sys.exit(0)
+
+	def getTypeFromVariable(self, var):
+		# if self.is_locale:
+		# 	print("Var: " + str(var))
+		# 	tabla = self.functions_directory.getSymbolTable(self.function_name)
+		# 	print(tabla.getContent(var))
+		# 	return tabla.getContent(var).getType()
+		# else:
+		for key, value in self.functions_directory.getDirectory().items():
+			if var in value.getSymbolTable().getTable():
+				return value.getSymbolTable().getContent(var).getType()	
 
 	def getSymbolsTables(self):
 		return self.functions_directory.getDirectory()
@@ -67,8 +100,23 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	# Sirve para crear la variable, obtiene el tipo y el ID
 	def enterVars_(self, ctx):
 		id = ctx.ID().getText()
-		self.type = ctx.tipo_dato().getText()
-		self.newVars(id, self.type, self.visibility)
+		self.type = ctx.tipo_dato().getText() 
+
+		# Checar los tipos con sus respectivos números
+		if self.type == "int":
+			type_number = 0
+		elif self.type == "float":
+			type_number = 1
+		elif self.type == "char":
+			type_number = 2
+		elif self.type == "string":
+			type_number = 3
+		elif self.type == "bool":
+			type_number = 4
+		elif self.type == "null":
+			type_number = 5
+
+		self.newVars(id, type_number, self.visibility)
 
 	# Método que invoca a la función encargada de añadir la clase al directorio de funciones
 	def enterClase(self, ctx):
@@ -130,7 +178,20 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
 		else:
-			self.argumentos.push_frame(id, type, visibility)
+			if type == "int":
+				type_number = 0
+			elif type == "float":
+				type_number = 1
+			elif type == "char":
+				type_number = 2
+			elif type == "string":
+				type_number = 3
+			elif type == "bool":
+				type_number = 4
+			elif type == "null":
+				type_number = 5
+
+			self.argumentos.push_frame(id, type_number, visibility)
 
 	# Se agregan argumentos de una funcion en la tabla de símbolos
 	def enterArgumentos(self, ctx):
@@ -165,17 +226,42 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.newFunction()
 
 	#def exitSuperExpresion(self, ctx):
+	def getTypeFromFactor(self, ctx, value):
+		if ctx.varCte().TYPE_INT() is not None:
+			return 0
+		elif ctx.varCte().TYPE_FLOAT() is not None:
+			return 1
+		elif ctx.varCte().TYPE_CHAR() is not None:
+			return 2
+		elif ctx.varCte().TYPE_STRING() is not None:
+			return 3
+		elif ctx.varCte().TYPE_BOOL() is not None:
+			return 4
+		else:
+			return self.getTypeFromVariable(value)
 
 	# Se introducen los operandos en la pila
 	def enterFactor(self, ctx):
 		if ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
-			id = ctx.varCte().getText()
+			value = ctx.varCte().getText()
 			if self.asignacion:
-				self.operandos.push(id)
+				self.operandos.push(value)
+				type = self.getTypeFromFactor(ctx, value)
+				print("value: " + value)
+				print("type: " + str(type))
+				self.types.push(type)
+				
 		elif ctx.factorParentesis() is not None:
 			# Fondo falso
 			if self.asignacion:
 				self.operadores.push('(')
+
+	# Revisa que el id exista
+	def enterObjeto(self, ctx):
+		self.is_locale = False
+		if ctx.objetoAux() is not None and self.asignacion:
+			id = ctx.objetoAux().getText()
+			self.isVarDeclared(id)
 
 	# Sirve para activar o desactivar la bandera de asignacion
 	def enterAsignacion(self, ctx):
@@ -190,6 +276,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if string is None and char is None:
 			id = ctx.objeto().getText()
 			valor = self.operandos.pop()
+			self.types.pop()
 			cuadruplo = Quadruple("=", valor, "", id)
 			cuadruplo.print()
 			self.cuadruplos.append(cuadruplo)
@@ -204,15 +291,30 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if self.asignacion:
 			if self.operadores.top() == '/' or self.operadores.top() == '*':
 				operando2 = self.operandos.pop()
+				tipo1 = self.types.pop()
 				operando1 = self.operandos.pop()
+				tipo2 = self.types.pop()
 				operador = self.operadores.pop()
-				registro = "r" + str(self.registros)
-				self.operandos.push(registro)
-				#Verificar
-				cuadruplo = Quadruple(operador, operando1, operando2, registro)
-				cuadruplo.print()
-				self.cuadruplos.append(cuadruplo)
-				self.registros += 1
+
+				if operador == '/':
+					number_op = 3
+				else:
+					number_op = 2
+
+				print("type1: " + str(tipo1))
+				print("type2" + str(tipo2))
+				new_type = self.oraculo.getDataType(tipo1, number_op, tipo2).any()
+				if new_type == -1.0:
+					print("Data type mismatch")
+					sys.exit(0)
+				else:
+					registro = "r" + str(self.registros)
+					self.operandos.push(registro)
+					self.types.push(new_type)
+					cuadruplo = Quadruple(operador, operando1, operando2, registro)
+					self.cuadruplos.append(cuadruplo)
+					cuadruplo.print()
+					self.registros += 1
 
 
 	# Sumas y restas
@@ -220,15 +322,30 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if self.asignacion:
 			if self.operadores.top() == '+' or self.operadores.top() == '-':
 				operando2 = self.operandos.pop()
+				tipo1 = self.types.pop()
 				operando1 = self.operandos.pop()
+				tipo2 = self.types.pop()
 				operador = self.operadores.pop()
-				registro = "r" + str(self.registros)
-				self.operandos.push(registro)
-				#Verificar
-				cuadruplo = Quadruple(operador, operando1, operando2, registro)
-				cuadruplo.print()
-				self.cuadruplos.append(cuadruplo)
-				self.registros += 1
+
+				if operador == '+':
+					number_op = 0
+				else:
+					number_op = 1
+
+				print("type1: " + str(tipo1))
+				print("type2" + str(tipo2))
+				new_type = self.oraculo.getDataType(tipo1, number_op, tipo2).any()
+				if new_type == -1.0:
+					print("Data type mismatch")
+					sys.exit(0)
+				else:
+					registro = "r" + str(self.registros)
+					self.operandos.push(registro)
+					self.types.push(new_type)
+					cuadruplo = Quadruple(operador, operando1, operando2, registro)
+					self.cuadruplos.append(cuadruplo)
+					cuadruplo.print()
+					self.registros += 1
 
 	def enterTerminoOperadores(self, ctx):
 		if self.asignacion:

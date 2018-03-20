@@ -22,3 +22,5 @@ class FunctionsDirectory(object):
 		return self.directory[id].getSymbolTable()
 	def getDirectory(self):
 		return self.directory
+	def test(self):
+		print(2)
