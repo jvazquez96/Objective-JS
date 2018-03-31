@@ -11,13 +11,6 @@ from Structures.Stack import Stack
 from Structures.SymbolTable import SymbolTable
 from Structures.Quadruple import Quadruple
 
-
-PLUS = 101
-MINUS = 102
-MULTIPLICATION = 103
-DIVISION = 104
-
-
 class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def __init__(self):
