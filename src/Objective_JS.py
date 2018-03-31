@@ -15,6 +15,10 @@ def main(argv):
     analysis = Objective_JS_SymbolTableGeneration()
     walker = ParseTreeWalker()
     walker.walk(analysis, tree)
+    quadruples = analysis.getQuadruples()
+    print("After")
+    for i in quadruples:
+        i.print()
     # for key, value in analysis.getFunctionDirectory().getDirectory().items():
     #   print("Function name: " + str(key))
     #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))

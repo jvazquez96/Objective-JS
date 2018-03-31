@@ -1,4 +1,4 @@
-# Generated from Objective_JS.g4 by ANTLR 4.7.1
+# Generated from Grammar/Objective_JS.g4 by ANTLR 4.7.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .Objective_JSParser import Objective_JSParser
@@ -476,6 +476,24 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#endIf.
+    def enterEndIf(self, ctx:Objective_JSParser.EndIfContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#endIf.
+    def exitEndIf(self, ctx:Objective_JSParser.EndIfContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#exitIfExpresion.
+    def enterExitIfExpresion(self, ctx:Objective_JSParser.ExitIfExpresionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#exitIfExpresion.
+    def exitExitIfExpresion(self, ctx:Objective_JSParser.ExitIfExpresionContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#condicionAux.
     def enterCondicionAux(self, ctx:Objective_JSParser.CondicionAuxContext):
         pass
@@ -491,6 +509,15 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#condicionChoice.
     def exitCondicionChoice(self, ctx:Objective_JSParser.CondicionChoiceContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#enterElse.
+    def enterEnterElse(self, ctx:Objective_JSParser.EnterElseContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#enterElse.
+    def exitEnterElse(self, ctx:Objective_JSParser.EnterElseContext):
         pass
 
 
@@ -518,6 +545,60 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#ciclos.
     def exitCiclos(self, ctx:Objective_JSParser.CiclosContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#afterDo.
+    def enterAfterDo(self, ctx:Objective_JSParser.AfterDoContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#afterDo.
+    def exitAfterDo(self, ctx:Objective_JSParser.AfterDoContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#afterCondition.
+    def enterAfterCondition(self, ctx:Objective_JSParser.AfterConditionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#afterCondition.
+    def exitAfterCondition(self, ctx:Objective_JSParser.AfterConditionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#afterDoLoop.
+    def enterAfterDoLoop(self, ctx:Objective_JSParser.AfterDoLoopContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#afterDoLoop.
+    def exitAfterDoLoop(self, ctx:Objective_JSParser.AfterDoLoopContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#afterWhile.
+    def enterAfterWhile(self, ctx:Objective_JSParser.AfterWhileContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#afterWhile.
+    def exitAfterWhile(self, ctx:Objective_JSParser.AfterWhileContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#afterWhileExpression.
+    def enterAfterWhileExpression(self, ctx:Objective_JSParser.AfterWhileExpressionContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#afterWhileExpression.
+    def exitAfterWhileExpression(self, ctx:Objective_JSParser.AfterWhileExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by Objective_JSParser#exitWhile.
+    def enterExitWhile(self, ctx:Objective_JSParser.ExitWhileContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#exitWhile.
+    def exitExitWhile(self, ctx:Objective_JSParser.ExitWhileContext):
         pass
 
 

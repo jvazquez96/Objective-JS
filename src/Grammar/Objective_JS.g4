@@ -327,17 +327,26 @@ asignacion :
 	;
 
 condicion :
-	IF condicionAux
+	IF condicionAux endIf
+	;
+
+endIf :
+	;
+
+exitIfExpresion :
 	;
 
 condicionAux :
-	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque condicionChoice
+	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS exitIfExpresion bloque condicionChoice
 	;
 
 condicionChoice :
-	ELSE_IF condicionAux
-	| ELSE bloque
+	ELSE_IF enterElse condicionAux
+	| ELSE enterElse bloque
 	|
+	;
+
+enterElse:
 	;
 
 escritura :
@@ -350,8 +359,26 @@ escrituraAux :
 	;
 
 ciclos :
-	DO doAux TIMES bloque
-	| WHILE LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS bloque
+	DO afterDo doAux afterCondition TIMES bloque afterDoLoop
+	| WHILE afterWhile LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS afterWhileExpression bloque exitWhile
+	;
+
+afterDo :
+	;
+
+afterCondition :
+	;
+
+afterDoLoop :
+	;
+
+afterWhile :
+	;
+
+afterWhileExpression :
+	;
+
+exitWhile :
 	;
 
 doAux :

@@ -44,13 +44,15 @@ Class HolaMundo {
 		var i : int;
 		i = 0;
 
-		do 25 times{
+		do 10 times{
 			print(i);
 			i--;
+			jb = "m";
 		}
 
 		while(true){
 			print("Ciclo infinito");
+			jb = "b";
 		}
 
 		funcionUno(morgan * nala, cecy + andrea, quique);

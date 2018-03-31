@@ -4,7 +4,7 @@ from antlr4 import *
 from Grammar.Objective_JSListener import Objective_JSListener
 from Structures.Cube import Cube
 from Structures.FunctionsDirectory import FunctionsDirectory
-from Structures.GOTO import GOTO
+from Structures.GO import GO
 from Structures.InfoDirectory import InfoDirectory
 from Structures.Info import Info
 from Structures.Stack import Stack
@@ -30,6 +30,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.registros = 1
 		self.oraculo = Cube()
 		self.isListDeclared = False;
+		self.pending_jumps = Stack()
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
@@ -52,6 +53,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if not exist:
 			print(var + " is used but not defined!")
 			sys.exit(0)
+
+	def fill(self, end, next):
+		quadruple = self.cuadruplos[end]
+		quadruple.setResult(next)
 
 	def getTypeFromVariable(self, var):
 		# First check in the local scope
@@ -295,9 +300,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Data type mismatch")
 			sys.exit(0)
 			print("Error")
-		cuadruplo = Quadruple("=", valor, "", id)
+		cuadruplo = Quadruple(self.registros, "=", valor, "", id)
 		cuadruplo.print()
 		self.cuadruplos.append(cuadruplo)
+		self.registros += 1
 		self.asignacion = False
 
 	# Se saca el fondo falso
@@ -327,7 +333,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					registro = "r" + str(self.registros)
 					self.operandos.push(registro)
 					self.types.push(new_type)
-					cuadruplo = Quadruple(operador, operando1, operando2, registro)
+					cuadruplo = Quadruple(self.registros, operador, operando1, operando2, registro)
 					self.cuadruplos.append(cuadruplo)
 					cuadruplo.print()
 					self.registros += 1
@@ -356,7 +362,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					registro = "r" + str(self.registros)
 					self.operandos.push(registro)
 					self.types.push(new_type)
-					cuadruplo = Quadruple(operador, operando1, operando2, registro)
+					cuadruplo = Quadruple(self.registros, operador, operando1, operando2, registro)
 					self.cuadruplos.append(cuadruplo)
 					cuadruplo.print()
 					self.registros += 1
@@ -380,3 +386,73 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def exitTipo_dato_list(self, ctx):
 		self.isListDeclared = False
+
+	def enterExitIfExpresion(self, ctx):
+		# exp_type = self.types.pop()
+		# if exp_type != 4: #Boolean
+		# 	print("The result of the expression must be boolean")
+		# 	sys.exit(0)
+		# result = self.operandos.pop()
+		# TODO(jorge) : Replace first None with the actual result of the expression
+		quadruple = Quadruple(self.registros, GO.TOFALSE, None , None, None)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		self.pending_jumps.push(len(self.cuadruplos) - 1)
+
+	def exitEnterElse(self, ctx):
+		quadruple = Quadruple(self.registros, GO.TO, None, None, None)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		false = self.pending_jumps.pop()
+		self.pending_jumps.push(len(self.cuadruplos)-1)
+		self.fill(false, len(self.cuadruplos))
+
+	def exitEndIf(self, ctx):
+		end = self.pending_jumps.pop()
+		self.fill(end, len(self.cuadruplos))
+
+	def exitAfterWhile(self, ctx):
+		self.pending_jumps.push(len(self.cuadruplos))
+
+	def enterAfterWhilExpression(self, ctx):
+		# exp_type = self.types.pop()
+		# if exp_type != 4: #Boolean
+		# 	print("The result of the expression must be boolean")
+		# 	sys.exit(0)
+		# result = self.operandos.pop()
+		# TODO(jorge) : Replace first None with the actual result of the expression
+		quadruple = Quadruple(self.registros, GO.TOFALSE, None, None, None)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		self.pending_jumps.push(len(self.cuadruplos)-1)
+
+	def exitExitWhile(self, ctx):
+		end = self.pending_jumps.pop()
+		ret = self.pending_jumps.pop()
+		quadruple = Quadruple(self.registros, GO.TO, None, None, ret)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		self.fill(end, len(self.cuadruplos))
+
+	def exitAfterDo(self, ctx):
+		self.pending_jumps.push(len(self.cuadruplos))
+
+	def exitAfterCondition(self, ctx):
+		# exp_type = self.types.pop()
+		# if exp_type != 4: #Boolean
+		# 	print("The result of the expression must be boolean")
+		# 	sys.exit(0)
+		# result = self.operandos.pop()
+		# TODO(jorge) : Replace first None with the actual result of the expression
+		quadruple = Quadruple(self.registros, GO.TOFALSE, None, None, None)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		self.pending_jumps.push(len(self.cuadruplos)-1)
+
+	def exitAfterDoLoop(self, ctx):
+		end = self.pending_jumps.pop()
+		ret = self.pending_jumps.pop()
+		quadruple = Quadruple(self.registros, GO.TO, None, None, ret)
+		self.cuadruplos.append(quadruple)
+		self.registros += 1
+		self.fill(end, len(self.cuadruplos))
