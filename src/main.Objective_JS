@@ -1,0 +1,62 @@
+import hola
+import nala
+import escuela
+
+Class HolaMundo {
+	var morgan, luis, paco, santiago : int;
+	var cecy, andrea, miguel : float;
+	var quique, raul, jaime : string;
+	var jorge : list [5] int;
+
+	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres) returns {
+		var morgan, luis, paco : int;
+		argumentoUno = argumentoDos / 5;
+		return argumentoUno;
+	}
+
+	function funcionDos(int argumentoUno, int unoYMedio, float argumentoDos, string argumentoTres, bool nuevoArgumento) {
+		var quique, raul, jaime : string;
+		var monica, andrea : int;
+		andrea = luis - paco;
+		monica  = andrea * miguel;
+		quique = "Hola Mundo";
+		jaime = "J";
+	}
+	main(){
+		var nala : int;
+		var cecy, andrea, hola : float;
+		var jb : char;
+		morgan = 25;
+		jb = "a";
+		jb = jb + "b";
+		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
+
+		if(luis != paco){
+			luis = paco;
+		}elsif(luis < paco){
+			luis = luis + 8.28;
+		}else{
+			paco = 25.5;
+		}
+
+		print("Hola Mundo: " + cecy);
+
+		var i : int;
+		i = 0;
+
+		do 25 times{
+			print(i);
+			i--;
+		}
+
+		while(true){
+			print("Ciclo infinito");
+		}
+
+		funcionUno(morgan * nala, cecy + andrea, quique);
+		raul.funcionTres((morgan + nala) / (nala - luis * paco));
+
+		read >> nala >> morgan >> quique;
+
+	}
+}
