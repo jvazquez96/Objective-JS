@@ -31,6 +31,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.oraculo = Cube()
 		self.isListDeclared = False;
 		self.pending_jumps = Stack()
+		self.id = 1;
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
@@ -300,10 +301,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Data type mismatch")
 			sys.exit(0)
 			print("Error")
-		cuadruplo = Quadruple(self.registros, "=", valor, "", id)
+		cuadruplo = Quadruple(self.id, "=", valor, "", id)
 		cuadruplo.print()
 		self.cuadruplos.append(cuadruplo)
-		self.registros += 1
+		self.id += 1
 		self.asignacion = False
 
 	# Se saca el fondo falso
@@ -333,9 +334,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					registro = "r" + str(self.registros)
 					self.operandos.push(registro)
 					self.types.push(new_type)
-					cuadruplo = Quadruple(self.registros, operador, operando1, operando2, registro)
+					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
 					self.cuadruplos.append(cuadruplo)
 					cuadruplo.print()
+					self.id += 1
 					self.registros += 1
 
 
@@ -362,10 +364,11 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					registro = "r" + str(self.registros)
 					self.operandos.push(registro)
 					self.types.push(new_type)
-					cuadruplo = Quadruple(self.registros, operador, operando1, operando2, registro)
+					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
 					self.cuadruplos.append(cuadruplo)
 					cuadruplo.print()
 					self.registros += 1
+					self.id += 1
 
 	def enterTerminoOperadores(self, ctx):
 		if self.asignacion:
@@ -394,15 +397,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		# 	sys.exit(0)
 		# result = self.operandos.pop()
 		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.registros, GO.TOFALSE, None , None, None)
+		quadruple = Quadruple(self.id, GO.TOFALSE, None , None, None)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
 
 	def exitEnterElse(self, ctx):
-		quadruple = Quadruple(self.registros, GO.TO, None, None, None)
+		quadruple = Quadruple(self.id, GO.TO, None, None, None)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		false = self.pending_jumps.pop()
 		self.pending_jumps.push(len(self.cuadruplos)-1)
 		self.fill(false, len(self.cuadruplos))
@@ -421,17 +424,17 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		# 	sys.exit(0)
 		# result = self.operandos.pop()
 		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.registros, GO.TOFALSE, None, None, None)
+		quadruple = Quadruple(self.id, GO.TOFALSE, None, None, None)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos)-1)
 
 	def exitExitWhile(self, ctx):
 		end = self.pending_jumps.pop()
 		ret = self.pending_jumps.pop()
-		quadruple = Quadruple(self.registros, GO.TO, None, None, ret)
+		quadruple = Quadruple(self.id, GO.TO, None, None, ret)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		self.fill(end, len(self.cuadruplos))
 
 	def exitAfterDo(self, ctx):
@@ -444,15 +447,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		# 	sys.exit(0)
 		# result = self.operandos.pop()
 		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.registros, GO.TOFALSE, None, None, None)
+		quadruple = Quadruple(self.id, GO.TOFALSE, None, None, None)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos)-1)
 
 	def exitAfterDoLoop(self, ctx):
 		end = self.pending_jumps.pop()
 		ret = self.pending_jumps.pop()
-		quadruple = Quadruple(self.registros, GO.TO, None, None, ret)
+		quadruple = Quadruple(self.id, GO.TO, None, None, ret)
 		self.cuadruplos.append(quadruple)
-		self.registros += 1
+		self.id += 1
 		self.fill(end, len(self.cuadruplos))
