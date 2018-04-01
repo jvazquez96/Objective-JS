@@ -20,27 +20,27 @@ Class Test {
 }
 
 Test() {
-	hola = 2;
+	hola = "b";
 }
 
 Test(int a, string alfa){
-	hola = 5;
+	hola = "5";
 	adios = "hola";
-	this.jorge = false;
-	hola.adios = 25.5;
+	jorge = true;
+	adios = "25.5";
 }
 
 Test(int a, string alfa, bool jefe){
 	miscursos = a;
-	this.hola = alfa;
+	hola = "29";
 	jorge = jefe;
 }
 
 Test(int a, string alfa, bool jefe, float numero2){
 	miscursos = a;
-	this.hola = alfa;
+	hola = alfa;
 	jorge = jefe;
-	this.tele = numero2 + 10;
+	tele = numero2 + 10;
 }
 
 function hola (list [2][2] int alfa, list[5] float jefe) returns {
@@ -51,5 +51,8 @@ function hola (list [2][2] int alfa, list[5] float jefe) returns {
 function torta () {
 	var hola, adios, comida : string;
 	print(2);
+	var i : int;
+	i = 0;
+	i = i + 1;
 	this.hola(a[2][3], tele[1]);
 }

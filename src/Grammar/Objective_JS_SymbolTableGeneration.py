@@ -1,4 +1,5 @@
 import sys
+import re
 import numpy as np
 from antlr4 import *
 from Grammar.Objective_JSListener import Objective_JSListener
@@ -101,6 +102,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	# Sirve para crear la variable, obtiene el tipo y el ID
 	def enterVars_(self, ctx):
 		id = ctx.ID().getText()
+		print("ID: " + str(id))
 		self.type = ctx.tipo_dato().getText() 
 
 		# Checar los tipos con sus respectivos números
@@ -116,6 +118,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			type_number = 4
 		elif self.type == "null":
 			type_number = 5
+		elif re.search("list(\[.\])+int", type) is not None:
+			type_number = 0
+		elif re.search("list(\[.\])+float", type) is not None:
+			type_number = 1
 
 		self.newVars(id, type_number, self.visibility)
 
@@ -191,6 +197,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				type_number = 4
 			elif type == "null":
 				type_number = 5
+			elif re.search("list(\[.\])+int", type) is not None:
+				type_number = 0
+			elif re.search("list(\[.\])+float", type) is not None:
+				type_number = 1
 
 			self.argumentos.push_frame(id, type_number, visibility)
 
@@ -296,8 +306,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		possibleType = self.types.pop()
 		variableType = self.getTypeFromVariable(id)
 		variableType = self.convertTypeToInt(variableType)
+		print("Var: " + str(id))
 		new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
 		if new_type == -1:
+			print("Exit asignacion")
 			print("Data type mismatch")
 			sys.exit(0)
 			print("Error")
