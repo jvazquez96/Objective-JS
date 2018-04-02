@@ -389,9 +389,9 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			elif ctx.LOGICAL_OR_OPERATOR() is not None:
 				self.operadores.push('||')
 
-	def exitExpresion(self, ctx):
+	def enterExpresion(self, ctx):
 		if self.asignacion:
-			if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.opeadores.top() == '==':
+			if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.operadores.top() == '==':
 				operando2 = self.operandos.pop()
 				tipo1 = self.types.pop()
 				operando1 = self.operandos.pop()
