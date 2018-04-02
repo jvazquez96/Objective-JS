@@ -97,7 +97,7 @@ class Cube(object):
 		self.cube[self.INT, self.EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.INT, self.EQUAL, self.NULL] = self.ERROR
 		# INT != Data type
-		self.cube[self.INT, self.NOT_EQUAL, self.INT] = self.ERROR
+		self.cube[self.INT, self.NOT_EQUAL, self.INT] = self.BOOLEAN
 		self.cube[self.INT, self.NOT_EQUAL, self.FLOAT] = self.ERROR
 		self.cube[self.INT, self.NOT_EQUAL, self.CHAR] = self.ERROR
 		self.cube[self.INT, self.NOT_EQUAL, self.STRING] = self.ERROR
