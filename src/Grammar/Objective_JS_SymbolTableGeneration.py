@@ -389,6 +389,43 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			elif ctx.LOGICAL_OR_OPERATOR() is not None:
 				self.operadores.push('||')
 
+	def exitExpresion(self, ctx):
+		if self.asignacion:
+			if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.opeadores.top() == '==':
+				operando2 = self.operandos.pop()
+				tipo1 = self.types.pop()
+				operando1 = self.operandos.pop()
+				tipo2 = self.types.pop()
+				operador = self.operadores.pop()
+
+				if operador == '>':
+					number_op = 6
+				elif operador == '<':
+					number_op = 7
+				elif operador == '>=':
+					number_op = 8
+				elif operador == '<=':
+					number_op = 9
+				elif operador == '==':
+					number_op = 10
+				elif operador == '!=':
+					number_op = 11
+
+				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+				if new_type == -1.0:
+					print("Data type mismatch")
+					sys.exit(0)
+				else:
+					registro = "r" + str(self.registros)
+					self.operandos.push(registro)
+					self.types.push(new_type)
+					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+					self.cuadruplos.append(cuadruplo)
+					cuadruplo.print()
+					self.registros += 1
+					self.id += 1
+
+
 	def enterSuperExpresionOperadores(self, ctx):
 		if self.asignacion:
 			if ctx.GREATER_THAN_OPERATOR() is not None:
