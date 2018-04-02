@@ -382,12 +382,32 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					self.registros += 1
 					self.id += 1
 
-	def enterMegaExpresionAux(self, ctx):
+	def enterMegaExpresion(self, ctx):
 		if self.asignacion:
-			if ctx.LOGICAL_AND_OPERATOR() is not None:
-				self.operadores.push('&&')
-			elif ctx.LOGICAL_OR_OPERATOR() is not None:
-				self.operadores.push('||')
+			if self.operadores.top() == '&&' or self.operadores.top() == '||':
+				operando2 = self.operandos.pop()
+				tipo1 = self.types.pop()
+				operando1 = self.operandos.pop()
+				tipo2 = self.types.pop()
+				operador = self.operadores.pop()
+				if operador == '&&':
+					number_op = 12
+				elif operador == '||':
+					number_op = 13
+
+				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+				if new_type == -1.0:
+					print("Data type mismatch")
+					sys.exit(0)
+				else:
+					registro = "r" + str(self.registros)
+					self.operandos.push(registro)
+					self.types.push(new_type)
+					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+					self.cuadruplos.append(cuadruplo)
+					cuadruplo.print()
+					self.registros += 1
+					self.id += 1
 
 	def enterExpresion(self, ctx):
 		if self.asignacion:
@@ -425,6 +445,12 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					self.registros += 1
 					self.id += 1
 
+	def enterMegaExpresionAux(self, ctx):
+		if self.asignacion:
+			if ctx.LOGICAL_AND_OPERATOR() is not None:
+				self.operadores.push('&&')
+			elif ctx.LOGICAL_OR_OPERATOR() is not None:
+				self.operadores.push('||')
 
 	def enterSuperExpresionOperadores(self, ctx):
 		if self.asignacion:

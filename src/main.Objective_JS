@@ -31,7 +31,9 @@ Class HolaMundo {
 		jb = jb + "b";
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
 
-		if(luis != paco){
+		var gerardo : bool;
+		var mike : bool;
+		if(mike != gerardo){
 			luis = paco;
 		}elsif(luis < paco){
 			luis = luis + 8.28;
