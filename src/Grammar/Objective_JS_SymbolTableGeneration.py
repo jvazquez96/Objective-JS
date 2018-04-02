@@ -382,6 +382,28 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					self.registros += 1
 					self.id += 1
 
+	def enterMegaExpresionAux(self, ctx):
+		if self.asignacion:
+			if ctx.LOGICAL_AND_OPERATOR() is not None:
+				self.operadores.push('&&')
+			elif ctx.LOGICAL_OR_OPERATOR() is not None:
+				self.operadores.push('||')
+
+	def enterSuperExpresionOperadores(self, ctx):
+		if self.asignacion:
+			if ctx.GREATER_THAN_OPERATOR() is not None:
+				self.operadores.push('>')
+			elif ctx.GREATER_OR_EQUAL_THAN_OPERATOR() is not None:
+				self.operadores.push('>=')
+			elif ctx.LESS_THAN_OPERATOR() is not None:
+				self.operadores.push('<')
+			elif ctx.LESS_THAN_OR_EQUAL_OPERATOR() is not None:
+				self.operadores.push('<=')
+			elif ctx.NOT_EQUAL_OPERATOR() is not None:
+				self.operadores.push('!=')
+			elif ctx.EQUAL_OPERATOR() is not None:
+				self.operadores.push('=')
+
 	def enterTerminoOperadores(self, ctx):
 		if self.asignacion:
 			if ctx.MULTIPLICATION_OPERATOR() is not None:
