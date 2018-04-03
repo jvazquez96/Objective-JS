@@ -27,7 +27,6 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.operadores = Stack()
 		self.operandos = Stack()
 		self.types = Stack()
-		self.asignacion = False
 		self.registros = 1
 		self.oraculo = Cube()
 		self.isListDeclared = False;
@@ -40,9 +39,18 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	def getQuadruples(self):
 		return self.cuadruplos
 
+	def isFunctionDeclared(self, name):
+		if name in self.functions_directory.getDirectory():
+			return True
+		else:
+			return False
+
 	def isVarDeclared(self, var):
 		exist = False
 		tabla = self.functions_directory.getSymbolTable(self.function_name)
+
+		# Check if the 'var' is a function
+		exist = self.isFunctionDeclared(var)
 
 		if var in tabla.getTable():
 			exist = True
@@ -50,7 +58,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			for key, value in self.functions_directory.getDirectory().items():
 				if var in value.getSymbolTable().getTable():
 					exist = True
-					break
+					break	
 
 		if not exist:
 			print(var + " is used but not defined!")
@@ -102,7 +110,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	# Sirve para crear la variable, obtiene el tipo y el ID
 	def enterVars_(self, ctx):
 		id = ctx.ID().getText()
-		print("ID: " + str(id))
+		#print("ID: " + str(id))
 		self.type = ctx.tipo_dato().getText() 
 
 		# Checar los tipos con sus respectivos números
@@ -271,32 +279,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	def enterFactor(self, ctx):
 		if ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
 			value = ctx.varCte().getText()
-			if self.asignacion:
-				self.operandos.push(value)
-				type = self.getTypeFromFactor(ctx, value)
-				type = self.convertTypeToInt(type)
-				self.types.push(type)
+			self.operandos.push(value)
+			type = self.getTypeFromFactor(ctx, value)
+			type = self.convertTypeToInt(type)
+			self.types.push(type)
 		elif ctx.factorParentesis() is not None:
 			# Fondo falso
-			if self.asignacion:
-				self.operadores.push('(')
+			self.operadores.push('(')
 		elif not self.isListDeclared:
-			if self.asignacion:
-				value = ctx.varCte().getText()
-				self.operandos.push(value)
-				type = self.getTypeFromFactor(ctx, value)
-				type = self.convertTypeToInt(type)
-				self.types.push(type)
+			value = ctx.varCte().getText()
+			self.operandos.push(value)
+			type = self.getTypeFromFactor(ctx, value)
+			type = self.convertTypeToInt(type)
+			self.types.push(type)
 
 	# Revisa que el id exista
 	def enterObjeto(self, ctx):
-		if ctx.objetoAux() is not None and self.asignacion:
+		if ctx.objetoAux() is not None:
 			id = ctx.objetoAux().getText()
 			self.isVarDeclared(id)
-
-	# Sirve para activar o desactivar la bandera de asignacion
-	def enterAsignacion(self, ctx):
-		self.asignacion = True
 
 	def exitAsignacion(self, ctx):
 		string = True
@@ -306,18 +307,16 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		possibleType = self.types.pop()
 		variableType = self.getTypeFromVariable(id)
 		variableType = self.convertTypeToInt(variableType)
-		print("Var: " + str(id))
+		#print("Var: " + str(id))
 		new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
 		if new_type == -1:
-			print("Exit asignacion")
 			print("Data type mismatch")
 			sys.exit(0)
 			print("Error")
 		cuadruplo = Quadruple(self.id, "=", valor, "", id)
-		cuadruplo.print()
+		#cuadruplo.print()
 		self.cuadruplos.append(cuadruplo)
 		self.id += 1
-		self.asignacion = False
 
 	# Se saca el fondo falso
 	def exitFactorParentesis(self, ctx):
@@ -325,161 +324,153 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	# Se resuelven y meten multiplicaciones y divisiones
 	def exitFactor(self, ctx):
-		if self.asignacion:
-			if self.operadores.top() == '/' or self.operadores.top() == '*':
-				operando2 = self.operandos.pop()
-				tipo1 = self.types.pop()
-				operando1 = self.operandos.pop()
-				tipo2 = self.types.pop()
-				operador = self.operadores.pop()
+		if self.operadores.top() == '/' or self.operadores.top() == '*':
+			operando2 = self.operandos.pop()
+			tipo1 = self.types.pop()
+			operando1 = self.operandos.pop()
+			tipo2 = self.types.pop()
+			operador = self.operadores.pop()
 
-				if operador == '/':
-					number_op = 3
-				else:
-					number_op = 2
+			if operador == '/':
+				number_op = 3
+			else:
+				number_op = 2
 
-				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-				if new_type == -1:
-					print("Data type mismatch")
-					sys.exit(0)
-				else:
-					registro = "r" + str(self.registros)
-					self.operandos.push(registro)
-					self.types.push(new_type)
-					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
-					self.cuadruplos.append(cuadruplo)
-					cuadruplo.print()
-					self.id += 1
-					self.registros += 1
+			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == -1:
+				print("Data type mismatch")
+				sys.exit(0)
+			else:
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				self.types.push(new_type)
+				cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+				self.cuadruplos.append(cuadruplo)
+				#cuadruplo.print()
+				self.id += 1
+				self.registros += 1
 
 
 	# Sumas y restas
 	def exitTermino(self, ctx):
-		if self.asignacion:
-			if self.operadores.top() == '+' or self.operadores.top() == '-':
-				operando2 = self.operandos.pop()
-				tipo1 = self.types.pop()
-				operando1 = self.operandos.pop()
-				tipo2 = self.types.pop()
-				operador = self.operadores.pop()
+		if self.operadores.top() == '+' or self.operadores.top() == '-':
+			operando2 = self.operandos.pop()
+			tipo1 = self.types.pop()
+			operando1 = self.operandos.pop()
+			tipo2 = self.types.pop()
+			operador = self.operadores.pop()
 
-				if operador == '+':
-					number_op = 0
-				else:
-					number_op = 1
+			if operador == '+':
+				number_op = 0
+			else:
+				number_op = 1
 
-				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-				if new_type == -1.0:
-					print("Data type mismatch")
-					sys.exit(0)
-				else:
-					registro = "r" + str(self.registros)
-					self.operandos.push(registro)
-					self.types.push(new_type)
-					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
-					self.cuadruplos.append(cuadruplo)
-					cuadruplo.print()
-					self.registros += 1
-					self.id += 1
+			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == -1.0:
+				print("Data type mismatch")
+				sys.exit(0)
+			else:
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				self.types.push(new_type)
+				cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+				self.cuadruplos.append(cuadruplo)
+				#cuadruplo.print()
+				self.registros += 1
+				self.id += 1
 
-	def enterMegaExpresion(self, ctx):
-		if self.asignacion:
-			if self.operadores.top() == '&&' or self.operadores.top() == '||':
-				operando2 = self.operandos.pop()
-				tipo1 = self.types.pop()
-				operando1 = self.operandos.pop()
-				tipo2 = self.types.pop()
-				operador = self.operadores.pop()
-				if operador == '&&':
-					number_op = 12
-				elif operador == '||':
-					number_op = 13
+	def exitMegaExpresionAux(self, ctx):
+		if self.operadores.top() == '&&' or self.operadores.top() == '||':
+			operando2 = self.operandos.pop()
+			tipo1 = self.types.pop()
+			operando1 = self.operandos.pop()
+			tipo2 = self.types.pop()
+			operador = self.operadores.pop()
+			if operador == '&&':
+				number_op = 12
+			elif operador == '||':
+				number_op = 13
 
-				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-				if new_type == -1.0:
-					print("Data type mismatch")
-					sys.exit(0)
-				else:
-					registro = "r" + str(self.registros)
-					self.operandos.push(registro)
-					self.types.push(new_type)
-					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
-					self.cuadruplos.append(cuadruplo)
-					cuadruplo.print()
-					self.registros += 1
-					self.id += 1
+			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == -1.0:
+				print("Data type mismatch")
+				sys.exit(0)
+			else:
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				self.types.push(new_type)
+				cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+				self.cuadruplos.append(cuadruplo)
+				#cuadruplo.print()
+				self.registros += 1
+				self.id += 1
 
-	def enterExpresion(self, ctx):
-		if self.asignacion:
-			if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.operadores.top() == '==':
-				operando2 = self.operandos.pop()
-				tipo1 = self.types.pop()
-				operando1 = self.operandos.pop()
-				tipo2 = self.types.pop()
-				operador = self.operadores.pop()
+	def exitSuperExpresionOperadores(self, ctx):
+		if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.operadores.top() == '==':
+			operando2 = self.operandos.pop()
+			tipo1 = self.types.pop()
+			operando1 = self.operandos.pop()
+			tipo2 = self.types.pop()
+			operador = self.operadores.pop()
 
-				if operador == '>':
-					number_op = 6
-				elif operador == '<':
-					number_op = 7
-				elif operador == '>=':
-					number_op = 8
-				elif operador == '<=':
-					number_op = 9
-				elif operador == '==':
-					number_op = 10
-				elif operador == '!=':
-					number_op = 11
+			if operador == '>':
+				number_op = 6
+			elif operador == '<':
+				number_op = 7
+			elif operador == '>=':
+				number_op = 8
+			elif operador == '<=':
+				number_op = 9
+			elif operador == '==':
+				number_op = 10
+			elif operador == '!=':
+				number_op = 11
 
-				new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-				if new_type == -1.0:
-					print("Data type mismatch")
-					sys.exit(0)
-				else:
-					registro = "r" + str(self.registros)
-					self.operandos.push(registro)
-					self.types.push(new_type)
-					cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
-					self.cuadruplos.append(cuadruplo)
-					cuadruplo.print()
-					self.registros += 1
-					self.id += 1
+			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == -1.0:
+				print("Data type mismatch")
+				sys.exit(0)
+			else:
+				registro = "r" + str(self.registros)
+				self.operandos.push(registro)
+				self.types.push(new_type)
+				cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+				self.cuadruplos.append(cuadruplo)
+				#cuadruplo.print()
+				self.registros += 1
+				self.id += 1
 
 	def enterMegaExpresionAux(self, ctx):
-		if self.asignacion:
-			if ctx.LOGICAL_AND_OPERATOR() is not None:
-				self.operadores.push('&&')
-			elif ctx.LOGICAL_OR_OPERATOR() is not None:
-				self.operadores.push('||')
+		if ctx.LOGICAL_AND_OPERATOR() is not None:
+			self.operadores.push('&&')
+		elif ctx.LOGICAL_OR_OPERATOR() is not None:
+			self.operadores.push('||')
 
 	def enterSuperExpresionOperadores(self, ctx):
-		if self.asignacion:
-			if ctx.GREATER_THAN_OPERATOR() is not None:
-				self.operadores.push('>')
-			elif ctx.GREATER_OR_EQUAL_THAN_OPERATOR() is not None:
-				self.operadores.push('>=')
-			elif ctx.LESS_THAN_OPERATOR() is not None:
-				self.operadores.push('<')
-			elif ctx.LESS_THAN_OR_EQUAL_OPERATOR() is not None:
-				self.operadores.push('<=')
-			elif ctx.NOT_EQUAL_OPERATOR() is not None:
-				self.operadores.push('!=')
-			elif ctx.EQUAL_OPERATOR() is not None:
-				self.operadores.push('=')
+		if ctx.GREATER_THAN_OPERATOR() is not None:
+			self.operadores.push('>')
+		elif ctx.GREATER_OR_EQUAL_THAN_OPERATOR() is not None:
+			self.operadores.push('>=')
+		elif ctx.LESS_THAN_OPERATOR() is not None:
+			self.operadores.push('<')
+		elif ctx.LESS_THAN_OR_EQUAL_OPERATOR() is not None:
+			self.operadores.push('<=')
+		elif ctx.NOT_EQUAL_OPERATOR() is not None:
+			self.operadores.push('!=')
+		elif ctx.EQUAL_OPERATOR() is not None:
+			self.operadores.push('=')
 
 	def enterTerminoOperadores(self, ctx):
-		if self.asignacion:
-			if ctx.MULTIPLICATION_OPERATOR() is not None:
-				self.operadores.push('*')
-			elif ctx.DIVISION_OPERATOR() is not None:
-				self.operadores.push('/')
+		if ctx.MULTIPLICATION_OPERATOR() is not None:
+			self.operadores.push('*')
+		elif ctx.DIVISION_OPERATOR() is not None:
+			self.operadores.push('/')
 
 	def enterExpresionOperadores(self, ctx):
-		if self.asignacion:
-			if ctx.SUM_OPERATOR() is not None:
-				self.operadores.push('+')
-			elif ctx.SUBSTRACTION_OPERATOR() is not None:
-				self.operadores.push('-')
+		if ctx.SUM_OPERATOR() is not None:
+			self.operadores.push('+')
+		elif ctx.SUBSTRACTION_OPERATOR() is not None:
+			self.operadores.push('-')
 
 	def enterTipo_dato_list(self, ctx):
 		self.isListDeclared = True
@@ -488,28 +479,35 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.isListDeclared = False
 
 	def enterExitIfExpresion(self, ctx):
-		# exp_type = self.types.pop()
-		# if exp_type != 4: #Boolean
-		# 	print("The result of the expression must be boolean")
-		# 	sys.exit(0)
-		# result = self.operandos.pop()
-		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.id, GO.TOFALSE, None , None, None)
+		condition_type = self.types.pop()
+		if condition_type != 4:
+			print("The result of the expression must be boolean")
+			sys.exit(0)
+
+		if not self.pending_jumps.empty():
+			end = self.pending_jumps.pop()
+			#print("END: " + str(end))
+			self.fill(end, len(self.cuadruplos) + 1)
+
+		condition = self.operandos.pop()
+		quadruple = Quadruple(self.id, GO.TOFALSE, condition , None, None)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
 
-	def exitEnterElse(self, ctx):
-		quadruple = Quadruple(self.id, GO.TO, None, None, None)
-		self.cuadruplos.append(quadruple)
-		self.id += 1
-		false = self.pending_jumps.pop()
-		self.pending_jumps.push(len(self.cuadruplos)-1)
-		self.fill(false, len(self.cuadruplos))
+	def enterCondicionChoice(self, ctx):
+
+		if ctx.ELSE() is not None: # If it is an elsif, it will do the enterExitIfExpresion action
+			quadruple = Quadruple(self.id, GO.TO, None, None, None)
+			self.cuadruplos.append(quadruple)
+			self.id += 1
+			false = self.pending_jumps.pop()
+			self.pending_jumps.push(len(self.cuadruplos)-1)
+			self.fill(false, len(self.cuadruplos) + 1)
 
 	def exitEndIf(self, ctx):
 		end = self.pending_jumps.pop()
-		self.fill(end, len(self.cuadruplos))
+		self.fill(end, len(self.cuadruplos) + 1)
 
 	def exitAfterWhile(self, ctx):
 		self.pending_jumps.push(len(self.cuadruplos))

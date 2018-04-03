@@ -312,12 +312,12 @@ tipo :
 	;
 
 estatuto :
-	asignacion
+	llamadaFunc
+	| asignacion
 	| condicion
 	| escritura
 	| ciclos
 	| vars_
-	| llamadaFunc
 	| lectura
 	| decInc
 	;
