@@ -54,5 +54,5 @@ function torta () {
 	var i : int;
 	i = 0;
 	i = i + 1;
-	this.hola(a[2][3], tele[1]);
+	hola(adios, tele);
 }

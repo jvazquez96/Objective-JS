@@ -33,7 +33,7 @@ Class HolaMundo {
 
 		var gerardo : bool;
 		var mike : bool;
-		if(mike != gerardo && luis > paco){
+		if(mike != gerardo && luis > morgan){
 			luis = paco;
 			santiago = luis + paco;
 		}elsif(luis < paco){

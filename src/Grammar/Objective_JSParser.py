@@ -1,4 +1,4 @@
-# Generated from Grammar/Objective_JS.g4 by ANTLR 4.7.1
+# Generated from Objective_JS.g4 by ANTLR 4.7.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -211,10 +211,10 @@ def serializedATN():
         buf.write("\7\34\2\2\u01d5\u01d6\7\67\2\2\u01d6\u01d9\7\35\2\2\u01d7")
         buf.write("\u01d9\3\2\2\2\u01d8\u01d4\3\2\2\2\u01d8\u01d7\3\2\2\2")
         buf.write("\u01d9_\3\2\2\2\u01da\u01db\t\2\2\2\u01dba\3\2\2\2\u01dc")
-        buf.write("\u01dd\t\3\2\2\u01ddc\3\2\2\2\u01de\u01e7\5f\64\2\u01df")
-        buf.write("\u01e7\5h\65\2\u01e0\u01e7\5t;\2\u01e1\u01e7\5x=\2\u01e2")
-        buf.write("\u01e7\5R*\2\u01e3\u01e7\5\u0088E\2\u01e4\u01e7\5\u008e")
-        buf.write("H\2\u01e5\u01e7\5\u0092J\2\u01e6\u01de\3\2\2\2\u01e6\u01df")
+        buf.write("\u01dd\t\3\2\2\u01ddc\3\2\2\2\u01de\u01e7\5\u0088E\2\u01df")
+        buf.write("\u01e7\5f\64\2\u01e0\u01e7\5h\65\2\u01e1\u01e7\5t;\2\u01e2")
+        buf.write("\u01e7\5x=\2\u01e3\u01e7\5R*\2\u01e4\u01e7\5\u008eH\2")
+        buf.write("\u01e5\u01e7\5\u0092J\2\u01e6\u01de\3\2\2\2\u01e6\u01df")
         buf.write("\3\2\2\2\u01e6\u01e0\3\2\2\2\u01e6\u01e1\3\2\2\2\u01e6")
         buf.write("\u01e2\3\2\2\2\u01e6\u01e3\3\2\2\2\u01e6\u01e4\3\2\2\2")
         buf.write("\u01e6\u01e5\3\2\2\2\u01e7e\3\2\2\2\u01e8\u01e9\5\u0096")
@@ -232,7 +232,7 @@ def serializedATN():
         buf.write("\u0206q\3\2\2\2\u0207\u0208\3\2\2\2\u0208s\3\2\2\2\u0209")
         buf.write("\u020a\7%\2\2\u020a\u020b\7\32\2\2\u020b\u020c\5\u009a")
         buf.write("N\2\u020c\u020d\5v<\2\u020d\u020e\7\33\2\2\u020e\u020f")
-        buf.write("\7\"\2\2\u020fu\3\2\2\2\u0210\u0211\7\21\2\2\u0211\u0212")
+        buf.write("\7\"\2\2\u020fu\3\2\2\2\u0210\u0211\7#\2\2\u0211\u0212")
         buf.write("\5\u009aN\2\u0212\u0213\5v<\2\u0213\u0216\3\2\2\2\u0214")
         buf.write("\u0216\3\2\2\2\u0215\u0210\3\2\2\2\u0215\u0214\3\2\2\2")
         buf.write("\u0216w\3\2\2\2\u0217\u0218\7\6\2\2\u0218\u0219\5z>\2")
@@ -3554,6 +3554,10 @@ class Objective_JSParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+        def llamadaFunc(self):
+            return self.getTypedRuleContext(Objective_JSParser.LlamadaFuncContext,0)
+
+
         def asignacion(self):
             return self.getTypedRuleContext(Objective_JSParser.AsignacionContext,0)
 
@@ -3572,10 +3576,6 @@ class Objective_JSParser ( Parser ):
 
         def vars_(self):
             return self.getTypedRuleContext(Objective_JSParser.Vars_Context,0)
-
-
-        def llamadaFunc(self):
-            return self.getTypedRuleContext(Objective_JSParser.LlamadaFuncContext,0)
 
 
         def lectura(self):
@@ -3611,37 +3611,37 @@ class Objective_JSParser ( Parser ):
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 476
-                self.asignacion()
+                self.llamadaFunc()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 477
-                self.condicion()
+                self.asignacion()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 478
-                self.escritura()
+                self.condicion()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 479
-                self.ciclos()
+                self.escritura()
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
                 self.state = 480
-                self.vars_()
+                self.ciclos()
                 pass
 
             elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
                 self.state = 481
-                self.llamadaFunc()
+                self.vars_()
                 pass
 
             elif la_ == 7:
@@ -4099,8 +4099,8 @@ class Objective_JSParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def SUM_OPERATOR(self):
-            return self.getToken(Objective_JSParser.SUM_OPERATOR, 0)
+        def COMMA(self):
+            return self.getToken(Objective_JSParser.COMMA, 0)
 
         def megaExpresion(self):
             return self.getTypedRuleContext(Objective_JSParser.MegaExpresionContext,0)
@@ -4132,10 +4132,10 @@ class Objective_JSParser ( Parser ):
             self.state = 531
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [Objective_JSParser.SUM_OPERATOR]:
+            if token in [Objective_JSParser.COMMA]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 526
-                self.match(Objective_JSParser.SUM_OPERATOR)
+                self.match(Objective_JSParser.COMMA)
                 self.state = 527
                 self.megaExpresion()
                 self.state = 528
@@ -5198,7 +5198,7 @@ class Objective_JSParser ( Parser ):
                 self.state = 627
                 self.megaExpresion()
                 pass
-            elif token in [Objective_JSParser.SUM_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
+            elif token in [Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
                 self.enterOuterAlt(localctx, 3)
 
                 pass
@@ -5351,7 +5351,7 @@ class Objective_JSParser ( Parser ):
                 self.state = 645
                 self.expresion()
                 pass
-            elif token in [Objective_JSParser.SUM_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
+            elif token in [Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
                 self.enterOuterAlt(localctx, 7)
 
                 pass
@@ -5449,28 +5449,27 @@ class Objective_JSParser ( Parser ):
         try:
             self.state = 657
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,43,self._ctx)
-            if la_ == 1:
+            token = self._input.LA(1)
+            if token in [Objective_JSParser.SUM_OPERATOR]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 652
                 self.match(Objective_JSParser.SUM_OPERATOR)
                 self.state = 653
                 self.termino()
                 pass
-
-            elif la_ == 2:
+            elif token in [Objective_JSParser.SUBSTRACTION_OPERATOR]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 654
                 self.match(Objective_JSParser.SUBSTRACTION_OPERATOR)
                 self.state = 655
                 self.termino()
                 pass
-
-            elif la_ == 3:
+            elif token in [Objective_JSParser.EQUAL_OPERATOR, Objective_JSParser.NOT_EQUAL_OPERATOR, Objective_JSParser.GREATER_THAN_OPERATOR, Objective_JSParser.GREATER_OR_EQUAL_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OR_EQUAL_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
                 self.enterOuterAlt(localctx, 3)
 
                 pass
-
+            else:
+                raise NoViableAltException(self)
 
         except RecognitionException as re:
             localctx.exception = re

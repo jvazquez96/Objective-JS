@@ -499,29 +499,11 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("The result of the expression must be boolean")
 			sys.exit(0)
 
-		if not self.pending_jumps.empty():
-			end = self.pending_jumps.pop()
-			self.fill(end, len(self.cuadruplos))
-			#Agregar GOTO
-
 		condition = self.operandos.pop()
 		quadruple = Quadruple(self.id, GO.TOFALSE, condition , None, None)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
-
-	def enterCondicionChoice(self, ctx):
-		if ctx.ELSE() is not None: # If it is an elsif, it will do the enterExitIfExpresion action
-			quadruple = Quadruple(self.id, GO.TO, None, None, None)
-			self.cuadruplos.append(quadruple)
-			self.id += 1
-			false = self.pending_jumps.pop()
-			self.pending_jumps.push(len(self.cuadruplos) - 1)
-			self.fill(false, len(self.cuadruplos) + 1)
-
-	def exitEndIf(self, ctx):
-		end = self.pending_jumps.pop()
-		self.fill(end, len(self.cuadruplos) + 1)
 
 	def exitAfterWhile(self, ctx):
 		self.pending_jumps.push(len(self.cuadruplos))
@@ -642,3 +624,24 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.cuadruplos.append(quadruple)
 			self.registros += 1
 			self.id += 1
+
+	def exitEnterElse(self, ctx):
+		quadruple = Quadruple(self.id, GO.TO, None, None, None)
+		self.id += 1
+		self.cuadruplos.append(quadruple)
+		false = self.pending_jumps.pop()
+		self.pending_jumps.push(len(self.cuadruplos) - 1)
+		print("FALSE: " + str(len(self.cuadruplos)))
+		self.fill(false, len(self.cuadruplos)+1)
+
+	def enterCondicion(self, ctx):
+		self.pending_jumps.push(-1)
+
+
+	def exitEndIf(self, ctx):
+		end = self.pending_jumps.pop()
+		while (end != -1):
+			self.fill(end, len(self.cuadruplos)+1)
+			end = self.pending_jumps.pop()
+		if end == -1:
+			self.pending_jumps.pop()

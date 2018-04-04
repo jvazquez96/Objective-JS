@@ -354,7 +354,7 @@ escritura :
 	;
 
 escrituraAux :
-	SUM_OPERATOR megaExpresion escrituraAux
+	COMMA megaExpresion escrituraAux
 	|
 	;
 
