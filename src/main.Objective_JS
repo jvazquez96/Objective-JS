@@ -47,7 +47,7 @@ Class HolaMundo {
 			nala = paco / luis;
 		}
 
-		print("Hola Mundo: ");
+		print("Hola Mundo: ", " este es mi primer programa", "j3j3");
 
 		var i : int;
 		i = 0;

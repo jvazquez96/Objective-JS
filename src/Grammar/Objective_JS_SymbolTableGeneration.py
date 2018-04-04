@@ -631,7 +631,6 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.cuadruplos.append(quadruple)
 		false = self.pending_jumps.pop()
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
-		print("FALSE: " + str(len(self.cuadruplos)))
 		self.fill(false, len(self.cuadruplos)+1)
 
 	def enterCondicion(self, ctx):
@@ -644,4 +643,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.fill(end, len(self.cuadruplos)+1)
 			end = self.pending_jumps.pop()
 		if end == -1:
-			self.pending_jumps.pop()
+			self.pending_jumps.pop
+
+	def enterEscritura(self, ctx):
+		quadruple = Quadruple(self.id, "print", ctx.megaExpresion().getText(), None, None)
+		self.id += 1
+		self.cuadruplos.append(quadruple)
+
+	def enterEscrituraAux(self, ctx):
+		if ctx.COMMA() is not None:
+			quadruple = Quadruple(self.id, "print",  ctx.megaExpresion().getText(), None, None)
+			self.id += 1
+			self.cuadruplos.append(quadruple)
