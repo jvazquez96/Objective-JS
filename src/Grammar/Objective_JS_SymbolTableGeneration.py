@@ -32,6 +32,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.isListDeclared = False;
 		self.pending_jumps = Stack()
 		self.id = 1;
+		self.do_object = False
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
@@ -298,6 +299,20 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if ctx.objetoAux() is not None:
 			id = ctx.objetoAux().getText()
 			self.isVarDeclared(id)
+			if self.do_object:
+				type = self.getTypeFromVariable(id)
+				type = self.convertTypeToInt(type)
+				new_type = np.int64(self.oraculo.getDataType(type, 9, 0))
+				if new_type == -1:
+					print("Data type mismatch")
+					sys.exit(0)
+
+				registro = "r" + str(self.registros)
+				cuadruplo = Quadruple(self.id, '<=', 'temp-while', id, registro)
+				self.operandos.push(registro)
+				self.registros += 1
+				self.cuadruplos.append(cuadruplo)
+				self.id += 1
 
 	def exitAsignacion(self, ctx):
 		string = True
@@ -313,7 +328,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Data type mismatch")
 			sys.exit(0)
 			print("Error")
-		cuadruplo = Quadruple(self.id, "=", valor, "", id)
+		cuadruplo = Quadruple(self.id, "=", valor, None, id)
 		#cuadruplo.print()
 		self.cuadruplos.append(cuadruplo)
 		self.id += 1
@@ -486,8 +501,8 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 		if not self.pending_jumps.empty():
 			end = self.pending_jumps.pop()
-			#print("END: " + str(end))
-			self.fill(end, len(self.cuadruplos) + 1)
+			self.fill(end, len(self.cuadruplos))
+			#Agregar GOTO
 
 		condition = self.operandos.pop()
 		quadruple = Quadruple(self.id, GO.TOFALSE, condition , None, None)
@@ -496,13 +511,12 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
 
 	def enterCondicionChoice(self, ctx):
-
 		if ctx.ELSE() is not None: # If it is an elsif, it will do the enterExitIfExpresion action
 			quadruple = Quadruple(self.id, GO.TO, None, None, None)
 			self.cuadruplos.append(quadruple)
 			self.id += 1
 			false = self.pending_jumps.pop()
-			self.pending_jumps.push(len(self.cuadruplos)-1)
+			self.pending_jumps.push(len(self.cuadruplos) - 1)
 			self.fill(false, len(self.cuadruplos) + 1)
 
 	def exitEndIf(self, ctx):
@@ -512,14 +526,14 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	def exitAfterWhile(self, ctx):
 		self.pending_jumps.push(len(self.cuadruplos))
 
-	def enterAfterWhilExpression(self, ctx):
-		# exp_type = self.types.pop()
-		# if exp_type != 4: #Boolean
-		# 	print("The result of the expression must be boolean")
-		# 	sys.exit(0)
-		# result = self.operandos.pop()
-		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.id, GO.TOFALSE, None, None, None)
+	def enterAfterWhileExpression(self, ctx):
+		condition = self.operandos.pop()
+		exp_type = self.types.pop()
+		if exp_type != 4:
+			print("The result of the expression must be boolean")
+			sys.exit(0)
+
+		quadruple = Quadruple(self.id, GO.TOFALSE, condition, None, None)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos)-1)
@@ -527,30 +541,104 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	def exitExitWhile(self, ctx):
 		end = self.pending_jumps.pop()
 		ret = self.pending_jumps.pop()
-		quadruple = Quadruple(self.id, GO.TO, None, None, ret)
+		quadruple = Quadruple(self.id, GO.TO, None, None, ret + 1)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
-		self.fill(end, len(self.cuadruplos))
+		self.fill(end, len(self.cuadruplos) + 1)
 
 	def exitAfterDo(self, ctx):
-		self.pending_jumps.push(len(self.cuadruplos))
+		cuadruplo = Quadruple(self.id, '=', 1, None, 'temp-while')
+		self.cuadruplos.append(cuadruplo)
+		self.id += 1
+		self.pending_jumps.push(len(self.cuadruplos) + 1)
 
 	def exitAfterCondition(self, ctx):
-		# exp_type = self.types.pop()
-		# if exp_type != 4: #Boolean
-		# 	print("The result of the expression must be boolean")
-		# 	sys.exit(0)
-		# result = self.operandos.pop()
-		# TODO(jorge) : Replace first None with the actual result of the expression
-		quadruple = Quadruple(self.id, GO.TOFALSE, None, None, None)
+		condition = self.operandos.pop()
+		quadruple = Quadruple(self.id, GO.TOFALSE, condition, None, None)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
 		self.pending_jumps.push(len(self.cuadruplos)-1)
 
+	def enterDoAux(self, ctx):
+		if ctx.objeto() is not None:
+			self.do_object = True
+		elif ctx.TYPE_INT() is not None:
+			cte = ctx.TYPE_INT().getText()
+			registro = "r" + str(self.registros)
+			cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, registro)
+			self.operandos.push(registro)
+			self.registros += 1
+			self.cuadruplos.append(cuadruplo)
+			self.id += 1
+		else:
+			print("Do while parameter wrong")
+			sys.exit(0)
+
+	def exitDoAux(self, ctx):
+		self.do_object = False
+
 	def exitAfterDoLoop(self, ctx):
+		registro = "r" + str(self.registros)
+		quadruple = Quadruple(self.id, '+', 'temp-while', 1, registro)
+		self.cuadruplos.append(quadruple)
+		self.id += 1
+		self.registros += 1
+		self.operandos.push(registro)
+
+		registro = "r" + str(self.registros)
+		quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, 'temp-while')
+		self.cuadruplos.append(quadruple)
+		self.id += 1
+		self.registros += 1
+
 		end = self.pending_jumps.pop()
 		ret = self.pending_jumps.pop()
 		quadruple = Quadruple(self.id, GO.TO, None, None, ret)
 		self.cuadruplos.append(quadruple)
 		self.id += 1
-		self.fill(end, len(self.cuadruplos))
+		self.fill(end, len(self.cuadruplos) + 1)
+
+	def enterDecInc(self, ctx):
+		var = ctx.objeto().getText()
+		if ctx.decIncAux().INCREMENT_OPERATOR() is not None:
+			type = self.getTypeFromVariable(var)
+			type = self.convertTypeToInt(type)
+			new_type = np.int64(self.oraculo.getDataType(type, 0, 0))
+			if new_type == -1:
+				print("Data type mismatch")
+				sys.exit(0)
+
+			registro = "r" + str(self.registros)
+			quadruple = Quadruple(self.id, '+', var, 1, registro)
+			self.cuadruplos.append(quadruple)
+			self.registros += 1
+			self.id += 1
+			self.operandos.push(registro)
+
+
+			registro = "r" + str(self.registros)
+			quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, var)
+			self.cuadruplos.append(quadruple)
+			self.registros += 1
+			self.id += 1
+		else:
+			type = self.getTypeFromVariable(var)
+			type = self.convertTypeToInt(type)
+			new_type = np.int64(self.oraculo.getDataType(type, 1, 0))
+			if new_type == -1:
+				print("Data type mismatch")
+				sys.exit(0)
+
+			registro = "r" + str(self.registros)
+			quadruple = Quadruple(self.id, '-', var, 1, registro)
+			self.cuadruplos.append(quadruple)
+			self.registros += 1
+			self.id += 1
+			self.operandos.push(registro)
+
+
+			registro = "r" + str(self.registros)
+			quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, var)
+			self.cuadruplos.append(quadruple)
+			self.registros += 1
+			self.id += 1

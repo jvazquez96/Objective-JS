@@ -35,8 +35,13 @@ Class HolaMundo {
 		var mike : bool;
 		if(mike != gerardo && luis > paco){
 			luis = paco;
+			santiago = luis + paco;
 		}elsif(luis < paco){
 			luis = luis + 8.28;
+			santiago = paco + 8.28;
+		}elsif(luis < paco){
+			luis = luis + 8.28;
+			santiago = paco + 8.28;
 		}else{
 			paco = 25.5;
 			nala = paco / luis;
@@ -47,15 +52,19 @@ Class HolaMundo {
 		var i : int;
 		i = 0;
 
-		do 10 times{
+		do 15 times{
 			print(i);
 			i--;
+			santiago++;
 			jb = "m";
 		}
 
-		while(true){
+		santiago = 1;
+
+		while(i < paco){
 			print("Ciclo infinito");
 			jb = "b";
+			i = i + 1;
 		}
 
 		funcionUno(morgan * nala, cecy + andrea, quique);
