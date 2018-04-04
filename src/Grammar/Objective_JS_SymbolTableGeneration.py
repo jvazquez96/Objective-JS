@@ -655,3 +655,14 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			quadruple = Quadruple(self.id, "print",  ctx.megaExpresion().getText(), None, None)
 			self.id += 1
 			self.cuadruplos.append(quadruple)
+
+	def enterLectura(self, ctx):
+		quadruple = Quadruple(self.id, "read", ctx.ID().getText(), None, None)
+		self.id += 1
+		self.cuadruplos.append(quadruple)
+
+	def enterLecturaAux(self, ctx):
+		if ctx.INPUT_STREAM() is not None:
+			quadruple = Quadruple(self.id, "read",  ctx.ID().getText(), None, None)
+			self.id += 1
+			self.cuadruplos.append(quadruple)
