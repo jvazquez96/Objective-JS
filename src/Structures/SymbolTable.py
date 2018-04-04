@@ -17,7 +17,6 @@ class SymbolTable(object):
 		if id in self._symbols:
 			return self._symbols[id]
 		else:
-			# print("Not found")
 			return []
 	def getTable(self):
 		return self._symbols

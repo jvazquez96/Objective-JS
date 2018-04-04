@@ -16,6 +16,11 @@ def main(argv):
     walker = ParseTreeWalker()
     walker.walk(analysis, tree)
     quadruples = analysis.getQuadruples()
+    function_directory = analysis.getFunctionDirectory()
+    for key, value in function_directory.getDirectory().items():
+        print("Key: " + str(key))
+        print("Parameters: " + str(value.numberOfParameters()))
+        print("Local variables: " + str(value.numberOfLocalVariables()))
     print("After")
     for i in quadruples:
         i.print()

@@ -100,10 +100,21 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			sys.exit(0)
 		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility)
 
-	# Se añade una función al directorio de funciones
+	# Se añade una función al directorio de funciones junto con sus parametros
 	def newFunction(self):
 		if self.function_name not in self.functions_directory.getDirectory():
 			self.functions_directory.create_table(self.function_name, InfoDirectory(self.argumentos, self.does_returns))
+			for key, value in self.argumentos.getTable().items():
+				if value.getType() == 0:
+					self.functions_directory.addInt(self.function_name, True)
+				elif value.getType() == 1:
+					self.functions_directory.addFloat(self.function_name, True)
+				elif value.getType() == 2:
+					self.functions_directory.addCHar(self.function_name, True)
+				elif value.getType() == 3:
+					self.functions_directory.addString(self.function_name, True)
+				elif value.getType() == 4:
+					self.functions_directory.addBool(self.function_name, True)
 		else:
 			print("Syntax error!! Function: " + self.function_name + " is already defined")
 			sys.exit(0)
@@ -196,16 +207,22 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		else:
 			if type == "int":
 				type_number = 0
+				# self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
 			elif type == "float":
 				type_number = 1
+				# self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
 			elif type == "char":
 				type_number = 2
+				# self.functions_directory.getSymbolTable(self.function_name).addChar(True)
 			elif type == "string":
 				type_number = 3
+				# self.functions_directory.getSymbolTable(self.function_name).addString(True)
 			elif type == "bool":
 				type_number = 4
+				# self.functions_directory.getSymbolTable(self.function_name).addBool(True)
 			elif type == "null":
 				type_number = 5
+				# TODO(jorge) : Add support to null
 			elif re.search("list(\[.\])+int", type) is not None:
 				type_number = 0
 			elif re.search("list(\[.\])+float", type) is not None:
@@ -242,6 +259,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.argumentos = SymbolTable()
 		self.functions_directory.remove_info(self.function_name)
 
+	# Constructores
 	def enterEmptyRule(self, ctx):
 		self.newFunction()
 
