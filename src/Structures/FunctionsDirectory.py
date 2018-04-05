@@ -17,6 +17,9 @@ class FunctionsDirectory(object):
 		else:
 			self.directory[id].deleteTable()
 
+	def addParam(self, id, name, value, size):
+		self.directory[id].addParameter(name, value, size)
+
 	def getSymbolTable(self, id):
 		return self.directory[id].getSymbolTable()
 

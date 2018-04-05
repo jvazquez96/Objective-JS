@@ -1,4 +1,5 @@
 from Structures.SymbolTable import SymbolTable
+from Structures.Stack import Stack
 class InfoDirectory(object):
 	def __init__ (self, symbol_table=None, return_type=None):
 		if symbol_table is None and return_type is None:
@@ -11,6 +12,8 @@ class InfoDirectory(object):
 		self.local_variables = [0, 0, 0, 0, 0]
 		# Types of tempral variables [int, float, char, string, bool]
 		self.temporal_variables = [0, 0, 0, 0, 0]
+		#
+		self.parameters2 = []
 
 	def getInfo(self):
 		return self._info
@@ -24,8 +27,15 @@ class InfoDirectory(object):
 	def getReturnType(self):
 		return self._info[1]
 
+	def getParams(self):
+		return self.parameters2
+
 	def deleteTable(self):
 		self._info[0] = SymbolTable()
+
+	def addParameter(self, id, type, size):
+		parameter = [id, type, size]
+		self.parameters2.append(parameter)
 
 	def addInteger(self, isParameter, n):
 		if isParameter:

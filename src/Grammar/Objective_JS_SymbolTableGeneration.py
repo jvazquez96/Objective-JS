@@ -98,9 +98,8 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		if id in self.functions_directory.getSymbolTable(self.function_name).getTable():
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
-		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility)
-		print("ID: " + str(id))
-		print("Type: " + str(type))
+		isList = False
+		total = 1
 		if type == "int" or type == 0:
 			self.functions_directory.addInt(self.function_name, False, 1)
 		elif type == "float" or type == 1:
@@ -127,6 +126,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					total *= int(type[start : start+size-1])
 					isFirst = True
 					start = 0
+			isList = True
 			self.functions_directory.addInt(self.function_name, False, total)
 		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
 			total = 1
@@ -145,6 +145,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					total *= int(type[start : start+size-1])
 					isFirst = True
 					start = 0
+			isList = False
 			self.functions_directory.addFloat(self.function_name, False, total)
 		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
 			total = 1
@@ -165,8 +166,9 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 					total *= int(type[start : start+size-1])
 					isFirst = True
 					start = 0
-				print("Array of " + str(total) + " bools")
+			isList = False
 			self.functions_directory.addBool(self.function_name, False, total)
+		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility, isList, total)
 
 	# Se añade una función al directorio de funciones junto con sus parametros
 	def newFunction(self):
@@ -175,14 +177,19 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			for key, value in self.argumentos.getTable().items():
 				if value.getType() == 0:
 					self.functions_directory.addInt(self.function_name, True, 1)
+					self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
 				elif value.getType() == 1:
 					self.functions_directory.addFloat(self.function_name, True, 1)
+					self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
 				elif value.getType() == 2:
 					self.functions_directory.addChar(self.function_name, True, 1)
+					self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
 				elif value.getType() == 3:
 					self.functions_directory.addString(self.function_name, True, 1)
+					self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
 				elif value.getType() == 4:
 					self.functions_directory.addBool(self.function_name, True, 1)
+					self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
 		else:
 			print("Syntax error!! Function: " + self.function_name + " is already defined")
 			sys.exit(0)
@@ -273,6 +280,8 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
 		else:
+			isList = False
+			total = 1
 			if type == "int":
 				type_number = 0
 				# self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
@@ -291,12 +300,99 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			elif type == "null":
 				type_number = 5
 				# TODO(jorge) : Add support to null
-			elif re.search("list(\[.\])+int", type) is not None:
+			elif re.search("list(\[[0-9]+\])+int", type) is not None:
 				type_number = 0
-			elif re.search("list(\[.\])+float", type) is not None:
+				isList = True
+				total = 1
+				start = 0
+				isFirst = True
+				for i in range(0, len(type)):
+					if type[i] == '[':
+						size = 1
+						while (type[i+1] != ']'):
+							if isFirst:
+								start = i + 1;
+								isFirst = not isFirst
+							size += 1
+							i += 1
+						total *= int(type[start : start+size-1])
+						isFirst = True
+						start = 0
+			elif re.search("list(\[[0-9]+\])+float", type) is not None:
 				type_number = 1
+				isList = True
+				total = 1
+				start = 0
+				isFirst = True
+				for i in range(0, len(type)):
+					if type[i] == '[':
+						size = 1
+						while (type[i+1] != ']'):
+							if isFirst:
+								start = i + 1;
+								isFirst = not isFirst
+							size += 1
+							i += 1
+						total *= int(type[start : start+size-1])
+						isFirst = True
+						start = 0
+			elif re.search("list(\[[0-9]+\])+char", type) is not None:
+				type_number = 2
+				isList = True
+				total = 1
+				start = 0
+				isFirst = True
+				for i in range(0, len(type)):
+					if type[i] == '[':
+						size = 1
+						while (type[i+1] != ']'):
+							if isFirst:
+								start = i + 1;
+								isFirst = not isFirst
+							size += 1
+							i += 1
+						total *= int(type[start : start+size-1])
+						isFirst = True
+						start = 0
+			elif re.search("list(\[[0-9]+\])+string", type) is not None:
+				type_number = 3
+				isList = True
+				total = 1
+				start = 0
+				isFirst = True
+				for i in range(0, len(type)):
+					if type[i] == '[':
+						size = 1
+						while (type[i+1] != ']'):
+							if isFirst:
+								start = i + 1;
+								isFirst = not isFirst
+							size += 1
+							i += 1
+						total *= int(type[start : start+size-1])
+						isFirst = True
+						start = 0
+			elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+				type_number = 4
+				isList = True
+				total = 1
+				start = 0
+				isFirst = True
+				for i in range(0, len(type)):
+					if type[i] == '[':
+						size = 1
+						while (type[i+1] != ']'):
+							if isFirst:
+								start = i + 1;
+								isFirst = not isFirst
+							size += 1
+							i += 1
+						total *= int(type[start : start+size-1])
+						isFirst = True
+						start = 0
 
-			self.argumentos.push_frame(id, type_number, visibility)
+
+			self.argumentos.push_frame(id, type_number, visibility, isList, total)
 
 	# Se agregan argumentos de una funcion en la tabla de símbolos
 	def enterArgumentos(self, ctx):
