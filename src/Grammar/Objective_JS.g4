@@ -387,8 +387,10 @@ doAux :
 	;
 
 llamadaFunc :
-	objeto LEFT_PARENTHESIS argumentosLlamada RIGHT_PARENTHESIS SEMICOLON
+	((THIS | ID) DOT)? ID LEFT_PARENTHESIS argumentosLlamada RIGHT_PARENTHESIS SEMICOLON
 	;
+
+
 
 argumentosLlamada :
 	objeto argumentosLlamadaAux
