@@ -82,6 +82,41 @@ class InfoDirectory(object):
 	def numberofTemporaryVariables(self):
 		return sum(self.temporal_variables)
 
+	def numberOfVariablesInt(self):
+		return self.local_variables[0]
+	def numberOfVariablesFloat(self):
+		return self.local_variables[1]
+	def numberOfVariablesChar(self):
+		return self.local_variables[2]
+	def numberOfVariablesString(self):
+		return self.local_variables[3]
+	def numberOfVariablesBool(self):
+		return self.local_variables[4]
+
+
+	def numberOfParametersInt(self):
+		return self.parameters[0]
+	def numberOfParametersFloat(self):
+		return self.parameters[1]
+	def numberOfParametersChar(self):
+		return self.parameters[2]
+	def numberOfParametersString(self):
+		return self.parameters[3]
+	def numberOfParametersBool(self):
+		return self.parameters[4]
+
+	def numberOfTemporaryInt(self):
+		return self.temporal_variables[0]
+	def numberOfTemporaryFloat(self):
+		return self.temporal_variables[1]
+	def numberOfTemporaryChar(self):
+		return self.temporal_variables[2]
+	def numberOfTemporaryString(self):
+		return self.temporal_variables[3]
+	def numberOfTemporaryBool(self):
+		return self.temporal_variables[4]
+
+
 	def getParameters(self):
 		return self.parameters
 
