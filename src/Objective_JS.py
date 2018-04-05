@@ -18,12 +18,12 @@ def main(argv):
     quadruples = analysis.getQuadruples()
     function_directory = analysis.getFunctionDirectory()
     for key, value in function_directory.getDirectory().items():
-        print("Key: " + str(key))
+        print("Function: " + str(key))
         print("Parameters: " + str(value.numberOfParameters()))
         print("Local variables: " + str(value.numberOfLocalVariables()))
-    print("After")
-    for i in quadruples:
-        i.print()
+        print("Temporary variables: " + str(value.numberofTemporaryVariables()))
+    # for i in quadruples:
+    #     i.print()
     # for key, value in analysis.getFunctionDirectory().getDirectory().items():
     #   print("Function name: " + str(key))
     #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))

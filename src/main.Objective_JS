@@ -26,6 +26,7 @@ Class HolaMundo {
 		var nala : int;
 		var cecy, andrea, hola : float;
 		var jb : char;
+		var jose : list [2][10] bool;
 		morgan = 25;
 		jb = "a";
 		jb = jb + "b";

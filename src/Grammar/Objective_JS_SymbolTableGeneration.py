@@ -99,6 +99,74 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
 		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility)
+		print("ID: " + str(id))
+		print("Type: " + str(type))
+		if type == "int" or type == 0:
+			self.functions_directory.addInt(self.function_name, False, 1)
+		elif type == "float" or type == 1:
+			self.functions_directory.addFloat(self.function_name, False, 1)
+		elif type == "char" or type == 2:
+			self.functions_directory.addChar(self.function_name, False, 1)
+		elif type == "string" or type == 3:
+			self.functions_directory.addString(self.function_name, False, 1)
+		elif type == "bool" or type == 4:
+			self.functions_directory.addBool(self.function_name, False, 1)
+		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+			total = 1
+			start = 0
+			isFirst = True
+			for i in range(0, len(type)):
+				if type[i] == '[':
+					size = 1
+					while (type[i+1] != ']'):
+						if isFirst:
+							start = i + 1;
+							isFirst = not isFirst
+						size += 1
+						i += 1
+					total *= int(type[start : start+size-1])
+					isFirst = True
+					start = 0
+			self.functions_directory.addInt(self.function_name, False, total)
+		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+			total = 1
+			start = 0
+			isFirst = True
+			for i in range(0, len(type)):
+				if type[i] == '[':
+					size = 1
+					while (type[i+1] != ']'):
+						if isFirst:
+							print("Here")
+							start = i + 1;
+							isFirst = not isFirst
+						size += 1
+						i += 1
+					total *= int(type[start : start+size-1])
+					isFirst = True
+					start = 0
+			self.functions_directory.addFloat(self.function_name, False, total)
+		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+			total = 1
+			start = 0
+			isFirst = True
+			for i in range(0, len(type)):
+				if type[i] == '[':
+					size = 1
+					while (type[i+1] != ']'):
+						if isFirst:
+							print("Here")
+							start = i + 1;
+							isFirst = not isFirst
+						size += 1
+						i += 1
+					print("start: " + str(start))
+					print('Size: ' + str(size))
+					total *= int(type[start : start+size-1])
+					isFirst = True
+					start = 0
+				print("Array of " + str(total) + " bools")
+			self.functions_directory.addBool(self.function_name, False, total)
 
 	# Se añade una función al directorio de funciones junto con sus parametros
 	def newFunction(self):
@@ -106,15 +174,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.functions_directory.create_table(self.function_name, InfoDirectory(self.argumentos, self.does_returns))
 			for key, value in self.argumentos.getTable().items():
 				if value.getType() == 0:
-					self.functions_directory.addInt(self.function_name, True)
+					self.functions_directory.addInt(self.function_name, True, 1)
 				elif value.getType() == 1:
-					self.functions_directory.addFloat(self.function_name, True)
+					self.functions_directory.addFloat(self.function_name, True, 1)
 				elif value.getType() == 2:
-					self.functions_directory.addCHar(self.function_name, True)
+					self.functions_directory.addChar(self.function_name, True, 1)
 				elif value.getType() == 3:
-					self.functions_directory.addString(self.function_name, True)
+					self.functions_directory.addString(self.function_name, True, 1)
 				elif value.getType() == 4:
-					self.functions_directory.addBool(self.function_name, True)
+					self.functions_directory.addBool(self.function_name, True, 1)
 		else:
 			print("Syntax error!! Function: " + self.function_name + " is already defined")
 			sys.exit(0)
@@ -370,6 +438,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				number_op = 2
 
 			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == 0:
+				self.functions_directory.addTempInt(self.function_name, 1)
+			elif new_type == 1:
+				self.functions_directory.addTempFloat(self.function_name, 1)
 			if new_type == -1:
 				print("Data type mismatch")
 				sys.exit(0)
@@ -399,6 +471,11 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				number_op = 1
 
 			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			if new_type == 0:
+				self.functions_directory.addTempInt(self.function_name, 1)
+			elif new_type == 1:
+				self.functions_directory.addTempFloat(self.function_name, 1)
+
 			if new_type == -1.0:
 				print("Data type mismatch")
 				sys.exit(0)
@@ -425,6 +502,8 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				number_op = 13
 
 			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			self.functions_directory.addTempBool(self.function_name, 1)
+
 			if new_type == -1.0:
 				print("Data type mismatch")
 				sys.exit(0)
@@ -460,6 +539,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				number_op = 11
 
 			new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+			self.functions_directory.addTempBool(self.function_name, 1)
 			if new_type == -1.0:
 				print("Data type mismatch")
 				sys.exit(0)

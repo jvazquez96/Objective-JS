@@ -9,6 +9,8 @@ class InfoDirectory(object):
 		self.parameters = [0, 0, 0, 0, 0]
 		# Types of local variables [int, float, char, string, bool]
 		self.local_variables = [0, 0, 0, 0, 0]
+		# Types of tempral variables [int, float, char, string, bool]
+		self.temporal_variables = [0, 0, 0, 0, 0]
 
 	def getInfo(self):
 		return self._info
@@ -25,41 +27,60 @@ class InfoDirectory(object):
 	def deleteTable(self):
 		self._info[0] = SymbolTable()
 
-	def addInteger(self, isParameter=True):
+	def addInteger(self, isParameter, n):
 		if isParameter:
-			self.parameters[0] += 1
+			self.parameters[0] += n
 		else:
-			self.local_variables[0] += 1
+			self.local_variables[0] += n
 
-	def addFloat(self, isParameter = True):
+	def addFloat(self, isParameter, n):
 		if isParameter:
-			self.parameters[1] += 1
+			self.parameters[1] += n
 		else:
-			self.local_variables[1] += 1
+			self.local_variables[1] += n
 
-	def addChar(self, isParameter = True):
+	def addChar(self, isParameter, n):
 		if isParameter:
-			self.parameters[2] += 1
+			self.parameters[2] += n
 		else:
-			self.local_variables[2] += 1
+			self.local_variables[2] += n
 
-	def addString(self, isParameter = True):
+	def addString(self, isParameter, n):
 		if isParameter:
-			self.parameters[2] += 1
+			self.parameters[2] += n
 		else:
-			self.local_variables[2] += 1
+			self.local_variables[2] += n
 
-	def addBool(self, isParameter = True):
+	def addBool(self, isParameter, n):
 		if isParameter:
-			self.parameters[3] += 1
+			self.parameters[3] += n
 		else:
-			self.local_variables[3] += 1
+			self.local_variables[3] += n
+
+	def addTemporaryInt(self, n):
+		self.temporal_variables[0] += n
+
+	def addTemporaryFloat(self, n):
+		self.temporal_variables[1] += n
+
+	def addTemporaryChar(self, n):
+		self.temporal_variables[2] += n
+
+	def addTemporaryString(self, n):
+		self.temporal_variables[3] += n
+
+	def addTemporaryBool(self, n):
+		self.temporal_variables[4] += n
+
 
 	def numberOfParameters(self):
-		return sum(1 for item in self.parameters if item > 0)
+		return sum(self.parameters)
 
 	def numberOfLocalVariables(self):
-		return sum(1 for item in self.local_variables if item > 0)
+		return sum(self.local_variables)
+
+	def numberofTemporaryVariables(self):
+		return sum(self.temporal_variables)
 
 	def getParameters(self):
 		return self.parameters
