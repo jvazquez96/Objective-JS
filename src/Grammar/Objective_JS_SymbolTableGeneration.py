@@ -872,19 +872,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.cuadruplos.append(quadruple)
 			self.current_param_counter = 0
 
-	def enterVerifyArgument(self, ctx):
+	def exitVerifyArgument(self, ctx):
+
 		argument = self.operandos.pop()
 		argument_type = self.types.pop()
-		argument_param = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
-		if self.convertIntToStringType(argument_type) != argument_param:
-			print("Function name: " + str(self.current_method_name))
-			print("Argument_type: " + str(argument_param))
-			print("Argument name: " + str(self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]))
-			print("Argument: " + str(argument))
-			print("Function type: " + str(argument_type))
+
+		argument_param_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
+		argument_param = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]
+
+		if self.convertIntToStringType(argument_type) != argument_param_type:
 			print("The data type of the call doesn't match the function")
 			sys.exit(0)
+
+	def exitAddArgument(self, ctx):
 		self.current_param_counter += 1
+
+	def exitLlamadaFunc(self, ctx):
+		if self.current_param_counter != len(self.functions_directory.getTable(self.current_method_name).getParams()):
+			print("The function call doesn't have the same number of arguments")
+			sys.exit(0)
 
 	def convertIntToStringType(self, type):
 		if type == 0:

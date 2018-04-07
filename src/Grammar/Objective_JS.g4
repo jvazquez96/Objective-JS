@@ -392,7 +392,10 @@ llamadaFunc :
 
 
 argumentosLlamada :
-	megaExpresion verifyArgument (COMMA (objeto | megaExpresion) verifyArgument)*
+	megaExpresion verifyArgument addArgument (COMMA megaExpresion verifyArgument addArgument)*
+	;
+
+addArgument :
 	;
 
 verifyArgument :
