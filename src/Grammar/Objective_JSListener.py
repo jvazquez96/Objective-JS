@@ -629,6 +629,15 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by Objective_JSParser#verifyArgument.
+    def enterVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#verifyArgument.
+    def exitVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
+        pass
+
+
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
     def enterArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
         pass

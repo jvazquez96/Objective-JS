@@ -23,6 +23,9 @@ class FunctionsDirectory(object):
 	def getSymbolTable(self, id):
 		return self.directory[id].getSymbolTable()
 
+	def getTable(self, id):
+		return self.directory[id]
+
 	def getDirectory(self):
 		return self.directory
 

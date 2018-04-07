@@ -33,6 +33,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.pending_jumps = Stack()
 		self.id = 1;
 		self.do_object = False
+		self.current_param_counter = 0
 
 	def getFunctionDirectory(self):
 		return self.functions_directory
@@ -860,3 +861,39 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			quadruple = Quadruple(self.id, "read",  ctx.ID().getText(), None, None)
 			self.id += 1
 			self.cuadruplos.append(quadruple)
+
+	def enterLlamadaFunc(self, ctx):
+		if ctx.THIS() is not None or len(ctx.ID()) == 1: #Local method
+			self.current_method_name = ctx.ID()[0].getText()
+			if self.current_method_name not in  self.functions_directory.getDirectory():
+				print("The function: " + str(self.current_method_name)+ " doesn't exist")
+				sys.exit(0)
+			quadruple = Quadruple("ERA", self.current_method_name, None, None)
+			self.cuadruplos.append(quadruple)
+			self.current_param_counter = 0
+
+	def enterVerifyArgument(self, ctx):
+		argument = self.operandos.pop()
+		argument_type = self.types.pop()
+		argument_param = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
+		if self.convertIntToStringType(argument_type) != argument_param:
+			print("Function name: " + str(self.current_method_name))
+			print("Argument_type: " + str(argument_param))
+			print("Argument name: " + str(self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]))
+			print("Argument: " + str(argument))
+			print("Function type: " + str(argument_type))
+			print("The data type of the call doesn't match the function")
+			sys.exit(0)
+		self.current_param_counter += 1
+
+	def convertIntToStringType(self, type):
+		if type == 0:
+			return "int"
+		elif type == 1:
+			return "float"
+		elif type == 2:
+			return "char"
+		elif type == 3:
+			return "string"
+		elif type == 4:
+			return "boolean"
