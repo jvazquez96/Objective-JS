@@ -1058,13 +1058,31 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]	
 		dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
 		dimensions_argument = 1
+		all_dimensions_argument = []
 		for key, value in self.functions_directory.getDirectory().items():
 			if argument in value.getSymbolTable().getSymbols():
 				dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()
+				all_dimensions_argument = value.getSymbolTable().getContent(argument).getDim()
 				break
-		if argument_type != parameter_type or dimensions_param != dimensions_argument:
-			print("The data type of the call doesn't match the function")
+		all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
+		if argument_type != parameter_type:
+			print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
 			sys.exit(0)
+		if dimensions_param != dimensions_argument:
+			if dimensions_param > dimensions_argument:
+				print("The function " + str(self.current_method_name) + " was expecting a matrix but received a list")
+			else:
+				print("The function " + str(self.current_method_name) + " was expecting a list but received a matrix")
+			sys.exit(0)
+		for dimP, dimA in zip(all_dimensions_param, all_dimensions_argument):
+			if dimP.getUpperBound() != dimA.getUpperBound():
+				if len(all_dimensions_argument) == 2:
+					print("The function " + str(self.current_method_name) + " was expecting a matrix of: " + str(dimensions_param) + " x " + str(dimP.getUpperBound()) + " but received a matrix of: " + str(dimensions_argument) + " x " + str(dimA.getUpperBound()))
+					sys.exit(0)
+				else:
+					print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
+				sys.exit(0)
+
 
 
 	def exitAddArgument(self, ctx):
@@ -1072,7 +1090,8 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def exitLlamadaFunc(self, ctx):
 		if self.current_param_counter != len(self.functions_directory.getTable(self.current_method_name).getParams()):
-			print("The function call doesn't have the same number of arguments")
+			print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
+			print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
 			sys.exit(0)
 
 	def convertIntToStringType(self, type):

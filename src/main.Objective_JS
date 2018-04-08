@@ -9,7 +9,7 @@ Class HolaMundo {
 	var jorge : list [5] int;
 	var ss : list [2][18] bool;
 
-	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [2][15] bool tic) returns {
+	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [2][10] bool tic) returns {
 		var salma, morgan, luis, paco : int;
 		argumentoUno = argumentoDos / 5;
 		return argumentoUno;
@@ -70,7 +70,8 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-		funcionUno(morgan * nala, 8.25, quique, vaso);
+
+		funcionUno(morgan * nala, 8.25, quique, jose);
 		read >> nala >> morgan >> quique;
 
 	}

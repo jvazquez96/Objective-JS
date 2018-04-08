@@ -24,6 +24,8 @@ class Info(object):
 		return self._info[3]
 	def getDim(self):
 		return self._info[4]
+	def getDimensions(self):
+		return self._info[5]
 	def getLowerBound(self, dim):
 		return self._info[5][dim].getLowerBound()
 	def getUpperBound(self, dim):
