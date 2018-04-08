@@ -1105,3 +1105,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			return "string"
 		elif type == 4:
 			return "boolean"
+
+	def enterMain(self, ctx):
+		# Go to main
+		quadruple = Quadruple(self.id, GO.TO, None, None, None)
+		self.cuadruplos.append(quadruple)
+		self.id += 1
+		self.pending_jumps.push(len(self.cuadruplos) - 1)
+
+	def exitMain_header(self, ctx):
+		main = self.pending_jumps.pop()
+		self.fill(main, len(self.cuadruplos)+1)
+

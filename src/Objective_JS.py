@@ -49,8 +49,8 @@ def main(argv):
     #     print("Number char of temporary: " + str(value.numberOfTemporaryChar()))
     #     print("Number string of temporary: " + str(value.numberOfTemporaryString()))
     #     print("Number bool of temporary: " + str(value.numberOfTemporaryBool()))
-    # for i in quadruples:
-    #     i.print()
+    for i in quadruples:
+        i.print()
     # for key, value in analysis.getFunctionDirectory().getDirectory().items():
     #   print("Function name: " + str(key))
     #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))
