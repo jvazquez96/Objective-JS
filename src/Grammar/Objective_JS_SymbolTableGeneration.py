@@ -1058,8 +1058,6 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]	
 		dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
 		dimensions_argument = 1
-		print("Argument: " + str(argument))
-		print("PAram: " + str(parameter))
 		for key, value in self.functions_directory.getDirectory().items():
 			if argument in value.getSymbolTable().getSymbols():
 				dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()

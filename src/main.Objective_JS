@@ -7,7 +7,7 @@ Class HolaMundo {
 	var cecy, andrea, miguel : float;
 	var quique, raul, jaime : string;
 	var jorge : list [5] int;
-	var ss : list [2][15] bool;
+	var ss : list [2][18] bool;
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [2][15] bool tic) returns {
 		var salma, morgan, luis, paco : int;
