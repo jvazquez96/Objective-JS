@@ -70,8 +70,8 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-
 		funcionUno(morgan * nala, 8.25, quique, jose);
+		funcionDos(2,3,4.5, "string", true);
 		read >> nala >> morgan >> quique;
 
 	}

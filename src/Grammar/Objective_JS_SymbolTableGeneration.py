@@ -568,6 +568,15 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def exitBloqueFunc(self, ctx):
 		self.argumentos = ParamTable()
+		if ctx.bloqueFuncAux2().RETURN() is not None:
+			return_value = self.operandos.pop()
+			quadruple = Quadruple(self.id, "return", return_value, None, None)
+			self.id += 1
+			self.cuadruplos.append(quadruple)
+		quadruple = Quadruple(self.id, "endproc", None, None, None)
+		self.id += 1
+		self.cuadruplos.append(quadruple)
+		self.registros = 1
 
 	def exitBloqueConstructor(self, ctx):
 		self.argumentos = ParamTable()
@@ -1082,8 +1091,9 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 				else:
 					print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
 				sys.exit(0)
-
-
+		quadruple = Quadruple(self.id, "param", argument, None, "param" + str(self.current_param_counter))
+		self.cuadruplos.append(quadruple)
+		self.id += 1
 
 	def exitAddArgument(self, ctx):
 		self.current_param_counter += 1
@@ -1093,6 +1103,9 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
 			print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
 			sys.exit(0)
+		quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, None)
+		self.cuadruplos.append(quadruple)
+		self.id += 1
 
 	def convertIntToStringType(self, type):
 		if type == 0:
@@ -1114,6 +1127,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.pending_jumps.push(len(self.cuadruplos) - 1)
 
 	def exitMain_header(self, ctx):
+		self.registros = 1
 		main = self.pending_jumps.pop()
 		self.fill(main, len(self.cuadruplos)+1)
 
