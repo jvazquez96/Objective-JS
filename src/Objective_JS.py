@@ -17,13 +17,13 @@ def main(argv):
     walker.walk(analysis, tree)
     quadruples = analysis.getQuadruples()
     function_directory = analysis.getFunctionDirectory()
-    for key, value in function_directory.getDirectory().items():
-        print("Function: " + str(key))
-        parameters = value.getParams()
-        for parameter in parameters:
-            print("Parameter: " + str(parameter[0]))
-            print("Value: " + str(parameter[1]))
-            print("Size: " + str(parameter[2]))
+    # for key, value in function_directory.getDirectory().items():
+    #     print("Function: " + str(key))
+    #     parameters = value.getParams()
+    #     for parameter in parameters:
+    #         print("Parameter: " + str(parameter[0]))
+    #         print("Value: " + str(parameter[1]))
+    #         print("Size: " + str(parameter[2]))
     #     print("Parameters: " + str(value.numberOfParameters()))
     #     print("Local variables: " + str(value.numberOfLocalVariables()))
     #     print("Temporary variables: " + str(value.numberofTemporaryVariables()))

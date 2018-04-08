@@ -1,16 +1,11 @@
 from Structures.Info import Info
+from Structures.Dimensions import Dimensions
 
 class SymbolTable(object):
 	def __init__(self):
 		self._symbols = dict()
-	def push_frame(self, id, type=None, attribute=None, isList = None, listSize = 0):
-		if type is not None and attribute is not None:
-			self._symbols[id] = Info(type, attribute, isList, listSize);
-		else:
-			content = Info(type, attribute, isList, listSize)
-			self._symbols[id] = content
-	def remove_frame(self, id):
-		self._symbols[id]
+	def push_frame(self, id, type=None, attribute=None, isList = None, listSize = 0, dim = 0, dimensions = None):
+		self._symbols[id] = Info(type, attribute, isList, listSize, dim, dimensions);
 	def size(self):
 		return len(self._symbols)
 	def getContent(self, id):
@@ -18,7 +13,7 @@ class SymbolTable(object):
 			return self._symbols[id]
 		else:
 			return []
-	def getTable(self):
+	def getSymbols(self):
 		return self._symbols
-	def test(self):
-		print(1)
+	def getDimensions(self, id):
+		return self._symbols[id].getDim()

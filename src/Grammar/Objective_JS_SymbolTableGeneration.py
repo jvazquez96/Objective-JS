@@ -11,6 +11,8 @@ from Structures.Info import Info
 from Structures.Stack import Stack
 from Structures.SymbolTable import SymbolTable
 from Structures.Quadruple import Quadruple
+from Structures.Dimensions import Dimensions
+from Structures.ParamTable import ParamTable
 
 class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
@@ -21,7 +23,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 		self.visibility = "private"
 		self.does_returns = None
 		self.function_name = None
-		self.argumentos = SymbolTable()
+		self.argumentos = ParamTable()
 		self.constructores = 0
 		self.cuadruplos = []
 		self.operadores = Stack()
@@ -48,19 +50,19 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			return False
 
 	def isVarDeclared(self, var):
+		table = self.functions_directory.getTable(self.function_name).getParamTable()
 		exist = False
-		tabla = self.functions_directory.getSymbolTable(self.function_name)
 
 		# Check if the 'var' is a function
 		exist = self.isFunctionDeclared(var)
 
-		if var in tabla.getTable():
+		if var in table.getParameters():
 			exist = True
 		else:
 			for key, value in self.functions_directory.getDirectory().items():
-				if var in value.getSymbolTable().getTable():
+				if var in value.getSymbolTable().getSymbols():
 					exist = True
-					break	
+					break
 
 		if not exist:
 			print(var + " is used but not defined!")
@@ -72,13 +74,11 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	def getTypeFromVariable(self, var):
 		# First check in the local scope
-		# print("Getting type for: " + var)
-		if self.functions_directory.getSymbolTable(self.function_name).getContent(var):
-			# print("Found it on local scope")
-			# print("Type: " + str(self.functions_directory.getSymbolTable(self.function_name).getContent(var).getType()))
-			return self.functions_directory.getSymbolTable(self.function_name).getContent(var).getType()
+		if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
+			return self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getType()
+		elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
+				return self.functions_directory.getTable(self.function_name).getParamTable().getType(var)
 		# Then check in the global scope
-		# print("Found it on global scope")
 		for key, value in self.functions_directory.getDirectory().items():
 			if var in value.getSymbolTable().getTable():
 				return value.getSymbolTable().getContent(var).getType()
@@ -96,25 +96,33 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	# Se añade una variable al directorio de símbolos de la función correspondiente
 	def newVars(self, id, type, visibility):
-		if id in self.functions_directory.getSymbolTable(self.function_name).getTable():
+		if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
 		isList = False
 		total = 1
+		dimensions = []
+		counter = 0
 		if type == "int" or type == 0:
+			counter += 1
 			self.functions_directory.addInt(self.function_name, False, 1)
 		elif type == "float" or type == 1:
+			counter += 1
 			self.functions_directory.addFloat(self.function_name, False, 1)
 		elif type == "char" or type == 2:
+			counter += 1
 			self.functions_directory.addChar(self.function_name, False, 1)
 		elif type == "string" or type == 3:
+			counter += 1
 			self.functions_directory.addString(self.function_name, False, 1)
 		elif type == "bool" or type == 4:
+			counter += 1
 			self.functions_directory.addBool(self.function_name, False, 1)
-		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+		elif re.search("list(\[[0-9]+\])+int", type) is not None:
 			total = 1
 			start = 0
 			isFirst = True
+			counter = 0
 			for i in range(0, len(type)):
 				if type[i] == '[':
 					size = 1
@@ -124,58 +132,140 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 							isFirst = not isFirst
 						size += 1
 						i += 1
-					total *= int(type[start : start+size-1])
+					counter += 1
+					dim = int(type[start : start+size-1])
+					dimension = Dimensions(0, dim)
+					dimensions.append(dimension)
+					total *= dim
 					isFirst = True
 					start = 0
+			if counter == 2: # Matrix
+				dimensions[0].setM(dimensions[1].getUpperBound())
+				dimensions[1].setM(0)
+			else: # List
+				dimensions[0].setM(0)
 			isList = True
 			self.functions_directory.addInt(self.function_name, False, total)
-		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+		elif re.search("list(\[[0-9]+\])+float", type) is not None:
 			total = 1
 			start = 0
 			isFirst = True
+			counter = 0
 			for i in range(0, len(type)):
 				if type[i] == '[':
 					size = 1
 					while (type[i+1] != ']'):
 						if isFirst:
-							print("Here")
 							start = i + 1;
 							isFirst = not isFirst
 						size += 1
 						i += 1
-					total *= int(type[start : start+size-1])
+					counter += 1
+					dim = int(int(type[start : start+size-1]))
+					total *= dim
+					dimension = Dimensions(0, dim)
+					dimensions.append(dimension)
 					isFirst = True
 					start = 0
-			isList = False
+			if counter == 2: # Matrix
+				dimensions[0].setM(dimensions[1].getUpperBound())
+				dimensions[1].setM(0)
+			else: # List
+				dimensions[0].setM(0)
+			isList = True
 			self.functions_directory.addFloat(self.function_name, False, total)
-		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+		elif re.search("list(\[[0-9]+\])+char", type) is not None:
 			total = 1
 			start = 0
 			isFirst = True
+			counter = 0
 			for i in range(0, len(type)):
 				if type[i] == '[':
 					size = 1
 					while (type[i+1] != ']'):
 						if isFirst:
-							print("Here")
 							start = i + 1;
 							isFirst = not isFirst
 						size += 1
 						i += 1
-					print("start: " + str(start))
-					print('Size: ' + str(size))
-					total *= int(type[start : start+size-1])
+					counter += 1
+					dim = int(int(type[start : start+size-1]))
+					total *= dim
+					dimension = Dimensions(0, dim)
+					dimensions.append(dimension)
 					isFirst = True
 					start = 0
+			if counter == 2: # Matrix
+				dimensions[0].setM(dimensions[1].getUpperBound())
+				dimensions[1].setM(0)
+			else: # List
+				dimensions[0].setM(0)
+			isList = True
+			self.functions_directory.addChar(self.function_name, False, total)
+		elif re.search("list(\[[0-9]+\])+string", type) is not None:
+			total = 1
+			start = 0
+			isFirst = True
+			counter = 0
+			for i in range(0, len(type)):
+				if type[i] == '[':
+					size = 1
+					while (type[i+1] != ']'):
+						if isFirst:
+							start = i + 1;
+							isFirst = not isFirst
+						size += 1
+						i += 1
+					counter += 1
+					dim = int(int(type[start : start+size-1]))
+					total *= dim
+					dimension = Dimensions(0, dim)
+					dimensions.append(dimension)
+					isFirst = True
+					start = 0
+			if counter == 2: # Matrix
+				dimensions[0].setM(dimensions[1].getUpperBound())
+				dimensions[1].setM(0)
+			else: # List
+				dimensions[0].setM(0)
+			isList = True
+			self.functions_directory.addString(self.function_name, False, total)
+		elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+			total = 1
+			start = 0
+			isFirst = True
+			counter = 0
+			for i in range(0, len(type)):
+				if type[i] == '[':
+					size = 1
+					while (type[i+1] != ']'):
+						if isFirst:
+							start = i + 1;
+							isFirst = not isFirst
+						size += 1
+						i += 1
+					counter += 1
+					dim = int(type[start : start+size-1])
+					total *= dim
+					dimension = Dimensions(0, dim)
+					dimensions.append(dimension)
+					isFirst = True
+					start = 0
+			if counter == 2: # Matrix
+				dimensions[0].setM(dimensions[1].getUpperBound())
+				dimensions[1].setM(0)
+			else: # List
+				dimensions[0].setM(0)
 			isList = False
 			self.functions_directory.addBool(self.function_name, False, total)
-		self.functions_directory.getSymbolTable(self.function_name).push_frame(id, type, visibility, isList, total)
+		self.functions_directory.getInfoDirectory(self.function_name).push_frame(id, type, isList, total, counter, dimensions)
 
 	# Se añade una función al directorio de funciones junto con sus parametros
 	def newFunction(self):
 		if self.function_name not in self.functions_directory.getDirectory():
-			self.functions_directory.create_table(self.function_name, InfoDirectory(self.argumentos, self.does_returns))
-			for key, value in self.argumentos.getTable().items():
+			self.functions_directory.create_table(self.function_name, InfoDirectory())
+			self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
+			for key, value in self.argumentos.getParameters().items():
 				if value.getType() == 0:
 					self.functions_directory.addInt(self.function_name, True, 1)
 					self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
@@ -198,9 +288,7 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 	# Sirve para crear la variable, obtiene el tipo y el ID
 	def enterVars_(self, ctx):
 		id = ctx.ID().getText()
-		#print("ID: " + str(id))
 		self.type = ctx.tipo_dato().getText() 
-
 		# Checar los tipos con sus respectivos números
 		if self.type == "int":
 			type_number = 0
@@ -214,10 +302,16 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			type_number = 4
 		elif self.type == "null":
 			type_number = 5
-		elif re.search("list(\[.\])+int", type) is not None:
+		elif re.search("list(\[.\])+int", self.type) is not None:
 			type_number = 0
-		elif re.search("list(\[.\])+float", type) is not None:
+		elif re.search("list(\[.\])+float", self.type) is not None:
 			type_number = 1
+		elif re.search("list(\[.\])+char", self.type) is not None:
+			type_number = 2
+		elif re.search("list(\[.\])+string", self.type) is not None:
+			type_number = 3
+		elif re.search("list(\[.\])+bool", self.type) is not None:
+			type_number = 4
 
 		self.newVars(id, type_number, self.visibility)
 
@@ -277,36 +371,44 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 
 	# Sirve para almacenar las variables de los argumentos (aun no se crea la funcion en el directorio de funciones)
 	def newArgument(self, id, type, visibility):
-		if id in self.argumentos.getTable():
+		if id in self.argumentos.getParameters():
 			print("Syntax error!! Variable: " + id + " is already defined")
 			sys.exit(0)
 		else:
 			isList = False
 			total = 1
+			dimensions = []
+			counter = 0
 			if type == "int":
 				type_number = 0
+				counter += 1
 				# self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
 			elif type == "float":
 				type_number = 1
+				counter += 1
 				# self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
 			elif type == "char":
 				type_number = 2
+				counter += 1
 				# self.functions_directory.getSymbolTable(self.function_name).addChar(True)
 			elif type == "string":
 				type_number = 3
+				counter += 1
 				# self.functions_directory.getSymbolTable(self.function_name).addString(True)
 			elif type == "bool":
 				type_number = 4
+				counter += 1
 				# self.functions_directory.getSymbolTable(self.function_name).addBool(True)
 			elif type == "null":
 				type_number = 5
-				# TODO(jorge) : Add support to null
+				counter += 1
 			elif re.search("list(\[[0-9]+\])+int", type) is not None:
 				type_number = 0
 				isList = True
 				total = 1
 				start = 0
 				isFirst = True
+				counter = 0
 				for i in range(0, len(type)):
 					if type[i] == '[':
 						size = 1
@@ -316,15 +418,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 								isFirst = not isFirst
 							size += 1
 							i += 1
-						total *= int(type[start : start+size-1])
+						counter += 1
+						dim = int(type[start: start+size-1])
+						dimension = Dimensions(0, dim)
+						dimensions.append(dimension)
+						total *= dim
 						isFirst = True
 						start = 0
+				if counter == 2: # Matrix
+					dimensions[0].setM(dimensions[1].getUpperBound())
+					dimensions[1].setM(0)
+				else: # List
+					dimensions[0].setM(0)
 			elif re.search("list(\[[0-9]+\])+float", type) is not None:
 				type_number = 1
 				isList = True
 				total = 1
 				start = 0
 				isFirst = True
+				counter = 0
 				for i in range(0, len(type)):
 					if type[i] == '[':
 						size = 1
@@ -334,15 +446,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 								isFirst = not isFirst
 							size += 1
 							i += 1
-						total *= int(type[start : start+size-1])
+						counter += 1
+						dim = int(type[start : start+size-1])
+						dimension = Dimensions(0, dim)
+						dimensions.append(dimension)
+						total *= dim
 						isFirst = True
 						start = 0
+				if counter == 2: # Matrix
+					dimensions[0].setM(dimensions[1].getUpperBound())
+					dimensions[1].setM(0)
+				else: # List
+					dimensions[0].setM(0)
 			elif re.search("list(\[[0-9]+\])+char", type) is not None:
 				type_number = 2
 				isList = True
 				total = 1
 				start = 0
 				isFirst = True
+				counter = 0
 				for i in range(0, len(type)):
 					if type[i] == '[':
 						size = 1
@@ -352,15 +474,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 								isFirst = not isFirst
 							size += 1
 							i += 1
-						total *= int(type[start : start+size-1])
+						counter += 1
+						dim = int(type[start : start+size-1])
+						dimension = Dimensions(0, dim)
+						dimensions.append(dimension)
+						total *= dim
 						isFirst = True
 						start = 0
+				if counter == 2: # Matrix
+					dimensions[0].setM(dimensions[1].getUpperBound())
+					dimensions[1].setM(0)
+				else: # List
+					dimensions[0].setM(0)
 			elif re.search("list(\[[0-9]+\])+string", type) is not None:
 				type_number = 3
 				isList = True
 				total = 1
 				start = 0
 				isFirst = True
+				counter = 0
 				for i in range(0, len(type)):
 					if type[i] == '[':
 						size = 1
@@ -370,15 +502,25 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 								isFirst = not isFirst
 							size += 1
 							i += 1
-						total *= int(type[start : start+size-1])
+						counter += 1
+						dim = int(type[start : start+size-1])
+						total *= dim
+						dimension = Dimensions(0, dim)
+						dimensions.append(dimension)
 						isFirst = True
 						start = 0
+				if counter == 2: # Matrix
+					dimensions[0].setM(dimensions[1].getUpperBound())
+					dimensions[1].setM(0)
+				else: # List
+					dimensions[0].setM(0)
 			elif re.search("list(\[[0-9]+\])+bool", type) is not None:
 				type_number = 4
 				isList = True
 				total = 1
 				start = 0
 				isFirst = True
+				counter = 0
 				for i in range(0, len(type)):
 					if type[i] == '[':
 						size = 1
@@ -388,12 +530,19 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 								isFirst = not isFirst
 							size += 1
 							i += 1
-						total *= int(type[start : start+size-1])
+						counter += 1
+						dim = int(type[start : start+size-1])
+						total *= dim
+						dimension = Dimensions(0, dim)
+						dimensions.append(dimension)
 						isFirst = True
 						start = 0
-
-
-			self.argumentos.push_frame(id, type_number, visibility, isList, total)
+				if counter == 2: # Matrix
+					dimensions[0].setM(dimensions[1].getUpperBound())
+					dimensions[1].setM(0)
+				else: # List
+					dimensions[0].setM(0)
+			self.argumentos.push_param(id, type_number, isList, total, counter, dimensions)
 
 	# Se agregan argumentos de una funcion en la tabla de símbolos
 	def enterArgumentos(self, ctx):
@@ -418,10 +567,10 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.function_name += str(self.constructores)
 
 	def exitBloqueFunc(self, ctx):
-		self.argumentos = SymbolTable()
+		self.argumentos = ParamTable()
 
 	def exitBloqueConstructor(self, ctx):
-		self.argumentos = SymbolTable()
+		self.argumentos = ParamTable()
 		self.functions_directory.remove_info(self.function_name)
 
 	# Constructores
@@ -872,17 +1021,53 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			self.cuadruplos.append(quadruple)
 			self.current_param_counter = 0
 
+	def normalizeTypes(self, type):
+		if isinstance(type, str):
+			if type == "int":
+				return 0
+			elif type == "float":
+				return 1
+			elif type == "char":
+				return 2
+			elif type == "string":
+				return 3
+			elif type == "bool":
+				return 4
+			elif type == "null":
+				return 5
+			elif re.search("list(\[.*\])+int", type) is not None:
+				return 0
+			elif re.search("list(\[.*\])+float", type) is not None:
+				return 1
+			elif re.search("list(\[.*\])+char", type) is not None:
+				return 2
+			elif re.search("list(\[.*\])+string", type) is not None:
+				return 3
+			elif re.search("list(\[.*\])+bool", type) is not None:
+				return 4
+		return type
+
 	def exitVerifyArgument(self, ctx):
 
 		argument = self.operandos.pop()
 		argument_type = self.types.pop()
 
-		argument_param_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
-		argument_param = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]
-
-		if self.convertIntToStringType(argument_type) != argument_param_type:
+		argument_type = self.normalizeTypes(argument_type)
+		parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
+		parameter_type = self.normalizeTypes(parameter_type)
+		parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]	
+		dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
+		dimensions_argument = 1
+		print("Argument: " + str(argument))
+		print("PAram: " + str(parameter))
+		for key, value in self.functions_directory.getDirectory().items():
+			if argument in value.getSymbolTable().getSymbols():
+				dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()
+				break
+		if argument_type != parameter_type or dimensions_param != dimensions_argument:
 			print("The data type of the call doesn't match the function")
 			sys.exit(0)
+
 
 	def exitAddArgument(self, ctx):
 		self.current_param_counter += 1

@@ -20,7 +20,7 @@ class FunctionsDirectory(object):
 	def addParam(self, id, name, value, size):
 		self.directory[id].addParameter(name, value, size)
 
-	def getSymbolTable(self, id):
+	def getInfoDirectory(self, id):
 		return self.directory[id].getSymbolTable()
 
 	def getTable(self, id):

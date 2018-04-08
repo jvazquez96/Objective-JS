@@ -7,10 +7,10 @@ Class HolaMundo {
 	var cecy, andrea, miguel : float;
 	var quique, raul, jaime : string;
 	var jorge : list [5] int;
-	var ss : list [2][15] int;
+	var ss : list [2][15] bool;
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [2][15] bool tic) returns {
-		var morgan, luis, paco : int;
+		var salma, morgan, luis, paco : int;
 		argumentoUno = argumentoDos / 5;
 		return argumentoUno;
 	}
@@ -29,6 +29,7 @@ Class HolaMundo {
 		var jb : char;
 		var jose : list [2][10] bool;
 		morgan = 25;
+		var vaso : bool;
 		jb = "a";
 		jb = jb + "b";
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
@@ -69,7 +70,7 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-		funcionUno(morgan * nala, 8.25, quique, ss);
+		funcionUno(morgan * nala, 8.25, quique, vaso);
 		read >> nala >> morgan >> quique;
 
 	}

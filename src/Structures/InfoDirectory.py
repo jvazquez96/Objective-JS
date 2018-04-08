@@ -1,11 +1,11 @@
 from Structures.SymbolTable import SymbolTable
 from Structures.Stack import Stack
+from Structures.ParamTable import ParamTable
+
 class InfoDirectory(object):
-	def __init__ (self, symbol_table=None, return_type=None):
-		if symbol_table is None and return_type is None:
-			self._info = [SymbolTable(), None]
-		else:
-			self._info = [symbol_table, return_type]
+	def __init__ (self, symbol_table=SymbolTable(), return_type=None):
+		self.symbol_table = symbol_table
+		self.return_type = return_type
 		# Types of parameters [int, float, char, string, bool]
 		self.parameters = [0, 0, 0, 0, 0]
 		# Types of local variables [int, float, char, string, bool]
@@ -14,24 +14,30 @@ class InfoDirectory(object):
 		self.temporal_variables = [0, 0, 0, 0, 0]
 		#
 		self.parameters2 = []
-
-	def getInfo(self):
-		return self._info
+		# Param table
+		self.param_table = ParamTable()
 
 	def createInfo(self, symbol_table, return_type):
-		self._info = InfoDirectory(symbol_table, return_type)
+		self.symbol_table = symbol_table
+		self.return_type = return_type
+
+	def getParamTable(self):
+		return self.param_table
 
 	def getSymbolTable(self):
-		return self._info[0]
+		return self.symbol_table
 
 	def getReturnType(self):
-		return self._info[1]
+		return self.return_type
 
 	def getParams(self):
 		return self.parameters2
 
+	def setParamTable(self, paramTable):
+		self.param_table = paramTable
+
 	def deleteTable(self):
-		self._info[0] = SymbolTable()
+		self.symbol_table = SymbolTable()
 
 	def addParameter(self, id, type, size):
 		parameter = [id, type, size]
