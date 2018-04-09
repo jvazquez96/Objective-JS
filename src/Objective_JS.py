@@ -5,6 +5,7 @@ from antlr4 import *
 from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
 from Grammar.Objective_JS_SymbolTableGeneration import Objective_JS_SymbolTableGeneration
+from Grammar.Objective_JSListener import Objective_JSListener
  
 def main(argv):
     input = FileStream(argv[1])
@@ -12,11 +13,11 @@ def main(argv):
     stream = CommonTokenStream(lexer)
     parser = Objective_JSParser(stream)
     tree = parser.inicio()
-    analysis = Objective_JS_SymbolTableGeneration()
+    listener = Objective_JSListener()
     walker = ParseTreeWalker()
-    walker.walk(analysis, tree)
-    quadruples = analysis.getQuadruples()
-    function_directory = analysis.getFunctionDirectory()
+    walker.walk(listener, tree)
+    quadruples = listener.getQuadruples()
+    # function_directory = listener.getFunctionDirectory()
     # for key, value in function_directory.getDirectory().items():
     #     print("Function: " + str(key))
     #     parameters = value.getParams()
@@ -51,7 +52,7 @@ def main(argv):
     #     print("Number bool of temporary: " + str(value.numberOfTemporaryBool()))
     for i in quadruples:
         i.print()
-    # for key, value in analysis.getFunctionDirectory().getDirectory().items():
+    # for key, value in listener.getFunctionDirectory().getDirectory().items():
     #   print("Function name: " + str(key))
     #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))
     #   print("Returns?: " + str(value.getReturnType()))

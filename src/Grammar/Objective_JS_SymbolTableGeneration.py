@@ -83,9 +83,6 @@ class Objective_JS_SymbolTableGeneration(Objective_JSListener):
 			if var in value.getSymbolTable().getTable():
 				return value.getSymbolTable().getContent(var).getType()
 
-	def getSymbolsTables(self):
-		return self.functions_directory.getDirectory()
-
 	def getCuadruplos(self):
 		return self.cuadruplos
 
