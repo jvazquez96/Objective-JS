@@ -1573,5 +1573,3 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#matrix.
     def exitMatrix(self, ctx:Objective_JSParser.MatrixContext):
         pass
-
-
