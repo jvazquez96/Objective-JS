@@ -120,6 +120,33 @@ class Objective_JSListener(ParseTreeListener):
         self.function_name = className
         self.functions_directory.create_table(self.function_name, InfoDirectory())
 
+    def parseList(self, type):
+        totalSize = 1
+        number_dimensions = 0
+        dimensions = []
+        isFirst = True
+        start = 0
+        for i in range(0, len(type)):
+            if type[i] == '[':
+                size = 1
+                while (type[i+1] != ']'):
+                    if isFirst:
+                        start = i + 1
+                        isFirst = not isFirst
+                    size += 1
+                    i += 1
+                number_dimensions += 1
+                dim = int(type[start : start+size-1])
+                dimension = Dimensions(0, dim)
+                dimensions.append(dimension)
+                totalSize *= dim
+                isFirst = True
+        if number_dimensions == 2: # Matrix:
+            dimensions[0].setM(dimensions[1].getUpperBound())
+            dimensions[1].setM(0)
+        else: # List
+            dimensions[0].setM(0)
+        return totalSize, number_dimensions, dimensions
     def newVars(self, id, type, visibility):
         """
         Adds a new variable into the function_directory
@@ -128,165 +155,45 @@ class Objective_JSListener(ParseTreeListener):
             print("Syntax error!! Variable: " + id + " is already defined")
             sys.exit(0)
         isList = False
-        total = 1
+        total_size = 1
         dimensions = []
-        counter = 0
+        number_dimensions = 0
         if type == "int" or type == 0:
-            counter += 1
+            number_dimensions += 1
             self.functions_directory.addInt(self.function_name, False, 1)
         elif type == "float" or type == 1:
-            counter += 1
+            number_dimensions += 1
             self.functions_directory.addFloat(self.function_name, False, 1)
         elif type == "char" or type == 2:
-            counter += 1
+            number_dimensions += 1
             self.functions_directory.addChar(self.function_name, False, 1)
         elif type == "string" or type == 3:
-            counter += 1
+            number_dimensions += 1
             self.functions_directory.addString(self.function_name, False, 1)
         elif type == "bool" or type == 4:
-            counter += 1
+            number_dimensions += 1
             self.functions_directory.addBool(self.function_name, False, 1)
         elif re.search("list(\[[0-9]+\])+int", type) is not None:
-            total = 1
-            start = 0
-            isFirst = True
-            counter = 0
-            for i in range(0, len(type)):
-                if type[i] == '[':
-                    size = 1
-                    while (type[i+1] != ']'):
-                        if isFirst:
-                            start = i + 1;
-                            isFirst = not isFirst
-                        size += 1
-                        i += 1
-                    counter += 1
-                    dim = int(type[start : start+size-1])
-                    dimension = Dimensions(0, dim)
-                    dimensions.append(dimension)
-                    total *= dim
-                    isFirst = True
-                    start = 0
-            if counter == 2: # Matrix
-                dimensions[0].setM(dimensions[1].getUpperBound())
-                dimensions[1].setM(0)
-            else: # List
-                dimensions[0].setM(0)
+            total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
-            self.functions_directory.addInt(self.function_name, False, total)
+            self.functions_directory.addInt(self.function_name, False, total_size)
         elif re.search("list(\[[0-9]+\])+float", type) is not None:
-            total = 1
-            start = 0
-            isFirst = True
-            counter = 0
-            for i in range(0, len(type)):
-                if type[i] == '[':
-                    size = 1
-                    while (type[i+1] != ']'):
-                        if isFirst:
-                            start = i + 1;
-                            isFirst = not isFirst
-                        size += 1
-                        i += 1
-                    counter += 1
-                    dim = int(int(type[start : start+size-1]))
-                    total *= dim
-                    dimension = Dimensions(0, dim)
-                    dimensions.append(dimension)
-                    isFirst = True
-                    start = 0
-            if counter == 2: # Matrix
-                dimensions[0].setM(dimensions[1].getUpperBound())
-                dimensions[1].setM(0)
-            else: # List
-                dimensions[0].setM(0)
             isList = True
-            self.functions_directory.addFloat(self.function_name, False, total)
+            total_size, number_dimensions, dimensions = self.parseList(type)
+            self.functions_directory.addFloat(self.function_name, False, total_size)
         elif re.search("list(\[[0-9]+\])+char", type) is not None:
-            total = 1
-            start = 0
-            isFirst = True
-            counter = 0
-            for i in range(0, len(type)):
-                if type[i] == '[':
-                    size = 1
-                    while (type[i+1] != ']'):
-                        if isFirst:
-                            start = i + 1;
-                            isFirst = not isFirst
-                        size += 1
-                        i += 1
-                    counter += 1
-                    dim = int(int(type[start : start+size-1]))
-                    total *= dim
-                    dimension = Dimensions(0, dim)
-                    dimensions.append(dimension)
-                    isFirst = True
-                    start = 0
-            if counter == 2: # Matrix
-                dimensions[0].setM(dimensions[1].getUpperBound())
-                dimensions[1].setM(0)
-            else: # List
-                dimensions[0].setM(0)
             isList = True
-            self.functions_directory.addChar(self.function_name, False, total)
+            total_size, number_dimensions, dimensions = self.parseList(type)
+            self.functions_directory.addChar(self.function_name, False, total_size)
         elif re.search("list(\[[0-9]+\])+string", type) is not None:
-            total = 1
-            start = 0
-            isFirst = True
-            counter = 0
-            for i in range(0, len(type)):
-                if type[i] == '[':
-                    size = 1
-                    while (type[i+1] != ']'):
-                        if isFirst:
-                            start = i + 1;
-                            isFirst = not isFirst
-                        size += 1
-                        i += 1
-                    counter += 1
-                    dim = int(int(type[start : start+size-1]))
-                    total *= dim
-                    dimension = Dimensions(0, dim)
-                    dimensions.append(dimension)
-                    isFirst = True
-                    start = 0
-            if counter == 2: # Matrix
-                dimensions[0].setM(dimensions[1].getUpperBound())
-                dimensions[1].setM(0)
-            else: # List
-                dimensions[0].setM(0)
+            total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
-            self.functions_directory.addString(self.function_name, False, total)
+            self.functions_directory.addString(self.function_name, False, total_size)
         elif re.search("list(\[[0-9]+\])+bool", type) is not None:
-            total = 1
-            start = 0
-            isFirst = True
-            counter = 0
-            for i in range(0, len(type)):
-                if type[i] == '[':
-                    size = 1
-                    while (type[i+1] != ']'):
-                        if isFirst:
-                            start = i + 1;
-                            isFirst = not isFirst
-                        size += 1
-                        i += 1
-                    counter += 1
-                    dim = int(type[start : start+size-1])
-                    total *= dim
-                    dimension = Dimensions(0, dim)
-                    dimensions.append(dimension)
-                    isFirst = True
-                    start = 0
-            if counter == 2: # Matrix
-                dimensions[0].setM(dimensions[1].getUpperBound())
-                dimensions[1].setM(0)
-            else: # List
-                dimensions[0].setM(0)
-            isList = False
-            self.functions_directory.addBool(self.function_name, False, total)
-        self.functions_directory.getInfoDirectory(self.function_name).push_frame(id, type, isList, total, counter, dimensions)
+            total_size, number_dimensions, dimensions = self.parseList(type)
+            isList = True
+            self.functions_directory.addBool(self.function_name, False, total_size)
+        self.functions_directory.getInfoDirectory(self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
 
     def newFunction(self):
         """
@@ -791,173 +698,53 @@ class Objective_JSListener(ParseTreeListener):
             sys.exit(0)
         else:
             isList = False
-            total = 1
+            total_size = 1
             dimensions = []
-            counter = 0
+            number_dimensions = 0
             if type == "int":
                 type_number = 0
-                counter += 1
+                number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
             elif type == "float":
                 type_number = 1
-                counter += 1
+                number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
             elif type == "char":
                 type_number = 2
-                counter += 1
+                number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addChar(True)
             elif type == "string":
                 type_number = 3
-                counter += 1
+                number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addString(True)
             elif type == "bool":
                 type_number = 4
-                counter += 1
+                number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addBool(True)
             elif type == "null":
                 type_number = 5
-                counter += 1
+                number_dimensions += 1
             elif re.search("list(\[[0-9]+\])+int", type) is not None:
                 type_number = 0
                 isList = True
-                total = 1
-                start = 0
-                isFirst = True
-                counter = 0
-                for i in range(0, len(type)):
-                    if type[i] == '[':
-                        size = 1
-                        while (type[i+1] != ']'):
-                            if isFirst:
-                                start = i + 1;
-                                isFirst = not isFirst
-                            size += 1
-                            i += 1
-                        counter += 1
-                        dim = int(type[start: start+size-1])
-                        dimension = Dimensions(0, dim)
-                        dimensions.append(dimension)
-                        total *= dim
-                        isFirst = True
-                        start = 0
-                if counter == 2: # Matrix
-                    dimensions[0].setM(dimensions[1].getUpperBound())
-                    dimensions[1].setM(0)
-                else: # List
-                    dimensions[0].setM(0)
+                total_size, number_dimensions, dimensions = self.parseList(type)
             elif re.search("list(\[[0-9]+\])+float", type) is not None:
                 type_number = 1
                 isList = True
-                total = 1
-                start = 0
-                isFirst = True
-                counter = 0
-                for i in range(0, len(type)):
-                    if type[i] == '[':
-                        size = 1
-                        while (type[i+1] != ']'):
-                            if isFirst:
-                                start = i + 1;
-                                isFirst = not isFirst
-                            size += 1
-                            i += 1
-                        counter += 1
-                        dim = int(type[start : start+size-1])
-                        dimension = Dimensions(0, dim)
-                        dimensions.append(dimension)
-                        total *= dim
-                        isFirst = True
-                        start = 0
-                if counter == 2: # Matrix
-                    dimensions[0].setM(dimensions[1].getUpperBound())
-                    dimensions[1].setM(0)
-                else: # List
-                    dimensions[0].setM(0)
+                total_size, number_dimensions, dimensions = self.parseList(type)
             elif re.search("list(\[[0-9]+\])+char", type) is not None:
                 type_number = 2
                 isList = True
-                total = 1
-                start = 0
-                isFirst = True
-                counter = 0
-                for i in range(0, len(type)):
-                    if type[i] == '[':
-                        size = 1
-                        while (type[i+1] != ']'):
-                            if isFirst:
-                                start = i + 1;
-                                isFirst = not isFirst
-                            size += 1
-                            i += 1
-                        counter += 1
-                        dim = int(type[start : start+size-1])
-                        dimension = Dimensions(0, dim)
-                        dimensions.append(dimension)
-                        total *= dim
-                        isFirst = True
-                        start = 0
-                if counter == 2: # Matrix
-                    dimensions[0].setM(dimensions[1].getUpperBound())
-                    dimensions[1].setM(0)
-                else: # List
-                    dimensions[0].setM(0)
+                total_size, number_dimensions, dimensions = self.parseList(type)
             elif re.search("list(\[[0-9]+\])+string", type) is not None:
                 type_number = 3
                 isList = True
-                total = 1
-                start = 0
-                isFirst = True
-                counter = 0
-                for i in range(0, len(type)):
-                    if type[i] == '[':
-                        size = 1
-                        while (type[i+1] != ']'):
-                            if isFirst:
-                                start = i + 1;
-                                isFirst = not isFirst
-                            size += 1
-                            i += 1
-                        counter += 1
-                        dim = int(type[start : start+size-1])
-                        total *= dim
-                        dimension = Dimensions(0, dim)
-                        dimensions.append(dimension)
-                        isFirst = True
-                        start = 0
-                if counter == 2: # Matrix
-                    dimensions[0].setM(dimensions[1].getUpperBound())
-                    dimensions[1].setM(0)
-                else: # List
-                    dimensions[0].setM(0)
+                total_size, number_dimensions, dimensions = self.parseList(type)
             elif re.search("list(\[[0-9]+\])+bool", type) is not None:
                 type_number = 4
                 isList = True
-                total = 1
-                start = 0
-                isFirst = True
-                counter = 0
-                for i in range(0, len(type)):
-                    if type[i] == '[':
-                        size = 1
-                        while (type[i+1] != ']'):
-                            if isFirst:
-                                start = i + 1;
-                                isFirst = not isFirst
-                            size += 1
-                            i += 1
-                        counter += 1
-                        dim = int(type[start : start+size-1])
-                        total *= dim
-                        dimension = Dimensions(0, dim)
-                        dimensions.append(dimension)
-                        isFirst = True
-                        start = 0
-                if counter == 2: # Matrix
-                    dimensions[0].setM(dimensions[1].getUpperBound())
-                    dimensions[1].setM(0)
-                else: # List
-                    dimensions[0].setM(0)
-            self.argumentos.push_param(id, type_number, isList, total, counter, dimensions)
+                total_size, number_dimensions, dimensions = self.parseList(type)
+            self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions)
 
     # Exit a parse tree produced by Objective_JSParser#vars_.
     def exitVars_(self, ctx:Objective_JSParser.Vars_Context):
@@ -1394,7 +1181,7 @@ class Objective_JSListener(ParseTreeListener):
         for dimP, dimA in zip(all_dimensions_param, all_dimensions_argument):
             if dimP.getUpperBound() != dimA.getUpperBound():
                 if len(all_dimensions_argument) == 2:
-                    print("The function " + str(self.current_method_name) + " was expecting a matrix of: " + str(dimensions_param) + " x " + str(dimP.getUpperBound()) + " but received a matrix of: " + str(dimensions_argument) + " x " + str(dimA.getUpperBound()))
+                    print("The function " + str(self.current_method_name) + " was expecting a matrix of: " + str(all_dimensions_param[0].getUpperBound()) + " x " + str(all_dimensions_param[1].getUpperBound()) + " but received a matrix of: " + str(all_dimensions_argument[0].getUpperBound()) + " x " + str(all_dimensions_argument[1].getUpperBound()))
                     sys.exit(0)
                 else:
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
