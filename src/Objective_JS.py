@@ -4,7 +4,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from antlr4 import *
 from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
-from Grammar.Objective_JS_SymbolTableGeneration import Objective_JS_SymbolTableGeneration
 from Grammar.Objective_JSListener import Objective_JSListener
  
 def main(argv):

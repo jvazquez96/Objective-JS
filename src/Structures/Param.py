@@ -1,12 +1,13 @@
 class Param(object):
 
-	def __init__(self, id, type, isList, listSize, dim, dimensions):
+	def __init__(self, id, type, isList, listSize, dim, dimensions, address):
 		self.id = id
 		self.type = type
 		self.isList = isList
 		self.listSize = listSize
 		self.dim = dim
 		self.dimensions = dimensions
+		self.address = address
 
 	def getType(self):
 		return self.type
@@ -22,3 +23,6 @@ class Param(object):
 
 	def getDimensions(self):
 		return self.dimensions
+
+	def getAddress(self):
+		return self.address

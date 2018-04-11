@@ -20,6 +20,47 @@ if __name__ is not None and "." in __name__:
 else:
     from Objective_JSParser import Objective_JSParser
 
+CONST_GLOBAL_BOTTOM_INT = 1000
+CONST_GLOBAL_BOTTOM_FLOAT = 2000
+CONST_GLOBAL_BOTTOM_CHAR = 3000
+CONST_GLOBAL_BOTTOM_STRING = 4000
+CONST_GLOBAL_BOTTOM_BOOLEAN = 5000
+CONST_GLOBAL_BOTTOM_NULL = 6000
+
+CONST_GLOBAL_TOP_INT = 1999
+CONST_GLOBAL_TOP_FLOAT = 2999
+CONST_GLOBAL_TOP_CHAR = 3999
+CONST_GLOBAL_TOP_STRING = 4999
+CONST_GLOBAL_TOP_BOOLEAN = 5999
+CONST_GLOBAL_TOP_NULL = 6999
+
+CONST_LOCAL_BOTTOM_INT = 7000
+CONST_LOCAL_BOTTOM_FLOAT = 8000
+CONST_LOCAL_BOTTOM_CHAR = 9000
+CONST_LOCAL_BOTTOM_STRING = 10000
+CONST_LOCAL_BOTTOM_BOOLEAN = 11000
+CONST_LOCAL_BOTTOM_NULL = 12000
+
+CONST_LOCAL_TOP_INT = 7999
+CONST_LOCAL_TOP_FLOAT = 8999
+CONST_LOCAL_TOP_CHAR = 9999
+CONST_LOCAL_TOP_STRING = 10999
+CONST_LOCAL_TOP_BOOLEAN = 11999
+CONST_LOCAL_TOP_NULL = 12999
+
+CONST_TEMPORAL_BOTTOM_INT = 13000
+CONST_TEMPORAL_BOTTOM_FLOAT = 14000
+CONST_TEMPORAL_BOTTOM_CHAR = 15000
+CONST_TEMPORAL_BOTTOM_STRING = 16000
+CONST_TEMPORAL_BOTTOM_BOOLEAN = 17000
+CONST_TEMPORAL_BOTTOM_NULL = 18000
+
+CONST_TEMPORAL_TOP_INT = 13999
+CONST_TEMPORAL_TOP_FLOAT = 14999
+CONST_TEMPORAL_TOP_CHAR = 15999
+CONST_TEMPORAL_TOP_STRING = 16999
+CONST_TEMPORAL_TOP_BOOLEAN = 17999
+CONST_TEMPORAL_TOP_NULL = 17999
 
 
 # This class defines a complete listener for a parse tree produced by Objective_JSParser.
@@ -45,7 +86,28 @@ class Objective_JSListener(ParseTreeListener):
         self.id = 1;
         self.do_object = False
         self.current_param_counter = 0
+        self.resetMemoryAddresses()
 
+
+    def resetMemoryAddresses(self):
+        self.current_global_int_counter = CONST_GLOBAL_BOTTOM_INT
+        self.current_global_float_counter = CONST_GLOBAL_BOTTOM_FLOAT
+        self.current_global_char_counter = CONST_GLOBAL_BOTTOM_CHAR
+        self.current_global_string_counter = CONST_GLOBAL_BOTTOM_STRING
+        self.current_global_boolean_counter = CONST_GLOBAL_BOTTOM_BOOLEAN
+        self.current_global_null_counter = CONST_GLOBAL_BOTTOM_NULL
+        self.current_local_int_counter = CONST_LOCAL_BOTTOM_INT
+        self.current_local_float_counter = CONST_LOCAL_BOTTOM_FLOAT
+        self.current_local_char_counter = CONST_LOCAL_BOTTOM_CHAR
+        self.current_local_string_counter = CONST_LOCAL_BOTTOM_STRING
+        self.current_local_boolean_counter = CONST_LOCAL_BOTTOM_BOOLEAN
+        self.current_local_null_counter = CONST_LOCAL_BOTTOM_NULL
+        self.current_temp_int_counter = CONST_TEMPORAL_BOTTOM_INT
+        self.current_temp_float_counter = CONST_TEMPORAL_BOTTOM_FLOAT
+        self.current_temp_char_counter = CONST_TEMPORAL_BOTTOM_CHAR
+        self.current_temp_string_counter = CONST_TEMPORAL_BOTTOM_STRING
+        self.current_temp_boolean_counter = CONST_TEMPORAL_BOTTOM_BOOLEAN
+        self.current_temp_null_counter = CONST_TEMPORAL_BOTTOM_NULL
 
     def getFunctionDirectory(self):
         """
@@ -110,8 +172,27 @@ class Objective_JSListener(ParseTreeListener):
                 return self.functions_directory.getTable(self.function_name).getParamTable().getType(var)
         # Then check in the global scope
         for key, value in self.functions_directory.getDirectory().items():
-            if var in value.getSymbolTable().getTable():
-                return value.getSymbolTable().getContent(var).getType()
+            print("Function: " + str(key))
+            for key2, value2 in value.getSymbolTable().getSymbols().items():
+                print("Var: " + str(key2))
+            # if var in value.getSymbolTable().getSymbols():
+            #     return value.getSymbolTable().getContent(var).getType()
+
+    def getMemoryAddressFromVariable(self, var):
+        """
+        Check the var table of the function
+        for the type of variable
+        """
+        # First check in the local scope
+        if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
+            address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
+            return address
+        elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
+            return self.functions_directory.getTable(self.function_name).getParamTable().getAddress(var)
+        # Then check in the global scope
+        for key, value in self.functions_directory.getDirectory().items():
+            if var in value.getSymbolTable().getSymbols():
+                return value.getSymbolTable().getContent(var).getAddress()
 
     def newClass(self, className):
         """
@@ -161,39 +242,73 @@ class Objective_JSListener(ParseTreeListener):
         if type == "int" or type == 0:
             number_dimensions += 1
             self.functions_directory.addInt(self.function_name, False, 1)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions, )
+            self.current_local_int_counter += 1
         elif type == "float" or type == 1:
             number_dimensions += 1
             self.functions_directory.addFloat(self.function_name, False, 1)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            self.current_local_float_counter += 1
         elif type == "char" or type == 2:
             number_dimensions += 1
             self.functions_directory.addChar(self.function_name, False, 1)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            self.current_local_char_counter += 1
         elif type == "string" or type == 3:
             number_dimensions += 1
             self.functions_directory.addString(self.function_name, False, 1)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            self.current_local_string_counter += 1
         elif type == "bool" or type == 4:
             number_dimensions += 1
             self.functions_directory.addBool(self.function_name, False, 1)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            self.current_local_boolean_counter += 1
         elif re.search("list(\[[0-9]+\])+int", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addInt(self.function_name, False, total_size)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if dimensions == 2:
+                self.current_local_int_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+            else:
+                self.current_local_int_counter += (dimensions[0].getUpperBound()+1)
         elif re.search("list(\[[0-9]+\])+float", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addFloat(self.function_name, False, total_size)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if dimensions == 2:
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+            else:
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
         elif re.search("list(\[[0-9]+\])+char", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addChar(self.function_name, False, total_size)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if dimensions == 2:
+                self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
+            else:
+                self.current_local_char_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
         elif re.search("list(\[[0-9]+\])+string", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addString(self.function_name, False, total_size)
+            self.functions_directory.getInfoDirectory(self.current_local_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
+            if dimensions == 2:
+                self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
+            else:
+                self.current_local_string_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
         elif re.search("list(\[[0-9]+\])+bool", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addBool(self.function_name, False, total_size)
-        self.functions_directory.getInfoDirectory(self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
+            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if dimensions == 2:
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+            else:
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
 
     def newFunction(self):
         """
@@ -629,6 +744,7 @@ class Objective_JSListener(ParseTreeListener):
         self.id += 1
         self.cuadruplos.append(quadruple)
         self.registros = 1
+        self.resetMemoryAddresses()
 
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFuncAux.
@@ -656,7 +772,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#preVars.
     def exitPreVars(self, ctx:Objective_JSParser.PreVarsContext):
-        pass
+        self.resetMemoryAddresses()
 
 
     # Enter a parse tree produced by Objective_JSParser#vars_.
@@ -705,46 +821,83 @@ class Objective_JSListener(ParseTreeListener):
                 type_number = 0
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
+                self.current_local_int_counter += 1
             elif type == "float":
                 type_number = 1
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                self.current_local_float_counter += 1
             elif type == "char":
                 type_number = 2
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addChar(True)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                self.current_local_char_counter += 1
             elif type == "string":
                 type_number = 3
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addString(True)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
+                self.current_local_string_counter += 1
             elif type == "bool":
                 type_number = 4
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addBool(True)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
+                self.current_local_boolean_counter += 1
             elif type == "null":
                 type_number = 5
                 number_dimensions += 1
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_null_counter)
+                self.current_local_null_counter += 1
             elif re.search("list(\[[0-9]+\])+int", type) is not None:
                 type_number = 0
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
+                if dimensions == 2:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                else:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()+1)
             elif re.search("list(\[[0-9]+\])+float", type) is not None:
                 type_number = 1
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                if dimensions == 2:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                else:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()+1)
             elif re.search("list(\[[0-9]+\])+char", type) is not None:
                 type_number = 2
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
+                if dimensions == 2:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                else:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
             elif re.search("list(\[[0-9]+\])+string", type) is not None:
                 type_number = 3
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
+                if dimensions == 2:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                else:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
             elif re.search("list(\[[0-9]+\])+bool", type) is not None:
                 type_number = 4
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
-            self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
+                if dimensions == 2:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                else:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+                total_size, number_dimensions, dimensions = self.parseList(type)
 
     # Exit a parse tree produced by Objective_JSParser#vars_.
     def exitVars_(self, ctx:Objective_JSParser.Vars_Context):
@@ -856,7 +1009,8 @@ class Objective_JSListener(ParseTreeListener):
             print("Data type mismatch")
             sys.exit(0)
             print("Error")
-        cuadruplo = Quadruple(self.id, "=", valor, None, id)
+        address = self.getMemoryAddressFromVariable(id)
+        cuadruplo = Quadruple(self.id, "=", valor, None, address)
         #cuadruplo.print()
         self.cuadruplos.append(cuadruplo)
         self.id += 1
@@ -999,7 +1153,8 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#afterDoLoop.
     def exitAfterDoLoop(self, ctx:Objective_JSParser.AfterDoLoopContext):
         registro = "r" + str(self.registros)
-        quadruple = Quadruple(self.id, '+', 'temp-while', 1, registro)
+        quadruple = Quadruple(self.id, '+', 'temp-while', 1, self.current_temp_int_counter)
+        self.current_temp_int_counter += 1
         self.cuadruplos.append(quadruple)
         self.id += 1
         self.registros += 1
@@ -1067,9 +1222,12 @@ class Objective_JSListener(ParseTreeListener):
         elif ctx.TYPE_INT() is not None:
             cte = ctx.TYPE_INT().getText()
             registro = "r" + str(self.registros)
-            cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, registro)
-            self.operandos.push(registro)
+            # cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, registro)
+            cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, self.current_temp_int_counter)
+            # self.operandos.push(registro)
+            self.operandos.push(self.current_temp_int_counter)
             self.registros += 1
+            self.current_temp_int_counter += 1
             self.cuadruplos.append(cuadruplo)
             self.id += 1
         else:
@@ -1236,7 +1394,9 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
 
             registro = "r" + str(self.registros)
-            quadruple = Quadruple(self.id, '+', var, 1, registro)
+            address = self.getMemoryAddressFromVariable(var)
+            quadruple = Quadruple(self.id, '+', address, 1, self.current_temp_int_counter)
+            self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
@@ -1257,7 +1417,9 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
 
             registro = "r" + str(self.registros)
-            quadruple = Quadruple(self.id, '-', var, 1, registro)
+            address = self.getMemoryAddressFromVariable(var)
+            quadruple = Quadruple(self.id, '-', address, 1, self.current_temp_int_counter)
+            self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
@@ -1265,7 +1427,7 @@ class Objective_JSListener(ParseTreeListener):
 
 
             registro = "r" + str(self.registros)
-            quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, var)
+            quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, address)
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
@@ -1354,10 +1516,11 @@ class Objective_JSListener(ParseTreeListener):
                 print("Data type mismatch")
                 sys.exit(0)
             else:
-                registro = "r" + str(self.registros)
-                self.operandos.push(registro)
+                # registro = "r" + str(self.registros)
+                self.operandos.push(self.current_temp_boolean_counter)
                 self.types.push(new_type)
-                cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+                cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_boolean_counter)
+                self.current_temp_boolean_counter += 1
                 self.cuadruplos.append(cuadruplo)
                 #cuadruplo.print()
                 self.registros += 1
@@ -1416,10 +1579,12 @@ class Objective_JSListener(ParseTreeListener):
                 print("Data type mismatch")
                 sys.exit(0)
             else:
-                registro = "r" + str(self.registros)
-                self.operandos.push(registro)
+                # registro = "r" + str(self.registros)
+                # self.operandos.push(registro)
+                self.operandos.push(self.current_temp_boolean_counter)
                 self.types.push(new_type)
-                cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+                cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_boolean_counter)
+                self.current_temp_boolean_counter += 1
                 self.cuadruplos.append(cuadruplo)
                 #cuadruplo.print()
                 self.registros += 1
@@ -1475,10 +1640,26 @@ class Objective_JSListener(ParseTreeListener):
                 print("Data type mismatch")
                 sys.exit(0)
             else:
+                if new_type == 0: # Int
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_int_counter)
+                    self.operandos.push(self.current_temp_int_counter)
+                    self.current_temp_int_counter += 1
+                elif new_type == 1: # Float
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_float_counter)
+                    self.operandos.push(self.current_temp_float_counter)
+                    self.current_temp_float_counter += 1
+                elif new_type == 2: # Char
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_char_counter)
+                    self.operandos.push(self.current_temp_char_counter)
+                    self.current_temp_char_counter += 1
+                elif new_type == 3: # String
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_string_counter)
+                    self.operandos.push(self.current_temp_string_counter)
+                    self.current_temp_string_counter += 1
                 registro = "r" + str(self.registros)
-                self.operandos.push(registro)
+                # self.operandos.push(registro)
                 self.types.push(new_type)
-                cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+                # cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
                 self.cuadruplos.append(cuadruplo)
                 #cuadruplo.print()
                 self.registros += 1
@@ -1501,9 +1682,51 @@ class Objective_JSListener(ParseTreeListener):
     def enterFactor(self, ctx:Objective_JSParser.FactorContext):
         if ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
             value = ctx.varCte().getText()
-            self.operandos.push(value)
+            # self.operandos.push(value)
             type = self.getTypeFromFactor(ctx, value)
             type = self.convertTypeToInt(type)
+            try:
+                number = int(value)
+                self.operandos.push('%'+str(number))
+                self.current_local_int_counter += 1
+            except ValueError:
+                try:
+                    number = float(value)
+                    self.operandos.push('%'+str(number))
+                    self.current_local_float_counter += 1
+                except ValueError:
+                    if value == "true":
+                        self.operandos.push('%'+str(value))
+                        self.current_local_boolean_counter += 1
+                    elif value == "false":
+                        self.operandos.push('%'+str(value))
+                        self.current_local_boolean_counter += 1
+                    elif type == 0:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_int_counter += 1
+                    elif type == 1:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_float_counter += 1
+                    elif type == 2:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_char_counter += 1
+                    elif type == 3:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_string_counter += 1
+                    elif type == 4:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_boolean_counter += 1
+                    elif type == 5:
+                        address = self.getMemoryAddressFromVariable(value)
+                        self.operandos.push(address)
+                        # self.current_local_null_counter += 1
+
+
             self.types.push(type)
         elif ctx.factorParentesis() is not None:
             # Fondo falso
@@ -1539,9 +1762,17 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
             else:
                 registro = "r" + str(self.registros)
-                self.operandos.push(registro)
+                # self.operandos.push(registro)
                 self.types.push(new_type)
-                cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+                if new_type == 0: #int
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_int_counter)
+                    self.operandos.push(self.current_temp_int_counter)
+                    self.current_temp_int_counter += 1
+                else: #Float
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_float_counter)
+                    self.operandos.push(self.current_temp_float_counter)
+                    self.current_temp_float_counter += 1
+                # cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
                 self.cuadruplos.append(cuadruplo)
                 #cuadruplo.print()
                 self.id += 1

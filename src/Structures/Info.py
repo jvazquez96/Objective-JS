@@ -1,11 +1,11 @@
 from Structures.Dimensions import Dimensions
 
 class Info(object):
-	def __init__(self, type=None, visibility=None, isList=None, listSize=0, dim = 0, dimensions = None):
+	def __init__(self, type=None, visibility=None, isList=None, listSize=0, dim = 0, dimensions = None, address = 0):
 		if type is None and visibility is None:
 			self._info = []
 		else:
-			self._info = [type, visibility, isList, listSize, dim, dimensions]
+			self._info = [type, visibility, isList, listSize, dim, dimensions, address]
 	def getInfo(self):
 		return self._info
 	def getType(self):
@@ -32,3 +32,5 @@ class Info(object):
 		return self._info[5][dim].getUpperBound()
 	def getM(self, dim):
 		return self._info[5][dim].getM()
+	def getAddress(self):
+		return self._info[6]
