@@ -16,6 +16,10 @@ def main(argv):
     walker = ParseTreeWalker()
     walker.walk(listener, tree)
     quadruples = listener.getQuadruples()
+    with open ('archivo.obj', 'w') as file:
+        for quadruple in quadruples:
+            file.write(str(quadruple.getId()) + " " + str(quadruple.getOperator()) + " " + str(quadruple.getOperand1()) + " " + str(quadruple.getOperand2()) + " " + str(quadruple.getResult()) + "\n")
+
     # function_directory = listener.getFunctionDirectory()
     # for key, value in function_directory.getDirectory().items():
     #     print("Function: " + str(key))

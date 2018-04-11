@@ -7,6 +7,9 @@ class Quadruple(object):
 		self.operand2 = operand2
 		self.result = result
 
+	def getId(self):
+		return self.id
+
 	def getOperator(self):
 		return self.operator
 
