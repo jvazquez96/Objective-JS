@@ -359,7 +359,6 @@ class Objective_JSListener(ParseTreeListener):
         elif ctx.varCte().TYPE_STRING() is not None or re.search("list(\[.*\])+string", value) is not None:
             return 3
         elif ctx.varCte().TYPE_BOOL() is not None or re.search("list(\[.*\])+bool", value) is not None:
-            print("Bool")
             return 4
         else:
             return self.getTypeFromVariable(value)

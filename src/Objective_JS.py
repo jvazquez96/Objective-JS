@@ -5,6 +5,7 @@ from antlr4 import *
 from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
 from Grammar.Objective_JSListener import Objective_JSListener
+from VirtualMachine import VirtualMachine
  
 def main(argv):
     input = FileStream(argv[1])
@@ -19,6 +20,8 @@ def main(argv):
     with open ('archivo.obj', 'w') as file:
         for quadruple in quadruples:
             file.write(str(quadruple.getId()) + " " + str(quadruple.getOperator()) + " " + str(quadruple.getOperand1()) + " " + str(quadruple.getOperand2()) + " " + str(quadruple.getResult()) + "\n")
+
+    VirtualMachine()
 
     # function_directory = listener.getFunctionDirectory()
     # for key, value in function_directory.getDirectory().items():
@@ -53,8 +56,8 @@ def main(argv):
     #     print("Number char of temporary: " + str(value.numberOfTemporaryChar()))
     #     print("Number string of temporary: " + str(value.numberOfTemporaryString()))
     #     print("Number bool of temporary: " + str(value.numberOfTemporaryBool()))
-    for i in quadruples:
-        i.print()
+    # for i in quadruples:
+    #     i.print()
     # for key, value in listener.getFunctionDirectory().getDirectory().items():
     #   print("Function name: " + str(key))
     #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))
