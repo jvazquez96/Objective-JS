@@ -172,11 +172,8 @@ class Objective_JSListener(ParseTreeListener):
                 return self.functions_directory.getTable(self.function_name).getParamTable().getType(var)
         # Then check in the global scope
         for key, value in self.functions_directory.getDirectory().items():
-            print("Function: " + str(key))
-            for key2, value2 in value.getSymbolTable().getSymbols().items():
-                print("Var: " + str(key2))
-            # if var in value.getSymbolTable().getSymbols():
-            #     return value.getSymbolTable().getContent(var).getType()
+            if var in value.getSymbolTable().getSymbols():
+                return value.getSymbolTable().getContent(var).getType()
 
     def getMemoryAddressFromVariable(self, var):
         """
@@ -264,51 +261,53 @@ class Objective_JSListener(ParseTreeListener):
             self.functions_directory.addBool(self.function_name, False, 1)
             self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
             self.current_local_boolean_counter += 1
-        elif re.search("list(\[[0-9]+\])+int", type) is not None:
+        elif re.search("list(\[.*\])+int", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addInt(self.function_name, False, total_size)
             self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
             if dimensions == 2:
-                self.current_local_int_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                self.current_local_int_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
             else:
                 self.current_local_int_counter += (dimensions[0].getUpperBound()+1)
-        elif re.search("list(\[[0-9]+\])+float", type) is not None:
+        elif re.search("list(\[.*\])+float", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addFloat(self.function_name, False, total_size)
             self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
             if dimensions == 2:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
             else:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
-        elif re.search("list(\[[0-9]+\])+char", type) is not None:
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+        elif re.search("list(\[.*\])+char", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addChar(self.function_name, False, total_size)
             self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
             if dimensions == 2:
-                self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
+                self.current_local_char_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
             else:
-                self.current_local_char_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
-        elif re.search("list(\[[0-9]+\])+string", type) is not None:
+                self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
+
+        elif re.search("list(\[.*\])+string", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addString(self.function_name, False, total_size)
             self.functions_directory.getInfoDirectory(self.current_local_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
             if dimensions == 2:
-                self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
+                self.current_local_string_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
             else:
-                self.current_local_string_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
-        elif re.search("list(\[[0-9]+\])+bool", type) is not None:
+                self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
+        elif re.search("list(\[.*\])+bool", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addBool(self.function_name, False, total_size)
             self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
             if dimensions == 2:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
             else:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+
 
     def newFunction(self):
         """
@@ -351,15 +350,16 @@ class Objective_JSListener(ParseTreeListener):
 
 
     def getTypeFromFactor(self, ctx, value):
-        if ctx.varCte().TYPE_INT() is not None:
+        if ctx.varCte().TYPE_INT() is not None or re.search("list(\[.*\])+int", value) is not None:
             return 0
-        elif ctx.varCte().TYPE_FLOAT() is not None:
+        elif ctx.varCte().TYPE_FLOAT() is not None or  re.search("list(\[.*\])+float", value) is not None:
             return 1
-        elif ctx.varCte().TYPE_CHAR() is not None:
+        elif ctx.varCte().TYPE_CHAR() is not None or  re.search("list(\[.*\])+char", value) is not None:
             return 2
-        elif ctx.varCte().TYPE_STRING() is not None:
+        elif ctx.varCte().TYPE_STRING() is not None or re.search("list(\[.*\])+string", value) is not None:
             return 3
-        elif ctx.varCte().TYPE_BOOL() is not None:
+        elif ctx.varCte().TYPE_BOOL() is not None or re.search("list(\[.*\])+bool", value) is not None:
+            print("Bool")
             return 4
         else:
             return self.getTypeFromVariable(value)
@@ -374,7 +374,7 @@ class Objective_JSListener(ParseTreeListener):
                 return 2
             elif type == "string":
                 return 3
-            elif type == "bool":
+            elif type == "bool" or re.search("list(\[.*\])+bool", type) is not None:
                 return 4
             elif type == "null":
                 return 5
@@ -801,6 +801,7 @@ class Objective_JSListener(ParseTreeListener):
         elif re.search("list(\[.\])+string", self.type) is not None:
             type_number = 3
         elif re.search("list(\[.\])+bool", self.type) is not None:
+            print("hereeeeeeasiduhasuidhaisdhasudk")
             type_number = 4
 
         self.newVars(id, type_number, self.visibility)
@@ -1091,7 +1092,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#escritura.
     def enterEscritura(self, ctx:Objective_JSParser.EscrituraContext):
-        quadruple = Quadruple(self.id, "print", ctx.megaExpresion().getText(), None, None)
+        quadruple = Quadruple(self.id, "print", self.operandos.pop(), None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
 
@@ -1103,7 +1104,7 @@ class Objective_JSListener(ParseTreeListener):
     # Enter a parse tree produced by Objective_JSParser#escrituraAux.
     def enterEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
         if ctx.COMMA() is not None:
-            quadruple = Quadruple(self.id, "print",  ctx.megaExpresion().getText(), None, None)
+            quadruple = Quadruple(self.id, "print",  self.operandos.pop(), None, None)
             self.id += 1
             self.cuadruplos.append(quadruple)
 
@@ -1309,9 +1310,16 @@ class Objective_JSListener(ParseTreeListener):
     def enterVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
         pass
 
+    def getVarNameFromMemoryAddress(self, address):
+        for funtion_name, info in self.functions_directory.getDirectory().items():
+            for var, info2 in info.getSymbolTable().getSymbols().items():
+                if address == info2.getAddress():
+                    return var
+
     # Exit a parse tree produced by Objective_JSParser#verifyArgument.
     def exitVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
         argument = self.operandos.pop()
+        argument_address = argument
         argument_type = self.types.pop()
 
         argument_type = self.normalizeTypes(argument_type)
@@ -1321,11 +1329,13 @@ class Objective_JSListener(ParseTreeListener):
         dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
         dimensions_argument = 1
         all_dimensions_argument = []
+        argument = self.getVarNameFromMemoryAddress(argument)
         for key, value in self.functions_directory.getDirectory().items():
             if argument in value.getSymbolTable().getSymbols():
                 dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()
                 all_dimensions_argument = value.getSymbolTable().getContent(argument).getDim()
                 break
+
         all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
         if argument_type != parameter_type:
             print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
@@ -1344,7 +1354,8 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
-        quadruple = Quadruple(self.id, "param", argument, None, "param" + str(self.current_param_counter))
+
+        quadruple = Quadruple(self.id, "param", argument_address, None, "param" + str(self.current_param_counter))
         self.cuadruplos.append(quadruple)
         self.id += 1
 
@@ -1725,8 +1736,6 @@ class Objective_JSListener(ParseTreeListener):
                         address = self.getMemoryAddressFromVariable(value)
                         self.operandos.push(address)
                         # self.current_local_null_counter += 1
-
-
             self.types.push(type)
         elif ctx.factorParentesis() is not None:
             # Fondo falso

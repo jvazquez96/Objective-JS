@@ -7,9 +7,9 @@ Class HolaMundo {
 	var cecy, andrea, miguel : float;
 	var quique, raul, jaime : string;
 	var jorge : list [5] int;
-	var ss : list [2][18] bool;
+	var ss : list [2][18] char;
 
-	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [3][10] bool tic) returns {
+	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [10][30] bool tic) returns {
 		var salma, morgan, luis, paco : int;
 		argumentoUno = argumentoDos / 5;
 		return argumentoUno;
@@ -27,7 +27,7 @@ Class HolaMundo {
 		var nala : int;
 		var cecy, andrea, hola : float;
 		var jb : char;
-		var jose : list [3][10] bool;
+		var jose : list [10][30] bool;
 		morgan = 25;
 		var vaso : bool;
 		jb = "a";
@@ -49,7 +49,6 @@ Class HolaMundo {
 			paco = 25.5;
 			nala = paco / luis;
 		}
-
 		print("Hola Mundo: ", " este es mi primer programa", "j3j3");
 
 		var i : int;
@@ -70,11 +69,12 @@ Class HolaMundo {
 		santiago = 1;
 
 		while(i < paco){
-			print("Ciclo infinito");
+			print("Ciclo infinito", "dos.4");
 			jb = "b";
 			i = i + 1;
 		}
 
+		funcionUno(2, 2.5, "32", jose);
 		funcionDos(2,3,4.5, "string", true);
 		read >> nala >> morgan >> quique;
 
