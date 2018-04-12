@@ -181,6 +181,11 @@ class Objective_JSListener(ParseTreeListener):
         for the type of variable
         """
         # First check in the local scope
+        # for key, value in self.functions_directory.getDirectory().items():
+        #     print("Function: " + str(key))
+        #     for key2, value2 in value.getSymbolTable().getSymbols().items():
+        #         print("Var: " + str(key2))
+        #         print("Address: " + str(value2.getAddress()))
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
             address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
             return address
@@ -1091,7 +1096,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#escritura.
     def enterEscritura(self, ctx:Objective_JSParser.EscrituraContext):
-        quadruple = Quadruple(self.id, "print", self.operandos.pop(), None, None)
+        pass
+
+    def enterPrintAfterExpresion(self, ctx:Objective_JSParser.EscrituraContext):
+        # print("PRINT: " + str(self.operandos.pop()))
+        exp = self.operandos.pop()
+        quadruple = Quadruple(self.id, "print", exp, None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
 
@@ -1102,10 +1112,14 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#escrituraAux.
     def enterEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
-        if ctx.COMMA() is not None:
-            quadruple = Quadruple(self.id, "print",  self.operandos.pop(), None, None)
-            self.id += 1
-            self.cuadruplos.append(quadruple)
+        pass
+
+
+    def enterPrintAfterExpresionAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
+        # print("PRINT aux: " + str(self.operandos.pop()))
+        quadruple = Quadruple(self.id, "print",  self.operandos.pop(), None, None)
+        self.id += 1
+        self.cuadruplos.append(quadruple)
 
     # Exit a parse tree produced by Objective_JSParser#escrituraAux.
     def exitEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
@@ -1127,7 +1141,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#afterDo.
     def exitAfterDo(self, ctx:Objective_JSParser.AfterDoContext):
-        cuadruplo = Quadruple(self.id, '=', 1, None, 'temp-while')
+        cuadruplo = Quadruple(self.id, '=', "%1", None, self.current_temp_int_counter)
+        self.operandos.push(self.current_temp_int_counter)
+        self.current_temp_int_counter += 1
         self.cuadruplos.append(cuadruplo)
         self.id += 1
         self.pending_jumps.push(len(self.cuadruplos) + 1)
@@ -1141,6 +1157,7 @@ class Objective_JSListener(ParseTreeListener):
     def exitAfterCondition(self, ctx:Objective_JSParser.AfterConditionContext):
         condition = self.operandos.pop()
         quadruple = Quadruple(self.id, GO.TOFALSE, condition, None, None)
+        self.operandos.push(condition)
         self.cuadruplos.append(quadruple)
         self.id += 1
         self.pending_jumps.push(len(self.cuadruplos)-1)
@@ -1153,15 +1170,19 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#afterDoLoop.
     def exitAfterDoLoop(self, ctx:Objective_JSParser.AfterDoLoopContext):
         registro = "r" + str(self.registros)
-        quadruple = Quadruple(self.id, '+', 'temp-while', 1, self.current_temp_int_counter)
+        address = self.operandos.pop()
+        quadruple = Quadruple(self.id, '+', address, "%1", self.current_temp_int_counter)
+        self.operandos.push(self.current_temp_int_counter)
+        self.types.push(0)
         self.current_temp_int_counter += 1
         self.cuadruplos.append(quadruple)
         self.id += 1
         self.registros += 1
-        self.operandos.push(registro)
 
         registro = "r" + str(self.registros)
-        quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, 'temp-while')
+
+        address = self.operandos.pop()
+        quadruple = Quadruple(self.id, '=', address, None, address)
         self.cuadruplos.append(quadruple)
         self.id += 1
         self.registros += 1
@@ -1223,9 +1244,11 @@ class Objective_JSListener(ParseTreeListener):
             cte = ctx.TYPE_INT().getText()
             registro = "r" + str(self.registros)
             # cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, registro)
-            cuadruplo = Quadruple(self.id, '<=', 'temp-while', cte, self.current_temp_int_counter)
+            address = self.operandos.pop()
+            cuadruplo = Quadruple(self.id, '<=', address, "%" + str(cte), self.current_temp_int_counter)
             # self.operandos.push(registro)
             self.operandos.push(self.current_temp_int_counter)
+            self.types.push(0)
             self.registros += 1
             self.current_temp_int_counter += 1
             self.cuadruplos.append(cuadruplo)
@@ -1405,16 +1428,16 @@ class Objective_JSListener(ParseTreeListener):
 
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
-            quadruple = Quadruple(self.id, '+', address, 1, self.current_temp_int_counter)
+            quadruple = Quadruple(self.id, '+', address, "%1", self.current_temp_int_counter)
+            self.operandos.push(self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
-            self.operandos.push(registro)
 
 
             registro = "r" + str(self.registros)
-            quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, var)
+            quadruple = Quadruple(self.id, '=', self.operandos.pop(), None, address)
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
@@ -1428,7 +1451,7 @@ class Objective_JSListener(ParseTreeListener):
 
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
-            quadruple = Quadruple(self.id, '-', address, 1, self.current_temp_int_counter)
+            quadruple = Quadruple(self.id, '-', address, "%1", self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
@@ -1741,7 +1764,8 @@ class Objective_JSListener(ParseTreeListener):
             self.operadores.push('(')
         elif not self.isListDeclared:
             value = ctx.varCte().getText()
-            self.operandos.push(value)
+            self.operandos.push("%" + value)
+
             type = self.getTypeFromFactor(ctx, value)
             type = self.convertTypeToInt(type)
             self.types.push(type)

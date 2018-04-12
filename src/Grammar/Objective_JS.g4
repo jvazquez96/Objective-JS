@@ -350,12 +350,18 @@ enterElse:
 	;
 
 escritura :
-	PRINT LEFT_PARENTHESIS megaExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	PRINT LEFT_PARENTHESIS megaExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	;
+
+printAfterExpresion :
 	;
 
 escrituraAux :
-	COMMA megaExpresion escrituraAux
+	COMMA megaExpresion printAfterExpresionAux escrituraAux
 	|
+	;
+
+printAfterExpresionAux :
 	;
 
 ciclos :

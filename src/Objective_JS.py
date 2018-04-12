@@ -19,7 +19,7 @@ def main(argv):
     quadruples = listener.getQuadruples()
     with open ('archivo.obj', 'w') as file:
         for quadruple in quadruples:
-            file.write(str(quadruple.getId()) + " " + str(quadruple.getOperator()) + " " + str(quadruple.getOperand1()) + " " + str(quadruple.getOperand2()) + " " + str(quadruple.getResult()) + "\n")
+            file.write(str(quadruple.getId()) + "," + str(quadruple.getOperator()) + "," + str(quadruple.getOperand1()) + "," + str(quadruple.getOperand2()) + "," + str(quadruple.getResult()) + "\n")
 
     VirtualMachine()
 
