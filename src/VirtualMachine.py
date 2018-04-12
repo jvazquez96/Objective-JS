@@ -136,6 +136,16 @@ class VirtualMachine(object):
 					self.set_local(address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(address, res)
+			elif operator == "^":
+				val1 = self.getValue(operand1)
+				val2 = self.getValue(operand2)
+				res = pow(val1,val2)
+				if self.is_constant(address):
+					self.set_constant(address, res)
+				elif self.is_local(address):
+					self.set_local(address, res)
+				elif self.is_temporal(address):
+					self.set_temporal(address, res)
 			elif operator == "!=":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)

@@ -72,7 +72,14 @@ Class HolaMundo {
 			jb = "m";
 		}
 
-
+		var a : int;
+		a = 2;
+		print("a", a);
+		var b : int;
+		b = 16;
+		var res: int;
+		res = a ^ b;
+		print(res);
 		do 18 times{
 			print("Diez y ocho");
 		}

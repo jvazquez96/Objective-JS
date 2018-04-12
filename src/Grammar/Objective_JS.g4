@@ -254,7 +254,7 @@ bloqueFuncAux :
 	;
 
 bloqueFuncAux2 :
-	RETURN megaExpresion SEMICOLON
+	RETURN hyperExpresion SEMICOLON
 	|
 	;
 
@@ -323,7 +323,7 @@ estatuto :
 	;
 
 asignacion :
-	objeto ASSIGNMENT megaExpresion SEMICOLON
+	objeto ASSIGNMENT hyperExpresion SEMICOLON
 	;
 
 condicion :
@@ -337,7 +337,7 @@ exitIfExpresion :
 	;
 
 condicionAux :
-	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS exitIfExpresion bloque condicionChoice
+	LEFT_PARENTHESIS hyperExpresion RIGHT_PARENTHESIS exitIfExpresion bloque condicionChoice
 	;
 
 condicionChoice :
@@ -350,14 +350,14 @@ enterElse:
 	;
 
 escritura :
-	PRINT LEFT_PARENTHESIS megaExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	PRINT LEFT_PARENTHESIS hyperExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
 	;
 
 printAfterExpresion :
 	;
 
 escrituraAux :
-	COMMA megaExpresion printAfterExpresionAux escrituraAux
+	COMMA hyperExpresion printAfterExpresionAux escrituraAux
 	|
 	;
 
@@ -366,7 +366,7 @@ printAfterExpresionAux :
 
 ciclos :
 	DO afterDo doAux afterCondition TIMES bloque afterDoLoop
-	| WHILE afterWhile LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS afterWhileExpression bloque exitWhile
+	| WHILE afterWhile LEFT_PARENTHESIS hyperExpresion RIGHT_PARENTHESIS afterWhileExpression bloque exitWhile
 	;
 
 afterDo :
@@ -398,7 +398,7 @@ llamadaFunc :
 
 
 argumentosLlamada :
-	megaExpresion verifyArgument addArgument (COMMA megaExpresion verifyArgument addArgument)*
+	hyperExpresion verifyArgument addArgument (COMMA hyperExpresion verifyArgument addArgument)*
 	;
 
 addArgument :
@@ -440,6 +440,16 @@ objetoAux:
 	| ID DOT ID
 	| ID
 	| ID LEFT_SQUARE_BRACKET TYPE_INT RIGHT_SQUARE_BRACKET matrix
+	;
+
+
+hyperExpresion :
+	megaExpresion hyperExpresionAux
+	;
+
+hyperExpresionAux :
+	POWER_OPERATOR hyperExpresion
+	|
 	;
 
 megaExpresion : 
@@ -492,7 +502,7 @@ factor :
 	;
 
 factorParentesis :
-	LEFT_PARENTHESIS megaExpresion RIGHT_PARENTHESIS
+	LEFT_PARENTHESIS hyperExpresion RIGHT_PARENTHESIS
 	;
 
 varCte :

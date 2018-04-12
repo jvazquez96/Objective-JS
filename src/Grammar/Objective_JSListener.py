@@ -1659,6 +1659,48 @@ class Objective_JSListener(ParseTreeListener):
     def exitMegaExpresion(self, ctx:Objective_JSParser.MegaExpresionContext):
         pass
 
+    def enterHyperExpresionAux(self, ctx):
+        if ctx.POWER_OPERATOR() is not None:
+            self.operadores.push('^')
+
+    def exitHyperExpresionAux(self, ctx):
+        if self.operadores.top() == '^':
+            operando2 = self.operandos.pop()
+            tipo1 = self.types.pop()
+            operando1 = self.operandos.pop()
+            tipo2 = self.types.pop()
+            operador = self.operadores.pop()
+            number_op = 4
+
+
+            new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
+
+            if new_type == 0:
+                self.functions_directory.addTempInt(self.function_name, 1)
+            elif new_type == 1:
+                self.functions_directory.addTempFloat(self.function_name, 1)
+            if new_type == -1:
+                print("Data type mismatch")
+                sys.exit(0)
+            else:
+                registro = "r" + str(self.registros)
+                # self.operandos.push(registro)
+                self.types.push(new_type)
+                if new_type == 0: #int
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_int_counter)
+                    self.operandos.push(self.current_temp_int_counter)
+                    self.current_temp_int_counter += 1
+                else: #Float
+                    cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_float_counter)
+                    self.operandos.push(self.current_temp_float_counter)
+                    self.current_temp_float_counter += 1
+                # cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
+                self.cuadruplos.append(cuadruplo)
+                #cuadruplo.print()
+                self.id += 1
+                self.registros += 1
+
+
 
     # Enter a parse tree produced by Objective_JSParser#megaExpresionAux.
     def enterMegaExpresionAux(self, ctx:Objective_JSParser.MegaExpresionAuxContext):
@@ -1681,7 +1723,11 @@ class Objective_JSListener(ParseTreeListener):
                 number_op = 13
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-            self.functions_directory.addTempBool(self.function_name, 1)
+            if new_type == 0:
+                self.functions_directory.addTempInt(self.function_name, 1)
+            elif new_type == 1:
+                self.functions_directory.addTempFloat(self.function_name, 1)
+
 
             if new_type == -1.0:
                 print("Data type mismatch")
