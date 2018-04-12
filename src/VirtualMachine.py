@@ -69,8 +69,8 @@ class VirtualMachine(object):
 		with open ('archivo.obj', 'r') as file:
 			self.quadruples = file.readlines()
 		list_splitted = self.quadruples[0].split( )
-		for i in list_splitted:
-			print(i)
+		# for i in list_splitted:
+		# 	print(i)
 		self.operation(list_splitted[0], list_splitted[1], list_splitted[2], list_splitted[3])
 						# int, float, char, string, boolean, null
 		self.constants = [dict(), dict(), dict(), dict(), dict(), dict()]

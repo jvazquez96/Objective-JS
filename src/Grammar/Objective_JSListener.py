@@ -81,15 +81,30 @@ class Objective_JSListener(ParseTreeListener):
         self.types = Stack()
         self.registros = 1
         self.oraculo = Cube()
-        self.isListDeclared = False;
+        self.isListDeclared = False
         self.pending_jumps = Stack()
-        self.id = 1;
+        self.id = 1
         self.do_object = False
         self.current_param_counter = 0
-        self.resetMemoryAddresses()
+        self.initMemoryAddresses()
+        self.isGlobalVar = True
 
 
     def resetMemoryAddresses(self):
+        self.current_local_int_counter = CONST_LOCAL_BOTTOM_INT
+        self.current_local_float_counter = CONST_LOCAL_BOTTOM_FLOAT
+        self.current_local_char_counter = CONST_LOCAL_BOTTOM_CHAR
+        self.current_local_string_counter = CONST_LOCAL_BOTTOM_STRING
+        self.current_local_boolean_counter = CONST_LOCAL_BOTTOM_BOOLEAN
+        self.current_local_null_counter = CONST_LOCAL_BOTTOM_NULL
+        self.current_temp_int_counter = CONST_TEMPORAL_BOTTOM_INT
+        self.current_temp_float_counter = CONST_TEMPORAL_BOTTOM_FLOAT
+        self.current_temp_char_counter = CONST_TEMPORAL_BOTTOM_CHAR
+        self.current_temp_string_counter = CONST_TEMPORAL_BOTTOM_STRING
+        self.current_temp_boolean_counter = CONST_TEMPORAL_BOTTOM_BOOLEAN
+        self.current_temp_null_counter = CONST_TEMPORAL_BOTTOM_NULL
+
+    def initMemoryAddresses(self):
         self.current_global_int_counter = CONST_GLOBAL_BOTTOM_INT
         self.current_global_float_counter = CONST_GLOBAL_BOTTOM_FLOAT
         self.current_global_char_counter = CONST_GLOBAL_BOTTOM_CHAR
@@ -181,6 +196,11 @@ class Objective_JSListener(ParseTreeListener):
         for the type of variable
         """
         # First check in the local scope
+        # for key, value in self.functions_directory.getDirectory().items():
+        #     print("Function: " + str(key))
+        #     for key2, value2 in value.getSymbolTable().getSymbols().items():
+        #         print("Var: " + str(key2))
+        #         print("Address: " + str(value2.getAddress()))
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
             address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
             return address
@@ -225,6 +245,7 @@ class Objective_JSListener(ParseTreeListener):
         else: # List
             dimensions[0].setM(0)
         return totalSize, number_dimensions, dimensions
+
     def newVars(self, id, type, visibility):
         """
         Adds a new variable into the function_directory
@@ -232,6 +253,7 @@ class Objective_JSListener(ParseTreeListener):
         if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
             print("Syntax error!! Variable: " + id + " is already defined")
             sys.exit(0)
+
         isList = False
         total_size = 1
         dimensions = []
@@ -239,82 +261,170 @@ class Objective_JSListener(ParseTreeListener):
         if type == "int" or type == 0:
             number_dimensions += 1
             self.functions_directory.addInt(self.function_name, False, 1)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions, )
-            self.current_local_int_counter += 1
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_int_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_global_int_counter += 1
+            else:
+                # print(id + " - " + str(self.current_local_int_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_int_counter += 1
         elif type == "float" or type == 1:
             number_dimensions += 1
             self.functions_directory.addFloat(self.function_name, False, 1)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            self.current_local_float_counter += 1
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_float_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_global_float_counter += 1
+            else:
+                # print(id + " - " + str(self.current_local_float_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_float_counter += 1
         elif type == "char" or type == 2:
             number_dimensions += 1
             self.functions_directory.addChar(self.function_name, False, 1)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            self.current_local_char_counter += 1
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_char_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_global_char_counter += 1
+            else:
+                # print(id + " - " + str(self.current_local_char_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_char_counter += 1
         elif type == "string" or type == 3:
             number_dimensions += 1
             self.functions_directory.addString(self.function_name, False, 1)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            self.current_local_string_counter += 1
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_string_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_global_string_counter += 1
+            else:
+                # print(id + " - " + str(self.current_local_string_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_string_counter += 1
         elif type == "bool" or type == 4:
             number_dimensions += 1
             self.functions_directory.addBool(self.function_name, False, 1)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            self.current_local_boolean_counter += 1
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_bool_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_global_boolean_counter += 1
+            else:
+                # print(id + " - " + str(self.current_local_boolean_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_boolean_counter += 1
         elif re.search("list(\[.*\])+int", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addInt(self.function_name, False, total_size)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if dimensions == 2:
-                self.current_local_int_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_int_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                self.current_local_int_counter += (dimensions[0].getUpperBound()+1)
+                # print(id + " - " + str(self.current_local_int_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+
+            if len(dimensions) == 2:
+                if self.isGlobalVar:
+                    self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            else:
+                if self.isGlobalVar:
+                    self.current_global_int_counter += (dimensions[0].getUpperBound())
+                else:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound())
         elif re.search("list(\[.*\])+float", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addFloat(self.function_name, False, total_size)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if dimensions == 2:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_float_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
+                # print(id + " - " + str(self.current_local_float_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+
+            if len(dimensions) == 2:
+                if self.isGlobalVar:
+                    self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            else:
+                if self.isGlobalVar:
+                    self.current_global_float_counter += (dimensions[0].getUpperBound())
+                else:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound())
         elif re.search("list(\[.*\])+char", type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(type)
             self.functions_directory.addChar(self.function_name, False, total_size)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if dimensions == 2:
-                self.current_local_char_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_char_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
+                # print(id + " - " + str(self.current_local_char_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+
+            if len(dimensions) == 2:
+                if self.isGlobalVar:
+                    self.current_global_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            else:
+                if self.isGlobalVar:
+                    self.current_global_char_counter += (dimensions[0].getUpperBound())
+                else:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound())
 
         elif re.search("list(\[.*\])+string", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addString(self.function_name, False, total_size)
-            self.functions_directory.getInfoDirectory(self.current_local_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
-            if dimensions == 2:
-                self.current_local_string_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_string_counter))
+                self.functions_directory.getInfoDirectory(self.current_global_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
+                # print(id + " - " + str(self.current_local_string_counter))
+                self.functions_directory.getInfoDirectory(self.current_local_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
+            if len(dimensions) == 2:
+                if self.isGlobalVar:
+                    self.current_global_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            else:
+                if self.isGlobalVar:
+                    self.current_global_string_counter += (dimensions[0].getUpperBound())
+                else:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound())
         elif re.search("list(\[.*\])+bool", type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(type)
             isList = True
             self.functions_directory.addBool(self.function_name, False, total_size)
-            self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if dimensions == 2:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) * (dimensions[1].getUpperBound()+1)
+            if self.isGlobalVar:
+                # print(id + " - " + str(self.current_global_bool_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
-
+                # print(id + " - " + str(self.current_local_boolean_counter))
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if len(dimensions) == 2:
+                if self.isGlobalVar:
+                    self.current_global_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            else:
+                if self.isGlobalVar:
+                    self.current_global_boolean_counter += (dimensions[0].getUpperBound())
+                else:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
 
     def newFunction(self):
         """
         Adds a new function into the function directory
         """
         if self.function_name not in self.functions_directory.getDirectory():
-            self.functions_directory.create_table(self.function_name, InfoDirectory())
+            self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
+
             self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
             for key, value in self.argumentos.getParameters().items():
                 if value.getType() == 0:
@@ -332,6 +442,10 @@ class Objective_JSListener(ParseTreeListener):
                 elif value.getType() == 4:
                     self.functions_directory.addBool(self.function_name, True, 1)
                     self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
+
+            # Test
+            # size = len(self.functions_directory.getTable(self.function_name).getParamTable().getParameters())
+            # print(self.function_name + " - size: " + str(size))
         else:
             print("Syntax error!! Function: " + self.function_name + " is already defined")
             sys.exit(0)
@@ -423,6 +537,10 @@ class Objective_JSListener(ParseTreeListener):
     def enterClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
         self.function_name = ctx.CLASSNAME().getText()
         self.functions_directory.create_table(self.function_name, InfoDirectory())
+
+        # Test
+        # size = len(self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols())
+        # print(self.function_name + " - size: " + str(size))
 
     # Exit a parse tree produced by Objective_JSParser#class_declaration.
     def exitClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
@@ -674,6 +792,7 @@ class Objective_JSListener(ParseTreeListener):
     def enterImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
         if ctx.FUNCTION() is not None:
             self.function_name = ctx.ID().getText()
+            # print(self.function_name)
 
     # Exit a parse tree produced by Objective_JSParser#impFunc.
     def exitImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
@@ -761,6 +880,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#bloqueFuncAux2.
     def exitBloqueFuncAux2(self, ctx:Objective_JSParser.BloqueFuncAux2Context):
+        # Test
+        # size = len(self.functions_directory.getTable(self.function_name).getParamTable().getParameters()) + len(self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols())
+        # print("size - " + str(size))
         self.functions_directory.remove_info(self.function_name)
         self.function_name = None
 
@@ -771,7 +893,10 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#preVars.
     def exitPreVars(self, ctx:Objective_JSParser.PreVarsContext):
-        self.resetMemoryAddresses()
+        self.isGlobalVar = False
+        # Test
+        # size = len(self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols())
+        # print("size: " + str(size))
 
 
     # Enter a parse tree produced by Objective_JSParser#vars_.
@@ -800,7 +925,6 @@ class Objective_JSListener(ParseTreeListener):
         elif re.search("list(\[.\])+string", self.type) is not None:
             type_number = 3
         elif re.search("list(\[.\])+bool", self.type) is not None:
-            print("hereeeeeeasiduhasuidhaisdhasudk")
             type_number = 4
 
         self.newVars(id, type_number, self.visibility)
@@ -820,12 +944,14 @@ class Objective_JSListener(ParseTreeListener):
             if type == "int":
                 type_number = 0
                 number_dimensions += 1
+                # print(id + " - " + str(self.current_local_int_counter))
                 # self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
                 self.current_local_int_counter += 1
             elif type == "float":
                 type_number = 1
                 number_dimensions += 1
+                # print(id + " - " + str(self.current_local_float_counter))
                 # self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
                 self.current_local_float_counter += 1
@@ -833,71 +959,78 @@ class Objective_JSListener(ParseTreeListener):
                 type_number = 2
                 number_dimensions += 1
                 # self.functions_directory.getSymbolTable(self.function_name).addChar(True)
-                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
                 self.current_local_char_counter += 1
             elif type == "string":
                 type_number = 3
                 number_dimensions += 1
+                # print(id + " - " + str(self.current_local_string_counter))
                 # self.functions_directory.getSymbolTable(self.function_name).addString(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
                 self.current_local_string_counter += 1
             elif type == "bool":
                 type_number = 4
                 number_dimensions += 1
+                # print(id + " - " + str(self.current_local_boolean_counter))
                 # self.functions_directory.getSymbolTable(self.function_name).addBool(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
                 self.current_local_boolean_counter += 1
             elif type == "null":
                 type_number = 5
                 number_dimensions += 1
+                # print(id + " - " + str(self.current_local_null_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_null_counter)
                 self.current_local_null_counter += 1
             elif re.search("list(\[[0-9]+\])+int", type) is not None:
                 type_number = 0
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                # print(id + " - " + str(self.current_local_int_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
-                if dimensions == 2:
-                    self.current_local_int_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                if len(dimensions) == 2:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_int_counter += (dimensions[0].getUpperBound()+1)
+                    self.current_local_int_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+float", type) is not None:
                 type_number = 1
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                # print(id + " - " + str(self.current_local_float_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
-                if dimensions == 2:
-                    self.current_local_float_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                if len(dimensions) == 2:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_float_counter += (dimensions[0].getUpperBound()+1)
+                    self.current_local_float_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+char", type) is not None:
                 type_number = 2
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                # print(id + " - " + str(self.current_local_char_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
-                if dimensions == 2:
-                    self.current_local_char_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                if len(dimensions) == 2:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_char_counter += (dimensions[0].getUpperBound()+1)
+                    self.current_local_char_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+string", type) is not None:
                 type_number = 3
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                # print(id + " - " + str(self.current_local_string_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
-                if dimensions == 2:
-                    self.current_local_string_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                if len(dimensions) == 2:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_string_counter += (dimensions[0].getUpperBound()+1)
+                    self.current_local_string_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+bool", type) is not None:
                 type_number = 4
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
+                # print(id + " - " + str(self.current_local_boolean_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
-                if dimensions == 2:
-                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1) + (dimensions[1].getUpperBound()+1)
+                if len(dimensions) == 2:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()+1)
-                total_size, number_dimensions, dimensions = self.parseList(type)
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
 
     # Exit a parse tree produced by Objective_JSParser#vars_.
     def exitVars_(self, ctx:Objective_JSParser.Vars_Context):

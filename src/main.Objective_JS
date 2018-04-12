@@ -11,13 +11,16 @@ Class HolaMundo {
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [10][30] bool tic) returns {
 		var salma, morgan, luis, paco : int;
-		argumentoUno = argumentoDos / 5;
+		argumentoUno = 2 / 5;
 		return argumentoUno;
 	}
 
 	function funcionDos(int argumentoUno, int unoYMedio, float argumentoDos, string argumentoTres, bool nuevoArgumento) {
 		var quique, raul, jaime : string;
 		var monica, andrea : int;
+		luis = 2;
+		paco = 23;
+		miguel = 2.5;
 		andrea = luis - paco;
 		monica  = andrea * miguel;
 		quique = "Hola Mundo";
@@ -33,9 +36,12 @@ Class HolaMundo {
 		jb = "a";
 		jb = jb + "b";
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
-
+		print(nala);
 		var gerardo : bool;
 		var mike : bool;
+		gerardo = true;
+		mike = false;
+		luis = 2;
 		if(mike != gerardo && luis > morgan){
 			luis = paco;
 			santiago = luis + paco;
@@ -56,8 +62,6 @@ Class HolaMundo {
 
 		do 15 times{
 			print(i);
-			i--;
-			santiago++;
 			jb = "m";
 		}
 
