@@ -863,6 +863,10 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(quadruple)
         self.registros = 1
         self.resetMemoryAddresses()
+        quadruple = Quadruple(self.id, "resetAddress", None, None, None)
+        self.id += 1
+        self.cuadruplos.append(quadruple)
+        self.registros = 1
 
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFuncAux.

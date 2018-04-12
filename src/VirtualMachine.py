@@ -62,6 +62,11 @@ class VirtualMachine(object):
 		self.quadruple_pointer = 0
 		self.start()
 
+	def resetMemory(self):
+		for localMemory, tempMemory in zip(self.locals, self.temps):
+			localMemory.clear()
+			tempMemory.clear()
+
 	def start(self):
 		while (self.quadruple_pointer < len(self.quadruples)):
 			next_quadruple = self.quadruples[self.quadruple_pointer]
@@ -73,7 +78,9 @@ class VirtualMachine(object):
 				address = int(address)
 		# if op == "GO.TO":
 		# 	self.quadruple_pointer = int(address) - 1
-			if operator == "+":
+			if operator == "resetAddress":
+				self.resetMemory()
+			elif operator == "+":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
 				res = val1 + val2

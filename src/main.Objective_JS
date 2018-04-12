@@ -37,9 +37,9 @@ Class HolaMundo {
 		var vaso : bool;
 		jb = "a";
 		jb = jb + "b";
-		nala = 1;
+		nala = 2;
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
-		print(nala);
+		print("nala: ", nala);
 		var gerardo : bool;
 		var mike : bool;
 		gerardo = true;
@@ -59,7 +59,9 @@ Class HolaMundo {
 			nala = paco / luis;
 		}
 		print("Hola Mundo: ", " este es mi primer programa", "j3j3");
-
+		var sosa : float;
+		sosa = 3.141;
+		print("Sosa", sosa);
 		var i : int;
 		i = 0;
 
