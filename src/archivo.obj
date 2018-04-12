@@ -1,100 +1,104 @@
-1 GO.TO None None 17
-2 / %2 %5 13000
-3 = 13000 None 7000
-4 return 7000 None None
-5 endproc None None None
-6 = %2 None 1001
-7 = %23 None 1002
-8 = %2.5 None 2002
-9 - 1001 1002 13000
-10 = 13000 None 7003
-11 = %2 None 7003
-12 * 7003 2002 14000
-13 = 14000 None 7002
-14 = "Hola Mundo" None 10001
-15 = "J" None 10003
-16 endproc None None None
-17 = %25 None 1000
-18 = "a" None 9000
-19 + 9000 "b" 16000
-20 = 16000 None 9000
-21 * 1000 1001 13000
-22 - 1002 7000 13001
-23 + 13000 13001 13002
-24 + %5 %25 13003
-25 / 13002 13003 13004
-26 * 13004 %30.25 14000
-27 = 14000 None 7000
-28 print [] None None
-29 = %true None 11301
-30 = %false None 11302
-31 = %2 None 1001
-32 != 11302 11301 17000
-33 > 1001 1000 17001
-34 && 17000 17001 17002
-35 GO.TOFALSE 17002 None 40
-36 = 1002 None 1001
-37 + 1001 1002 13005
-38 = 13005 None 1003
-39 GO.TO None None 57
-40 < 1001 1002 17003
-41 GO.TOFALSE 17003 None 47
-42 + 1001 %8.28 14001
-43 = 14001 None 1001
-44 + 1002 %8.28 14002
-45 = 14002 None 1003
-46 GO.TO None None 57
-47 < 1001 1002 17004
-48 GO.TOFALSE 17004 None 54
-49 + 1001 %8.28 14003
-50 = 14003 None 1001
-51 + 1002 %8.28 14004
-52 = 14004 None 1003
-53 GO.TO None None 57
-54 = %25.5 None 1002
-55 / 1002 1001 13006
-56 = 13006 None 7000
-57 print 7000 None None
-58 print "Hola Mundo: " None None
-59 print " este es mi primer programa" None None
-60 = %0 None 7005
-61 = 1 None temp-while
-62 <= temp-while 15 13007
-63 GO.TOFALSE 13007 None 69
-64 print "j3j3" None None
-65 = "m" None 9000
-66 + temp-while 1 13008
-67 = r20 None temp-while
-68 GO.TO None None 62
-69 = 1 None temp-while
-70 <= temp-while 18 13009
-71 GO.TOFALSE 13009 None 76
-72 print 7005 None None
-73 + temp-while 1 13010
-74 = r23 None temp-while
-75 GO.TO None None 70
-76 = %1 None 1003
-77 < 7005 1002 17005
-78 GO.TOFALSE 17005 None 85
-79 print "Diez y ocho" None None
-80 print "Ciclo infinito" None None
-81 = "b" None 9000
-82 + 7005 %1 13011
-83 = 13011 None 7005
-84 GO.TO None None 77
-ERA funcionUno None None None
-85 param %2 None param0
-86 param %2.5 None param1
-87 param "32" None param2
-88 param 11000 None param3
-89 GO.SUB funcionUno None None
-ERA funcionDos None None None
-90 param %2 None param0
-91 param %3 None param1
-92 param %4.5 None param2
-93 param "string" None param3
-94 param %true None param4
-95 GO.SUB funcionDos None None
-96 read nala None None
-97 read morgan None None
-98 read quique None None
+1,GO.TO,None,None,20
+2,/,%2,%5,13000
+3,=,13000,None,7000
+4,return,7000,None,None
+5,endproc,None,None,None
+6,=,%2,None,1001
+7,=,%23,None,1002
+8,=,%2.5,None,2002
+9,-,1002,1001,13000
+10,=,13000,None,7003
+11,print,%"Andrea es: ",None,None
+12,print,7003,None,None
+13,*,7003,2002,14000
+14,=,14000,None,7002
+15,print,%"Monica es: ",None,None
+16,print,7002,None,None
+17,=,%"Hola Mundo",None,10001
+18,=,%"J",None,10003
+19,endproc,None,None,None
+20,=,%25,None,1000
+21,=,%"a",None,9000
+22,+,9000,%"b",16000
+23,=,16000,None,9000
+24,=,%1,None,7000
+25,*,1000,1001,13000
+26,-,1002,7000,13001
+27,+,13000,13001,13002
+28,+,%5,%25,13003
+29,/,13002,13003,13004
+30,*,13004,%30.25,14000
+31,=,14000,None,7000
+32,print,7000,None,None
+33,=,%true,None,11301
+34,=,%false,None,11302
+35,=,%2,None,1001
+36,!=,11302,11301,17000
+37,>,1001,1000,17001
+38,&&,17000,17001,17002
+39,GO.TOFALSE,17002,None,44
+40,=,1002,None,1001
+41,+,1001,1002,13005
+42,=,13005,None,1003
+43,GO.TO,None,None,61
+44,<,1001,1002,17003
+45,GO.TOFALSE,17003,None,51
+46,+,1001,%8.28,14001
+47,=,14001,None,1001
+48,+,1002,%8.28,14002
+49,=,14002,None,1003
+50,GO.TO,None,None,61
+51,<,1001,1002,17004
+52,GO.TOFALSE,17004,None,58
+53,+,1001,%8.28,14003
+54,=,14003,None,1001
+55,+,1002,%8.28,14004
+56,=,14004,None,1003
+57,GO.TO,None,None,61
+58,=,%25.5,None,1002
+59,/,1002,1001,13006
+60,=,13006,None,7000
+61,print,%"Hola Mundo: ",None,None
+62,print,%" este es mi primer programa",None,None
+63,print,%"j3j3",None,None
+64,=,%0,None,7006
+65,=,%1,None,13007
+66,<=,13007,%15,13008
+67,GO.TOFALSE,13008,None,73
+68,print,7006,None,None
+69,=,%"m",None,9000
+70,+,13008,%1,13009
+71,=,13009,None,13009
+72,GO.TO,None,None,66
+73,=,%1,None,13010
+74,<=,13010,%18,13011
+75,GO.TOFALSE,13011,None,80
+76,print,%"Diez y ocho",None,None
+77,+,13011,%1,13012
+78,=,13012,None,13012
+79,GO.TO,None,None,74
+80,=,%1,None,1003
+81,<,7006,1002,17005
+82,GO.TOFALSE,17005,None,89
+83,print,%"Ciclo infinito",None,None
+84,print,%"dos.4",None,None
+85,=,%"b",None,9000
+86,+,7006,%1,13013
+87,=,13013,None,7006
+88,GO.TO,None,None,81
+ERA,funcionUno,None,None,None
+89,param,%2,None,param0
+90,param,%2.5,None,param1
+91,param,%"32",None,param2
+92,param,11000,None,param3
+93,GO.SUB,funcionUno,None,None
+ERA,funcionDos,None,None,None
+94,param,%2,None,param0
+95,param,%3,None,param1
+96,param,%4.5,None,param2
+97,param,%"string",None,param3
+98,param,%true,None,param4
+99,GO.SUB,funcionDos,None,None
+100,read,nala,None,None
+101,read,morgan,None,None
+102,read,quique,None,None

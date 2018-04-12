@@ -21,8 +21,10 @@ Class HolaMundo {
 		luis = 2;
 		paco = 23;
 		miguel = 2.5;
-		andrea = luis - paco;
+		andrea = paco - luis;
+		print("Andrea es: ", andrea);
 		monica  = andrea * miguel;
+		print("Monica es: ", monica);
 		quique = "Hola Mundo";
 		jaime = "J";
 	}
@@ -35,6 +37,7 @@ Class HolaMundo {
 		var vaso : bool;
 		jb = "a";
 		jb = jb + "b";
+		nala = 1;
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
 		print(nala);
 		var gerardo : bool;
