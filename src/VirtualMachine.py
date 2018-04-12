@@ -74,11 +74,19 @@ class VirtualMachine(object):
 			operator = next_quadruple.getOperator()
 			operand1 = next_quadruple.getOperand1()
 			operand2 = next_quadruple.getOperand2()
+
+			# next_quadruple.print()
+
 			if address != "None" and operator != "param":
 				address = int(address)
-		# if op == "GO.TO":
-		# 	self.quadruple_pointer = int(address) - 1
-			if operator == "resetAddress":
+
+			if operator == "GO.TO":
+				self.quadruple_pointer = int(address) - 2
+			elif operator == "GO.TOFALSE":
+				value = self.getValue(operand1)
+				if not value:
+					self.quadruple_pointer = int(address)-2
+			elif operator == "resetAddress":
 				self.resetMemory()
 			elif operator == "+":
 				val1 = self.getValue(operand1)
@@ -254,17 +262,41 @@ class VirtualMachine(object):
 
 	def get_constant(self, address):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
-			return self.constants[0][address]
+			if address not in self.constants[0]:
+				print("A global int variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[0][address]
 		elif CONST_GLOBAL_BOTTOM_FLOAT <= address <= CONST_GLOBAL_TOP_FLOAT:
-			return self.constants[1][address]
+			if address not in self.constants[1]:
+				print("A global float variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[1][address]
 		elif CONST_GLOBAL_BOTTOM_CHAR <= address <= CONST_GLOBAL_TOP_CHAR:
-			return self.constants[2][address]
+			if address not in self.constants[2]:
+				print("A global char variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[2][address]
 		elif CONST_GLOBAL_BOTTOM_STRING <= address <= CONST_GLOBAL_TOP_STRING:
-			return self.constants[3][address]
+			if address not in self.constants[3]:
+				print("A global string variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[3][address]
 		elif CONST_GLOBAL_BOTTOM_BOOLEAN <= address <= CONST_GLOBAL_TOP_BOOLEAN:
-			return self.constants[4][address]
+			if address not in self.constants[4]:
+				print("A global boolean variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[4][address]
 		elif CONST_GLOBAL_BOTTOM_NULL <= address <= CONST_GLOBAL_TOP_NULL:
-			return self.constants[5][address]
+			if address not in self.constants[5]:
+				print("A global null variable is used but not intialized")
+				sys.exit(0)
+			else:
+				return self.constants[5][address]
 
 	def set_constant(self, address, value):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
@@ -282,17 +314,35 @@ class VirtualMachine(object):
 
 	def get_local(self, address):
 		if CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_INT:
-			return self.locals[0][address]
+			if address not in self.locals[0]:
+				print("A local int variable is used but not intialized")
+			else:
+				return self.locals[0][address]
 		elif CONST_LOCAL_BOTTOM_FLOAT <= address <= CONST_LOCAL_TOP_FLOAT:
-			return self.locals[1][address]
+			if address not in self.locals[1]:
+				print("A local float variable is used bot not initialized")
+			else:
+				return self.locals[1][address]
 		elif CONST_LOCAL_BOTTOM_CHAR <= address <= CONST_LOCAL_TOP_CHAR:
-			return self.locals[2][address]
+			if address not in self.locals[2]:
+				print("A local char variable is used bot not initialized")
+			else:
+				return self.locals[2][address]
 		elif CONST_LOCAL_BOTTOM_STRING <= address <= CONST_LOCAL_TOP_STRING:
-			return self.locals[3][address]
+			if address not in self.locals[3]:
+				print("A local string variable is used bot not initialized")
+			else:
+				return self.locals[3][address]
 		elif CONST_LOCAL_BOTTOM_BOOLEAN <= address <= CONST_LOCAL_TOP_BOOLEAN:
-			return self.locals[4][address]
+			if address not in self.locals[4]:
+				print("A local boolean variable is used bot not initialized")
+			else:
+				return self.locals[4][address]
 		elif CONST_LOCAL_BOTTOM_NULL <= address <= CONST_LOCAL_TOP_NULL:
-			return self.locals[5][address]
+			if address not in self.locals[5]:
+				print("A local null variable is used bot not initialized")
+			else:
+				return self.locals[5][address]
 
 	def set_local(self, address, value):
 		if CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_INT:

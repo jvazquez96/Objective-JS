@@ -38,6 +38,8 @@ Class HolaMundo {
 		jb = "a";
 		jb = jb + "b";
 		nala = 2;
+		luis = 24;
+		paco = 25;
 		nala = (morgan * luis + (paco - nala)) / (5 + 25) * 30.25;
 		print("nala: ", nala);
 		var gerardo : bool;
@@ -63,7 +65,7 @@ Class HolaMundo {
 		sosa = 3.141;
 		print("Sosa", sosa);
 		var i : int;
-		i = 0;
+		i = 23;
 
 		do 15 times{
 			print(i);
