@@ -1567,7 +1567,7 @@ class Objective_JSListener(ParseTreeListener):
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
             quadruple = Quadruple(self.id, '+', address, "%1", self.current_temp_int_counter)
-            self.operandos.push(address)
+            self.operandos.push(self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
@@ -1590,11 +1590,11 @@ class Objective_JSListener(ParseTreeListener):
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
             quadruple = Quadruple(self.id, '-', address, "%1", self.current_temp_int_counter)
+            self.operandos.push(self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
-            self.operandos.push(registro)
 
 
             registro = "r" + str(self.registros)
