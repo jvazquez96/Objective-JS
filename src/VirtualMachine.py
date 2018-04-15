@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from Structures.Quadruple import Quadruple
+from Structures.Stack import Stack
 
 CONST_GLOBAL_BOTTOM_INT = 1000
 CONST_GLOBAL_BOTTOM_FLOAT = 2000
@@ -45,6 +46,21 @@ CONST_TEMPORAL_TOP_STRING = 16999
 CONST_TEMPORAL_TOP_BOOLEAN = 17999
 CONST_TEMPORAL_TOP_NULL = 17999
 
+class Memory():
+
+	def __init__(self, locals, temps):
+					# int, float, char, string, boolean, null
+		self.locals = locals
+		self.temps = temps
+
+	def saveMemory(self, locals, temps):
+		self.locals = locals
+		self.temps = temps
+
+	def getMemory(self):
+		return self.locals, self.temps
+
+
 class VirtualMachine(object):
 
 	def __init__(self):
@@ -60,6 +76,8 @@ class VirtualMachine(object):
 		self.locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.quadruple_pointer = 0
+		self.pointer = Stack()
+		self.context_stack = Stack()
 		self.start()
 
 	def resetMemory(self):
@@ -77,7 +95,7 @@ class VirtualMachine(object):
 
 			# next_quadruple.print()
 
-			if address != "None" and operator != "param":
+			if address != "None":
 				address = int(address)
 
 			if operator == "GO.TO":
@@ -95,9 +113,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "-":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -105,17 +123,17 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "=":
 				val = self.getValue(operand1)
 				if self.is_constant(address):
 					self.set_constant(address, val)
 				elif self.is_local(address):
-					self.set_local(address, val)
+					self.set_local(self.locals, address, val)
 				elif self.is_temporal(address):
-					self.set_temporal(address, val)
+					self.set_temporal(self.temps, address, val)
 			elif operator == "/":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -123,9 +141,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "*":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -133,9 +151,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "^":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -143,9 +161,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "!=":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -153,9 +171,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "&&":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -163,9 +181,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "||":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -173,9 +191,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == ">":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -183,9 +201,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "<":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -193,9 +211,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == ">=":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -203,9 +221,9 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "<=":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)
@@ -213,12 +231,33 @@ class VirtualMachine(object):
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):
-					self.set_local(address, res)
+					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
-					self.set_temporal(address, res)
+					self.set_temporal(self.temps, address, res)
 			elif operator == "print":
 				val = self.getValue(operand1)
 				print(str(val))
+			elif operator == "ERA":
+				current_context = Memory(self.locals, self.temps)
+				self.context_stack.push(current_context)
+				self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
+				self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+			elif operator == "param":
+				val = self.getValue(operand1)
+				if self.is_local(address):
+					self.set_local(self.new_locals, address, val)
+				elif self.is_temporal(address):
+					self.set_temporal(self.new_temps, address, val)
+			elif operator == "GO.SUB":
+				self.locals = self.new_locals
+				self.temps = self.new_temps
+				self.pointer.push(self.quadruple_pointer + 1)
+				self.quadruple_pointer = address - 2
+			elif operator == "endproc":
+				mem = self.context_stack.pop()
+				self.locals, self.temps = mem.getMemory()
+				return_address = self.pointer.pop() - 1
+				self.quadruple_pointer = return_address
 
 			self.quadruple_pointer += 1
 
@@ -354,33 +393,33 @@ class VirtualMachine(object):
 			else:
 				return self.locals[5][address]
 
-	def set_local(self, address, value):
+	def set_local(self, context, address, value):
 		if CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_INT:
-			self.locals[0][address] = value
+			context[0][address] = value
 		elif CONST_LOCAL_BOTTOM_FLOAT <= address <= CONST_LOCAL_TOP_FLOAT:
-			self.locals[1][address] = value
+			context[1][address] = value
 		elif CONST_LOCAL_BOTTOM_CHAR <= address <= CONST_LOCAL_TOP_CHAR:
-			self.locals[2][address] = value
+			context[2][address] = value
 		elif CONST_LOCAL_BOTTOM_STRING <= address <= CONST_LOCAL_TOP_STRING:
-			self.locals[3][address] = value
+			context[3][address] = value
 		elif CONST_LOCAL_BOTTOM_BOOLEAN <= address <= CONST_LOCAL_TOP_BOOLEAN:
-			self.locals[4][address] = value
+			context[4][address] = value
 		elif CONST_LOCAL_BOTTOM_NULL <= address <= CONST_LOCAL_TOP_NULL:
-			self.locals[5][address] = value
+			context[5][address] = value
 
-	def set_temporal(self, address, value):
+	def set_temporal(self, context, address, value):
 		if CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_INT:
-			self.temps[0][address] = value
+			context[0][address] = value
 		elif CONST_TEMPORAL_BOTTOM_FLOAT <= address <= CONST_TEMPORAL_TOP_FLOAT:
-			self.temps[1][address] = value
+			context[1][address] = value
 		elif CONST_TEMPORAL_BOTTOM_CHAR <= address <= CONST_TEMPORAL_TOP_CHAR:
-			self.temps[2][address] = value
+			context[2][address] = value
 		elif CONST_TEMPORAL_BOTTOM_STRING <= address <= CONST_TEMPORAL_TOP_STRING:
-			self.temps[3][address] = value
+			context[3][address] = value
 		elif CONST_TEMPORAL_BOTTOM_BOOLEAN <= address <= CONST_TEMPORAL_TOP_BOOLEAN:
-			self.temps[4][address] = value
+			context[4][address] = value
 		elif CONST_TEMPORAL_BOTTOM_NULL <= address <= CONST_TEMPORAL_TOP_NULL:
-			self.temps[5][address] = value
+			context[5][address] = value
 
 	def get_temporal(self, address):
 		if CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_INT:

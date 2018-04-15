@@ -1410,7 +1410,8 @@ class Objective_JSListener(ParseTreeListener):
             if self.current_method_name not in  self.functions_directory.getDirectory():
                 print("The function: " + str(self.current_method_name)+ " doesn't exist")
                 sys.exit(0)
-            quadruple = Quadruple("ERA", self.current_method_name, None, None)
+            quadruple = Quadruple(self.id, "ERA", self.current_method_name, None, None)
+            self.id += 1
             self.cuadruplos.append(quadruple)
             self.current_param_counter = 0
 
