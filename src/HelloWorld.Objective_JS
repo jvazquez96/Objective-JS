@@ -1,0 +1,23 @@
+Class HelloWorld {
+	main(){
+		var i : int;
+		i = 1;
+		do 3 times{
+			print(i);
+			i = i + 1;
+		}
+
+		print("Hello World");
+
+		var a, b, c : float;
+		var uno : int;
+
+		b = 10.5;
+		c = 5.2;
+		uno = 20;
+
+		a = b + uno;
+
+		print(a);
+	}
+}
