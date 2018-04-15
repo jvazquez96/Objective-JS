@@ -11,6 +11,7 @@ Class HolaMundo {
 
 	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [10][30] bool tic) returns {
 		var salma, morgan, luis, paco : int;
+		salma = argumentoDos * 23;
 		argumentoUno = 2 / 5;
 		return argumentoUno;
 	}

@@ -1490,6 +1490,7 @@ class Objective_JSListener(ParseTreeListener):
         parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
         parameter_type = self.normalizeTypes(parameter_type)
         parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]  
+        parameter_address = self.functions_directory.getTable(self.current_method_name).getParamTable().getAddress(parameter)
         dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
         dimensions_argument = 1
         all_dimensions_argument = []
@@ -1519,7 +1520,7 @@ class Objective_JSListener(ParseTreeListener):
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
 
-        quadruple = Quadruple(self.id, "param", argument_address, None, "param" + str(self.current_param_counter))
+        quadruple = Quadruple(self.id, "param", argument_address, None, parameter_address)
         self.cuadruplos.append(quadruple)
         self.id += 1
 
