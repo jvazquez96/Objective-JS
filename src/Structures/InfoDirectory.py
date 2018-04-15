@@ -16,6 +16,9 @@ class InfoDirectory(object):
 		self.parameters2 = []
 		# Param table
 		self.param_table = ParamTable()
+		# Address where the function starts
+		self.start_address = 0
+		self.text = "sdasudausi"
 
 	def createInfo(self, symbol_table, return_type):
 		self.symbol_table = symbol_table
@@ -33,8 +36,18 @@ class InfoDirectory(object):
 	def getParams(self):
 		return self.parameters2
 
+	def getStartAddress(self):
+		return self.start_address
+
+	def getText(self):
+		return self.text
+
 	def setParamTable(self, paramTable):
 		self.param_table = paramTable
+
+	def setStartAddress(self, address):
+		self.start_address = address
+		self.text = "I'm being set"
 
 	def deleteTable(self):
 		self.symbol_table = SymbolTable()

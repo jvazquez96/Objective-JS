@@ -425,8 +425,9 @@ class Objective_JSListener(ParseTreeListener):
         """
         if self.function_name not in self.functions_directory.getDirectory():
             self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
-
             self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
+            start_address = len(self.cuadruplos) + 1
+            self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
             for key, value in self.argumentos.getParameters().items():
                 if value.getType() == 0:
                     self.functions_directory.addInt(self.function_name, True, 1)
@@ -1141,7 +1142,9 @@ class Objective_JSListener(ParseTreeListener):
         possibleType = self.types.pop()
         variableType = self.getTypeFromVariable(id)
         variableType = self.convertTypeToInt(variableType)
-        #print("Var: " + str(id))
+        print("Var: " + str(id))
+        print("variableType: " + str(variableType))
+        print("possibleType: " + str(possibleType))
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
             print("Data type mismatch")
@@ -1443,7 +1446,8 @@ class Objective_JSListener(ParseTreeListener):
             print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
             print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
             sys.exit(0)
-        quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, None)
+        start_address = self.functions_directory.getTable(self.current_method_name).getStartAddress()
+        quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
         self.cuadruplos.append(quadruple)
         self.id += 1
 

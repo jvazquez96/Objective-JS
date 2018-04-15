@@ -134,14 +134,14 @@ ERA,funcionUno,None,None,None
 133,param,%2.5,None,param1
 134,param,%"32",None,param2
 135,param,11000,None,param3
-136,GO.SUB,funcionUno,None,None
+136,GO.SUB,funcionUno,None,2
 ERA,funcionDos,None,None,None
 137,param,%2,None,param0
 138,param,%3,None,param1
 139,param,%4.5,None,param2
 140,param,%"string",None,param3
 141,param,%true,None,param4
-142,GO.SUB,funcionDos,None,None
+142,GO.SUB,funcionDos,None,7
 143,read,nala,None,None
 144,read,morgan,None,None
 145,read,quique,None,None
