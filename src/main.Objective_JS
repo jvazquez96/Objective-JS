@@ -9,8 +9,9 @@ Class HolaMundo {
 	var jorge : list [5] int;
 	var ss : list [2][18] char;
 
-	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, list [10][30] bool tic) returns {
+	function funcionUno(int argumentoUno, float argumentoDos, string argumentoTres, bool tic) returns {
 		var salma, morgan, luis, paco : int;
+		salma = argumentoDos * 23;
 		argumentoUno = 2 / 5;
 		return argumentoUno;
 	}
@@ -28,6 +29,23 @@ Class HolaMundo {
 		quique = "Hola Mundo";
 		jaime = "J";
 	}
+
+	function minus(int a, int b) returns {
+		var res : int;
+		res = a - b;
+		print("ESTA FUNCION FUE LLAMADA POR OTRA FUNCION :O");
+		print("resta", res);
+	}
+	
+
+	function sum(int a, int b) returns {
+		var res : int;
+		res = a + b;
+		print("DENTRO DE UNA FUNCION", "SUMAAAAA", res);
+		minus(a, b);
+		return res;
+	}
+
 	main(){
 		var nala : int;
 		var cecy, andrea, hola : float;
@@ -82,9 +100,27 @@ Class HolaMundo {
 		print(res);
 		do 18 times{
 			print("Diez y ocho");
+			do 5 times {
+				print("cinco");
+			}
 		}
 
 		santiago = 1;
+
+		while (i <= 30) {
+			while (santiago <= 5) {
+				print("Santiago", santiago);
+				santiago++;
+			}
+			i = i + 1;
+			print("i", i);
+		}
+
+		while (i > 0) {
+			print("decrementing i");
+			i--;
+			print(i);
+		}
 
 		while(i < paco){
 			print("Ciclo infinito", "dos.4");
@@ -92,8 +128,9 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-		funcionUno(2, 2.5, "32", jose);
-		funcionDos(2,3,4.5, "string", true);
+		sum(2, 19);
+		print("Estoy regresando de una funcion", "wuuu");
+		print("Elevando unos numeros en un main que los declare aqui", a^b);
 		read >> nala >> morgan >> quique;
 
 	}

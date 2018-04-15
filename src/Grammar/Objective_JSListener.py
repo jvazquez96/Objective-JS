@@ -425,8 +425,9 @@ class Objective_JSListener(ParseTreeListener):
         """
         if self.function_name not in self.functions_directory.getDirectory():
             self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
-
             self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
+            start_address = len(self.cuadruplos) + 1
+            self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
             for key, value in self.argumentos.getParameters().items():
                 if value.getType() == 0:
                     self.functions_directory.addInt(self.function_name, True, 1)
@@ -1141,7 +1142,9 @@ class Objective_JSListener(ParseTreeListener):
         possibleType = self.types.pop()
         variableType = self.getTypeFromVariable(id)
         variableType = self.convertTypeToInt(variableType)
-        #print("Var: " + str(id))
+        print("Var: " + str(id))
+        print("variableType: " + str(variableType))
+        print("possibleType: " + str(possibleType))
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
             print("Data type mismatch")
@@ -1407,7 +1410,8 @@ class Objective_JSListener(ParseTreeListener):
             if self.current_method_name not in  self.functions_directory.getDirectory():
                 print("The function: " + str(self.current_method_name)+ " doesn't exist")
                 sys.exit(0)
-            quadruple = Quadruple("ERA", self.current_method_name, None, None)
+            quadruple = Quadruple(self.id, "ERA", self.current_method_name, None, None)
+            self.id += 1
             self.cuadruplos.append(quadruple)
             self.current_param_counter = 0
 
@@ -1443,7 +1447,8 @@ class Objective_JSListener(ParseTreeListener):
             print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
             print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
             sys.exit(0)
-        quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, None)
+        start_address = self.functions_directory.getTable(self.current_method_name).getStartAddress()
+        quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
         self.cuadruplos.append(quadruple)
         self.id += 1
 
@@ -1486,6 +1491,7 @@ class Objective_JSListener(ParseTreeListener):
         parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
         parameter_type = self.normalizeTypes(parameter_type)
         parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]  
+        parameter_address = self.functions_directory.getTable(self.current_method_name).getParamTable().getAddress(parameter)
         dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
         dimensions_argument = 1
         all_dimensions_argument = []
@@ -1515,7 +1521,7 @@ class Objective_JSListener(ParseTreeListener):
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
 
-        quadruple = Quadruple(self.id, "param", argument_address, None, "param" + str(self.current_param_counter))
+        quadruple = Quadruple(self.id, "param", argument_address, None, parameter_address)
         self.cuadruplos.append(quadruple)
         self.id += 1
 
@@ -1567,7 +1573,7 @@ class Objective_JSListener(ParseTreeListener):
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
             quadruple = Quadruple(self.id, '+', address, "%1", self.current_temp_int_counter)
-            self.operandos.push(address)
+            self.operandos.push(self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
@@ -1590,11 +1596,11 @@ class Objective_JSListener(ParseTreeListener):
             registro = "r" + str(self.registros)
             address = self.getMemoryAddressFromVariable(var)
             quadruple = Quadruple(self.id, '-', address, "%1", self.current_temp_int_counter)
+            self.operandos.push(self.current_temp_int_counter)
             self.current_temp_int_counter += 1
             self.cuadruplos.append(quadruple)
             self.registros += 1
             self.id += 1
-            self.operandos.push(registro)
 
 
             registro = "r" + str(self.registros)
