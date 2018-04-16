@@ -254,8 +254,11 @@ bloqueFuncAux :
 	;
 
 bloqueFuncAux2 :
-	RETURN hyperExpresion SEMICOLON
+	RETURN hyperExpresion getValue SEMICOLON
 	|
+	;
+
+getValue : 
 	;
 
 preVars :
@@ -507,6 +510,7 @@ factorParentesis :
 
 varCte :
 	objeto
+	| llamadaFunc
 	| TYPE_INT
 	| TYPE_FLOAT
 	| TYPE_STRING

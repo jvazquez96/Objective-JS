@@ -855,11 +855,6 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#bloqueFunc.
     def exitBloqueFunc(self, ctx:Objective_JSParser.BloqueFuncContext):
         self.argumentos = ParamTable()
-        if ctx.bloqueFuncAux2().RETURN() is not None:
-            return_value = self.operandos.pop()
-            quadruple = Quadruple(self.id, "return", return_value, None, None)
-            self.id += 1
-            self.cuadruplos.append(quadruple)
         quadruple = Quadruple(self.id, "endproc", None, None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
@@ -886,9 +881,6 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#bloqueFuncAux2.
     def exitBloqueFuncAux2(self, ctx:Objective_JSParser.BloqueFuncAux2Context):
-        # Test
-        # size = len(self.functions_directory.getTable(self.function_name).getParamTable().getParameters()) + len(self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols())
-        # print("size - " + str(size))
         self.functions_directory.remove_info(self.function_name)
         self.function_name = None
 
@@ -900,9 +892,6 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#preVars.
     def exitPreVars(self, ctx:Objective_JSParser.PreVarsContext):
         self.isGlobalVar = False
-        # Test
-        # size = len(self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols())
-        # print("size: " + str(size))
 
 
     # Enter a parse tree produced by Objective_JSParser#vars_.
@@ -950,48 +939,37 @@ class Objective_JSListener(ParseTreeListener):
             if type == "int":
                 type_number = 0
                 number_dimensions += 1
-                # print(id + " - " + str(self.current_local_int_counter))
-                # self.functions_directory.getSymbolTable(self.function_name).addInteger(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
                 self.current_local_int_counter += 1
             elif type == "float":
                 type_number = 1
                 number_dimensions += 1
-                # print(id + " - " + str(self.current_local_float_counter))
-                # self.functions_directory.getSymbolTable(self.function_name).addFloat(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
                 self.current_local_float_counter += 1
             elif type == "char":
                 type_number = 2
                 number_dimensions += 1
-                # self.functions_directory.getSymbolTable(self.function_name).addChar(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
                 self.current_local_char_counter += 1
             elif type == "string":
                 type_number = 3
                 number_dimensions += 1
-                # print(id + " - " + str(self.current_local_string_counter))
-                # self.functions_directory.getSymbolTable(self.function_name).addString(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
                 self.current_local_string_counter += 1
             elif type == "bool":
                 type_number = 4
                 number_dimensions += 1
-                # print(id + " - " + str(self.current_local_boolean_counter))
-                # self.functions_directory.getSymbolTable(self.function_name).addBool(True)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
                 self.current_local_boolean_counter += 1
             elif type == "null":
                 type_number = 5
                 number_dimensions += 1
-                # print(id + " - " + str(self.current_local_null_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_null_counter)
                 self.current_local_null_counter += 1
             elif re.search("list(\[[0-9]+\])+int", type) is not None:
                 type_number = 0
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
-                # print(id + " - " + str(self.current_local_int_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
                 if len(dimensions) == 2:
                     self.current_local_int_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
@@ -1011,7 +989,6 @@ class Objective_JSListener(ParseTreeListener):
                 type_number = 2
                 isList = True
                 total_size, number_dimensions, dimensions = self.parseList(type)
-                # print(id + " - " + str(self.current_local_char_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
                 if len(dimensions) == 2:
                     self.current_local_char_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
@@ -1142,15 +1119,13 @@ class Objective_JSListener(ParseTreeListener):
         possibleType = self.types.pop()
         variableType = self.getTypeFromVariable(id)
         variableType = self.convertTypeToInt(variableType)
-        print("Var: " + str(id))
-        print("variableType: " + str(variableType))
-        print("possibleType: " + str(possibleType))
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
             print("Data type mismatch")
             sys.exit(0)
             print("Error")
         address = self.getMemoryAddressFromVariable(id)
+        self.operadores.pop()
         cuadruplo = Quadruple(self.id, "=", valor, None, address)
         #cuadruplo.print()
         self.cuadruplos.append(cuadruplo)
@@ -1413,7 +1388,6 @@ class Objective_JSListener(ParseTreeListener):
             quadruple = Quadruple(self.id, "ERA", self.current_method_name, None, None)
             self.id += 1
             self.cuadruplos.append(quadruple)
-            self.current_param_counter = 0
 
     def normalizeTypes(self, type):
         if isinstance(type, str):
@@ -1451,6 +1425,14 @@ class Objective_JSListener(ParseTreeListener):
         quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
         self.cuadruplos.append(quadruple)
         self.id += 1
+        self.current_param_counter = 0
+        if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
+            quadruple = Quadruple(self.id, "=", self.current_method_name, None,self.current_temp_int_counter)
+            print("Counter: " + str(self.current_temp_int_counter))
+            self.operandos.push(self.current_temp_int_counter)
+            self.id += 1
+            self.current_temp_int_counter += 1
+            self.cuadruplos.append(quadruple)
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamada.
@@ -1882,9 +1864,7 @@ class Objective_JSListener(ParseTreeListener):
                 registro = "r" + str(self.registros)
                 # self.operandos.push(registro)
                 self.types.push(new_type)
-                # cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
                 self.cuadruplos.append(cuadruplo)
-                #cuadruplo.print()
                 self.registros += 1
                 self.id += 1
 
@@ -1903,62 +1883,70 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#factor.
     def enterFactor(self, ctx:Objective_JSParser.FactorContext):
-        if ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
-            value = ctx.varCte().getText()
-            # self.operandos.push(value)
-            type = self.getTypeFromFactor(ctx, value)
-            type = self.convertTypeToInt(type)
-            try:
-                number = int(value)
-                self.operandos.push('%'+str(number))
-                self.current_local_int_counter += 1
-            except ValueError:
+        if ctx.varCte() is not None:
+            if ctx.varCte().llamadaFunc() is not None:
+                function_name = ctx.varCte().getText().split('(')[0]
+                if not self.isFunctionDeclared(function_name):
+                    print("The function: " + str(function_name) + " doesn't exist")
+                    sys.exit(0)
+                else:
+                    return_type = self.functions_directory.getTable(function_name).getReturnType()
+                    self.types.push(return_type)
+            elif ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
+                value = ctx.varCte().getText()
+                type = self.getTypeFromFactor(ctx, value)
+                type = self.convertTypeToInt(type)
                 try:
-                    number = float(value)
+                    number = int(value)
                     self.operandos.push('%'+str(number))
-                    self.current_local_float_counter += 1
+                    self.current_local_int_counter += 1
                 except ValueError:
-                    if value == "true":
-                        self.operandos.push('%'+str(value))
-                        self.current_local_boolean_counter += 1
-                    elif value == "false":
-                        self.operandos.push('%'+str(value))
-                        self.current_local_boolean_counter += 1
-                    elif type == 0:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_int_counter += 1
-                    elif type == 1:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_float_counter += 1
-                    elif type == 2:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_char_counter += 1
-                    elif type == 3:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_string_counter += 1
-                    elif type == 4:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_boolean_counter += 1
-                    elif type == 5:
-                        address = self.getMemoryAddressFromVariable(value)
-                        self.operandos.push(address)
-                        # self.current_local_null_counter += 1
-            self.types.push(type)
-        elif ctx.factorParentesis() is not None:
-            # Fondo falso
-            self.operadores.push('(')
-        elif not self.isListDeclared:
-            value = ctx.varCte().getText()
-            self.operandos.push("%" + value)
+                    try:
+                        number = float(value)
+                        self.operandos.push('%'+str(number))
+                        self.current_local_float_counter += 1
+                    except ValueError:
+                        if value == "true":
+                            self.operandos.push('%'+str(value))
+                            self.current_local_boolean_counter += 1
+                        elif value == "false":
+                            self.operandos.push('%'+str(value))
+                            self.current_local_boolean_counter += 1
+                        elif type == 0:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_int_counter += 1
+                        elif type == 1:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_float_counter += 1
+                        elif type == 2:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_char_counter += 1
+                        elif type == 3:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_string_counter += 1
+                        elif type == 4:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_boolean_counter += 1
+                        elif type == 5:
+                            address = self.getMemoryAddressFromVariable(value)
+                            self.operandos.push(address)
+                            # self.current_local_null_counter += 1
+                self.types.push(type)
+            elif ctx.factorParentesis() is not None:
+                # Fondo falso
+                self.operadores.push('(')
+            elif not self.isListDeclared:
+                value = ctx.varCte().getText()
+                self.operandos.push("%" + value)
 
-            type = self.getTypeFromFactor(ctx, value)
-            type = self.convertTypeToInt(type)
-            self.types.push(type)
+                type = self.getTypeFromFactor(ctx, value)
+                type = self.convertTypeToInt(type)
+                self.types.push(type)
 
     # Exit a parse tree produced by Objective_JSParser#factor.
     def exitFactor(self, ctx:Objective_JSParser.FactorContext):
@@ -2025,3 +2013,43 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#matrix.
     def exitMatrix(self, ctx:Objective_JSParser.MatrixContext):
         pass
+
+    def exitGetValue(self, ctx):
+        return_value = self.operandos.pop()
+        return_type = self.getTypeFromAddress(return_value)
+        self.functions_directory.getTable(self.function_name).setReturnType(return_type)
+        quadruple = Quadruple(self.id, "return", return_value, None, None)
+        self.id += 1
+        self.cuadruplos.append(quadruple)
+
+    def getTypeFromAddress(self, address):
+        if isinstance(address, str):
+            if address[0] == "%":
+                value = address[1:]
+                try:
+                    number = int(value)
+                    return 0
+                except ValueError:
+                    try:
+                        number = float(value)
+                        return 1
+                    except ValueError:
+                        if value == "true" or value == "false":
+                            return 4
+                        if len(address) > 1:
+                            return 3
+                        else:
+                            return 2
+        address = int(address)
+        if 7000 <= address <= 7999 or 13000 <= address <= 13999:
+            return 0
+        elif 8000 <= address <= 8999 or 14000 <= address <= 14999:
+            return 1
+        elif 9000 <= address <= 9999 or 15000 <= address <= 15999:
+            return 2
+        elif 10000 <= address <= 10999 or 16000 <= address <= 16999:
+            return 3
+        elif 11000 <= address <= 11999 or 17000 <= address <= 17999:
+            return 4
+        elif 12000 <= address <= 12999 or 18000 <= address <= 18999:
+            return 5

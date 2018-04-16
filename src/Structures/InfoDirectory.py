@@ -5,7 +5,7 @@ from Structures.ParamTable import ParamTable
 class InfoDirectory(object):
 	def __init__ (self, symbol_table=SymbolTable(), return_type=None):
 		self.symbol_table = symbol_table
-		self.return_type = return_type
+		self.return_type = None
 		# Types of parameters [int, float, char, string, bool]
 		self.parameters = [0, 0, 0, 0, 0]
 		# Types of local variables [int, float, char, string, bool]
@@ -18,11 +18,13 @@ class InfoDirectory(object):
 		self.param_table = ParamTable()
 		# Address where the function starts
 		self.start_address = 0
-		self.text = "sdasudausi"
 
 	def createInfo(self, symbol_table, return_type):
 		self.symbol_table = symbol_table
 		self.return_type = return_type
+
+	def setReturnType(self, type):
+		self.return_type = type
 
 	def getParamTable(self):
 		return self.param_table

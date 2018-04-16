@@ -75,6 +75,8 @@ class VirtualMachine(object):
 		self.constants = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.quadruple_pointer = 0
 		self.pointer = Stack()
 		self.context_stack = Stack()
