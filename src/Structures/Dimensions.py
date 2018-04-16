@@ -12,7 +12,7 @@ class Dimensions(object):
 		return self.upper
 
 	def getM(self):
-		return m
+		return self.m
 
 	def setLowerBound(selfm, lowerBound):
 		self.lower = lowerBound

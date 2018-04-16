@@ -4,8 +4,8 @@ from Structures.Dimensions import Dimensions
 class SymbolTable(object):
 	def __init__(self):
 		self._symbols = dict()
-	def push_frame(self, address, id, type=None, attribute=None, isList = None, listSize = 0, dim = 0, dimensions = None):
-		self._symbols[id] = Info(type, attribute, isList, listSize, dim, dimensions, address);
+	def push_frame(self, address, id, type=None, isList = None, listSize = 0, dim = 0, dimensions = None):
+		self._symbols[id] = Info(type, isList, listSize, dim, dimensions, address);
 	def size(self):
 		return len(self._symbols)
 	def getContent(self, id):
