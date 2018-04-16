@@ -803,11 +803,13 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#impFuncAux2.
     def enterImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
+        self.newFunction()
         if ctx.RETURNS() is None:
             self.does_returns = None
         else:
             self.does_returns = "returns"
-        self.newFunction()
+            return_type = ctx.tipo_dato_no_list().getText()
+            self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
     def exitImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
@@ -865,7 +867,6 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(quadruple)
         self.registros = 1
 
-
     # Enter a parse tree produced by Objective_JSParser#bloqueFuncAux.
     def enterBloqueFuncAux(self, ctx:Objective_JSParser.BloqueFuncAuxContext):
         pass
@@ -883,6 +884,13 @@ class Objective_JSListener(ParseTreeListener):
     def exitBloqueFuncAux2(self, ctx:Objective_JSParser.BloqueFuncAux2Context):
         self.functions_directory.remove_info(self.function_name)
         self.function_name = None
+
+    def enterGetReturnType(self, ctx):
+        return_value = self.operandos.pop()
+        quadruple = Quadruple(self.id, "return", return_value, None, None)
+        self.id += 1
+        self.cuadruplos.append(quadruple)
+
 
 
     # Enter a parse tree produced by Objective_JSParser#preVars.
@@ -1427,8 +1435,7 @@ class Objective_JSListener(ParseTreeListener):
         self.id += 1
         self.current_param_counter = 0
         if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
-            quadruple = Quadruple(self.id, "=", self.current_method_name, None,self.current_temp_int_counter)
-            print("Counter: " + str(self.current_temp_int_counter))
+            quadruple = Quadruple(self.id, "save_return",self.current_method_name, None,self.current_temp_int_counter)
             self.operandos.push(self.current_temp_int_counter)
             self.id += 1
             self.current_temp_int_counter += 1
@@ -1437,11 +1444,11 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamada.
     def enterArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
-        pass
+        self.operadores.push(')')
 
     # Exit a parse tree produced by Objective_JSParser#argumentosLlamada.
     def exitArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
-        pass
+        self.operadores.pop()
 
 
     # Enter a parse tree produced by Objective_JSParser#addArgument.
@@ -1468,6 +1475,7 @@ class Objective_JSListener(ParseTreeListener):
         argument = self.operandos.pop()
         argument_address = argument
         argument_type = self.types.pop()
+
 
         argument_type = self.normalizeTypes(argument_type)
         parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
@@ -1512,10 +1520,12 @@ class Objective_JSListener(ParseTreeListener):
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
     def enterArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
         pass
+        self.operandos.push(')')
 
     # Exit a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
     def exitArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
         pass
+        self.operandos.pop()
 
 
     # Enter a parse tree produced by Objective_JSParser#lectura.
@@ -1672,7 +1682,6 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
             else:
                 registro = "r" + str(self.registros)
-                # self.operandos.push(registro)
                 self.types.push(new_type)
                 if new_type == 0: #int
                     cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_int_counter)
@@ -1682,9 +1691,7 @@ class Objective_JSListener(ParseTreeListener):
                     cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_float_counter)
                     self.operandos.push(self.current_temp_float_counter)
                     self.current_temp_float_counter += 1
-                # cuadruplo = Quadruple(self.id, operador, operando1, operando2, registro)
                 self.cuadruplos.append(cuadruplo)
-                #cuadruplo.print()
                 self.id += 1
                 self.registros += 1
 
@@ -1721,13 +1728,11 @@ class Objective_JSListener(ParseTreeListener):
                 print("Data type mismatch")
                 sys.exit(0)
             else:
-                # registro = "r" + str(self.registros)
                 self.operandos.push(self.current_temp_boolean_counter)
                 self.types.push(new_type)
                 cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_boolean_counter)
                 self.current_temp_boolean_counter += 1
                 self.cuadruplos.append(cuadruplo)
-                #cuadruplo.print()
                 self.registros += 1
                 self.id += 1
 
@@ -1754,7 +1759,7 @@ class Objective_JSListener(ParseTreeListener):
         elif ctx.NOT_EQUAL_OPERATOR() is not None:
             self.operadores.push('!=')
         elif ctx.EQUAL_OPERATOR() is not None:
-            self.operadores.push('=')
+            self.operadores.push('==')
 
     # Exit a parse tree produced by Objective_JSParser#superExpresionOperadores.
     def exitSuperExpresionOperadores(self, ctx:Objective_JSParser.SuperExpresionOperadoresContext):
@@ -1784,14 +1789,11 @@ class Objective_JSListener(ParseTreeListener):
                 print("Data type mismatch")
                 sys.exit(0)
             else:
-                # registro = "r" + str(self.registros)
-                # self.operandos.push(registro)
                 self.operandos.push(self.current_temp_boolean_counter)
                 self.types.push(new_type)
                 cuadruplo = Quadruple(self.id, operador, operando1, operando2, self.current_temp_boolean_counter)
                 self.current_temp_boolean_counter += 1
                 self.cuadruplos.append(cuadruplo)
-                #cuadruplo.print()
                 self.registros += 1
                 self.id += 1
 
@@ -1807,7 +1809,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#expresionOperadores.
     def enterExpresionOperadores(self, ctx:Objective_JSParser.ExpresionOperadoresContext):
-        if ctx.SUM_OPERATOR() is not None:
+        if ctx.SUM_OPERATOR() is not None: 
             self.operadores.push('+')
         elif ctx.SUBSTRACTION_OPERATOR() is not None:
             self.operadores.push('-')
@@ -2015,12 +2017,17 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     def exitGetValue(self, ctx):
-        return_value = self.operandos.pop()
-        return_type = self.getTypeFromAddress(return_value)
-        self.functions_directory.getTable(self.function_name).setReturnType(return_type)
-        quadruple = Quadruple(self.id, "return", return_value, None, None)
-        self.id += 1
-        self.cuadruplos.append(quadruple)
+        # print("After return")
+        # print(ctx.tipo_dato_no_list().getText())
+        # print("Return value: " + str(return_value))
+        # return_type = self.getTypeFromAddress(return_value)
+        # print("Return type: " + str(return_type))
+        # print("Function: " + str(self.function_name))
+        # self.functions_directory.getTable(self.function_name).setReturnType(return_type)
+        # quadruple = Quadruple(self.id, "return", return_value, None, None)
+        # self.id += 1
+        # self.cuadruplos.append(quadruple)
+        pass
 
     def getTypeFromAddress(self, address):
         if isinstance(address, str):

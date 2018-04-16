@@ -90,8 +90,8 @@ class Cube(object):
 		self.cube[self.INT, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.INT, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
 		# INT = Data types
-		self.cube[self.INT, self.EQUAL, self.INT] = self.INT
-		self.cube[self.INT, self.EQUAL, self.FLOAT] = self.FLOAT
+		self.cube[self.INT, self.EQUAL, self.INT] = self.BOOLEAN
+		self.cube[self.INT, self.EQUAL, self.FLOAT] = self.BOOLEAN
 		self.cube[self.INT, self.EQUAL, self.CHAR] = self.ERROR
 		self.cube[self.INT, self.EQUAL, self.STRING] = self.ERROR
 		self.cube[self.INT, self.EQUAL, self.BOOLEAN] = self.ERROR

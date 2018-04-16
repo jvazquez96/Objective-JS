@@ -80,6 +80,7 @@ class VirtualMachine(object):
 		self.quadruple_pointer = 0
 		self.pointer = Stack()
 		self.context_stack = Stack()
+		self.return_values = Stack()
 		self.start()
 
 	def resetMemory(self):
@@ -260,6 +261,17 @@ class VirtualMachine(object):
 				self.locals, self.temps = mem.getMemory()
 				return_address = self.pointer.pop() - 1
 				self.quadruple_pointer = return_address
+			elif operator == "return":
+				return_value = self.getValue(operand1)
+				self.return_values.push(return_value)
+			elif operator == "save_return":
+				return_value = self.return_values.pop()
+				if self.is_local(address):
+					self.set_local(self.locals, address, return_value)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, return_value)
+
+
 
 			self.quadruple_pointer += 1
 

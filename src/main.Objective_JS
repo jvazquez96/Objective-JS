@@ -128,7 +128,8 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-		sum(2, 19);
+		var s : int;
+		s = sum(2, 19);;
 		print("Estoy regresando de una funcion", "wuuu");
 		print("Elevando unos numeros en un main que los declare aqui", a^b);
 		read >> nala >> morgan >> quique;

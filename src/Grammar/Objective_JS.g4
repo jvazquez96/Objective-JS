@@ -192,7 +192,7 @@ func :
 	;
 
 funcAux:
-	RETURNS
+	RETURNS 
 	|
 	;
 
@@ -225,7 +225,7 @@ impFunc :
 	;
 
 impFuncAux2 :
-	RETURNS
+	RETURNS tipo_dato_no_list getValue
 	|
 	;
 
@@ -254,8 +254,11 @@ bloqueFuncAux :
 	;
 
 bloqueFuncAux2 :
-	RETURN hyperExpresion getValue SEMICOLON
+	RETURN hyperExpresion getReturnType SEMICOLON
 	|
+	;
+
+getReturnType :
 	;
 
 getValue : 
