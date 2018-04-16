@@ -108,7 +108,7 @@ bloque :
 	;
 
 preEstatuto :
-	estatuto preEstatuto
+	estatuto SEMICOLON preEstatuto
 	|
 	;
 
@@ -270,7 +270,7 @@ preVars :
 	;
 
 vars_ :
-	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
+	VAR ID varsAux COLON tipo_dato varsRepeated
 	;
 
 varsAux:
@@ -329,7 +329,7 @@ estatuto :
 	;
 
 asignacion :
-	objeto ASSIGNMENT hyperExpresion SEMICOLON
+	objeto ASSIGNMENT hyperExpresion
 	;
 
 condicion :
@@ -356,7 +356,7 @@ enterElse:
 	;
 
 escritura :
-	PRINT LEFT_PARENTHESIS hyperExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	PRINT LEFT_PARENTHESIS hyperExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS
 	;
 
 printAfterExpresion :
@@ -399,7 +399,7 @@ doAux :
 	;
 
 llamadaFunc :
-	((THIS | ID) DOT)? ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS SEMICOLON
+	((THIS | ID) DOT)? ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS
 	;
 
 
@@ -420,7 +420,7 @@ argumentosLlamadaAux :
 	;
 
 lectura :
-	READ INPUT_STREAM ID lecturaAux SEMICOLON
+	READ INPUT_STREAM ID lecturaAux
 	;
 
 lecturaAux :
@@ -429,7 +429,7 @@ lecturaAux :
 	;
 
 decInc :
-	objeto decIncAux SEMICOLON
+	objeto decIncAux
 	;
 
 decIncAux :

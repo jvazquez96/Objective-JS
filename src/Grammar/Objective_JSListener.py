@@ -2017,16 +2017,6 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     def exitGetValue(self, ctx):
-        # print("After return")
-        # print(ctx.tipo_dato_no_list().getText())
-        # print("Return value: " + str(return_value))
-        # return_type = self.getTypeFromAddress(return_value)
-        # print("Return type: " + str(return_type))
-        # print("Function: " + str(self.function_name))
-        # self.functions_directory.getTable(self.function_name).setReturnType(return_type)
-        # quadruple = Quadruple(self.id, "return", return_value, None, None)
-        # self.id += 1
-        # self.cuadruplos.append(quadruple)
         pass
 
     def getTypeFromAddress(self, address):

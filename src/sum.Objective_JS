@@ -1,15 +1,17 @@
 Class Sum {
-	function fib(int x) returns int {
+	function fib(int x) returns int {		
 		if (x <= 2) {
 			x = 1;
 		} else {
-			x = fib(x-1); + fib(x-2);;
+			x = fib(x-1) + fib(x-2);
 		}
 		return x;
 	}
 	main() {
-		var z: int;
-		z = fib(20);;
-		print("z", z);
+		var z : int ; var a : float;
+		z = fib(19);
+		print("fibonnacci", z);
+		a = 12;
+		print("A: ", a);
 	}
 }
