@@ -19,7 +19,7 @@
 19,endproc,None,None,None
 20,resetAddress,None,None,None
 21,ERA,fib,None,None
-22,param,%19,None,7000
+22,param,%20,None,7000
 23,GO.SUB,fib,None,2
 24,save_return,fib,None,13000
 25,=,13000,None,7000
