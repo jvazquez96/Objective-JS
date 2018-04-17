@@ -16,10 +16,8 @@ Class Carro {
 }
 Carro() {
 	marca = "default";
-	serie = 2;
 }
 Carro (string marca2) {
-	marca2 = "2";
 	marca = marca2;
 }
 
@@ -32,5 +30,5 @@ function getSerie() returns int {
 }
 
 function printSomething() {
-	print("asdaksudiaushduiahsiudhauisdhias")
+	print("Homeland");
 }

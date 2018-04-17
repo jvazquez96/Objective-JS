@@ -93,6 +93,7 @@ class Objective_JSListener(ParseTreeListener):
         self.initMemoryAddresses()
         self.isGlobalVar = True
         self.imports = []
+        self.only_class = False
 
 
     def resetMemoryAddresses(self):
@@ -477,12 +478,14 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#inicio.
     def enterInicio(self, ctx:Objective_JSParser.InicioContext):
-        pass
+        if ctx.main() is None:
+            self.only_class = True
 
     # Exit a parse tree produced by Objective_JSParser#inicio.
     def exitInicio(self, ctx:Objective_JSParser.InicioContext):
-        pass
-
+        if  self.only_class:
+            end = self.pending_jumps.pop()
+            self.fill(end, len(self.cuadruplos) + 1)
 
     # Enter a parse tree produced by Objective_JSParser#main.
     def enterMain(self, ctx:Objective_JSParser.MainContext):
@@ -495,9 +498,13 @@ class Objective_JSListener(ParseTreeListener):
     def exitMain(self, ctx:Objective_JSParser.MainContext):
         pass
 
-
     # Enter a parse tree produced by Objective_JSParser#clase.
     def enterClase(self, ctx:Objective_JSParser.ClaseContext):
+        if self.only_class:
+            quadruple = Quadruple(self.id, GO.TO, None, None, None)
+            self.cuadruplos.append(quadruple)
+            self.id += 1
+            self.pending_jumps.push(len(self.cuadruplos) - 1)
         className = ctx.CLASSNAME().getText()
         self.newClass(className)
 
@@ -508,26 +515,27 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#imports.
     def enterImports(self, ctx:Objective_JSParser.ImportsContext):
-        if ctx.IMPORT() is not None:
-            file_name = ctx.ID().getText() + ".Objective_JS"
-            self.imports.append(file_name)
+        # if ctx.IMPORT() is not None:
+        #     file_name = ctx.ID().getText() + ".Objective_JS"
+        #     self.imports.append(file_name)
+        pass
 
     def enterPasteImports(self, ctx):
-        with open("temp_file.Objective_JS", "a") as temp_file:
-            for file in self.imports:
-                with open(file, "r") as imported_file:
-                    temp_file.write(imported_file.read())
+        pass
+        # with open("temp_file.Objective_JS", "a") as temp_file:
+        #     for file in self.imports:
+        #         with open(file, "r") as imported_file:
+        #             temp_file.write(imported_file.read())
 
-            with open(self.fileName, 'r') as init_file:
-                temp_file.write(init_file.read())
+        #     with open(self.fileName, 'r') as init_file:
+        #         temp_file.write(init_file.read())
 
-        with open('original_copy.Objective_JS', 'w') as output, open(self.fileName, 'r') as input:
-            output.write(input.read())
+        # with open('original_copy.Objective_JS', 'w') as output, open(self.fileName, 'r') as input:
+        #     output.write(input.read())
 
-        with open(self.fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
-            output.write(input.read())
+        # with open(self.fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
+        #     output.write(input.read())
 
-        os.remove('temp_file.Objective_JS')
     # Exit a parse tree produced by Objective_JSParser#imports.
     def exitImports(self, ctx:Objective_JSParser.ImportsContext):
         pass
@@ -535,15 +543,17 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#class_declaration.
     def enterClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
-        self.function_name = ctx.CLASSNAME().getText()
-        self.functions_directory.create_table(self.function_name, InfoDirectory())
-        self.file_name = ctx.CLASSNAME().getText()
+        if ctx.CLASSNAME() is not None:
+            self.function_name = ctx.CLASSNAME().getText()
+            self.functions_directory.create_table(self.function_name, InfoDirectory())
+            self.file_name = ctx.CLASSNAME().getText()
 
     # Exit a parse tree produced by Objective_JSParser#class_declaration.
     def exitClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
-        with open('original_copy.Objective_JS','r') as input, open(self.fileName, 'w+') as output:
-            output.write(input.read())
-        os.remove('original_copy.Objective_JS')
+        pass
+        # with open('original_copy.Objective_JS','r') as input, open(self.fileName, 'w+') as output:
+        #     output.write(input.read())
+        # os.remove('original_copy.Objective_JS')
     # Enter a parse tree produced by Objective_JSParser#main_header.
     def enterMain_header(self, ctx:Objective_JSParser.Main_headerContext):
         self.function_name = "main"
@@ -789,7 +799,6 @@ class Objective_JSListener(ParseTreeListener):
     def enterImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
         if ctx.FUNCTION() is not None:
             self.function_name = ctx.ID().getText()
-            # print(self.function_name)
 
     # Exit a parse tree produced by Objective_JSParser#impFunc.
     def exitImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):

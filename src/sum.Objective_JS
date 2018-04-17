@@ -1,4 +1,37 @@
-import carro
+Class Carro {
+	Carro();
+	Carro(string marca);
+	Attributes {
+		public : 
+			var marca : string;
+		private : 
+			var serie : int;
+	}
+	Methods {
+		public :
+			function getMarca () ;
+		private :
+			function getSerie () ;
+	}
+}
+Carro() {
+	marca = "default";
+}
+Carro (string marca2) {
+	marca = marca2;
+}
+
+function getMarca() returns string {
+	return marca;
+}
+
+function getSerie() returns int {
+	return serie;
+}
+
+function printSomething() {
+	print("Homeland");
+}
 
 Class Sum {
 	function fib(int x) returns int {		
@@ -6,7 +39,7 @@ Class Sum {
 			x = 1;
 		} else {
 			x = fib(x-1) + fib(x-2);
-		}
+		};
 		return x;
 	}
 	main() {
@@ -15,5 +48,6 @@ Class Sum {
 		print("fibonnacci", z);
 		a = 12;
 		print("A: ", a);
+		printSomething();
 	}
 }

@@ -78,12 +78,12 @@ WHITESPACE : [ \n\t\r]+ -> skip;
 // Delete this when actually doing the real rules.
 
 inicio:
-	clase
-	| main
+	main
+	| clase
 	;
 
 main :
-	imports pasteImports (clase)* class_declaration
+	(clase)* class_declaration
 	;
 
 pasteImports :
@@ -252,7 +252,7 @@ bloqueFunc :
 	;
 
 bloqueFuncAux :
-	estatuto bloqueFuncAux
+	estatuto SEMICOLON bloqueFuncAux
 	|
 	;
 
