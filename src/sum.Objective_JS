@@ -1,37 +1,4 @@
-Class Carro {
-	Carro();
-	Carro(string marca);
-	Attributes {
-		public : 
-			var marca : string;
-		private : 
-			var serie : int;
-	}
-	Methods {
-		public :
-			function getMarca () ;
-		private :
-			function getSerie () ;
-	}
-}
-Carro() {
-	marca = "default";
-}
-Carro (string marca2) {
-	marca = marca2;
-}
-
-function getMarca() returns string {
-	return marca;
-}
-
-function getSerie() returns int {
-	return serie;
-}
-
-function printSomething() {
-	print("Homeland");
-}
+import carro
 
 Class Sum {
 	function fib(int x) returns int {		
@@ -43,6 +10,15 @@ Class Sum {
 		return x;
 	}
 	main() {
+		if (true) {
+			print("true");
+		};
+		var i : int;;
+		i = 0;
+		while (i <= 5) {
+			print("i", i);
+			i++;
+		};
 		var z : int ; var a : float;
 		z = fib(20);
 		print("fibonnacci", z);

@@ -49,9 +49,9 @@ def main(argv):
     listener = Objective_JSListener(fileName)
     walker = ParseTreeWalker()
     walker.walk(listener, tree)
-    # if os.path.exists('original_copy.Objective_JS'):
-    #     with open('original_copy.Objective_JS','r') as input, open(fileName, 'w+') as output:
-    #         output.write(input.read())
+    if os.path.exists('original_copy.Objective_JS'):
+        with open('original_copy.Objective_JS','r') as input, open(fileName, 'w+') as output:
+            output.write(input.read())
     if os.path.exists('original_copy.Objective_JS'):
         os.remove('original_copy.Objective_JS')
     quadruples = listener.getQuadruples()
