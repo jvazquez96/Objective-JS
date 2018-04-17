@@ -383,27 +383,27 @@ class VirtualMachine(object):
 				return self.locals[0][address]
 		elif CONST_LOCAL_BOTTOM_FLOAT <= address <= CONST_LOCAL_TOP_FLOAT:
 			if address not in self.locals[1]:
-				print("A local float variable is used bot not initialized")
+				print("A local float variable is used but not initialized")
 			else:
 				return self.locals[1][address]
 		elif CONST_LOCAL_BOTTOM_CHAR <= address <= CONST_LOCAL_TOP_CHAR:
 			if address not in self.locals[2]:
-				print("A local char variable is used bot not initialized")
+				print("A local char variable is used but not initialized")
 			else:
 				return self.locals[2][address]
 		elif CONST_LOCAL_BOTTOM_STRING <= address <= CONST_LOCAL_TOP_STRING:
 			if address not in self.locals[3]:
-				print("A local string variable is used bot not initialized")
+				print("A local string variable is used but not initialized")
 			else:
 				return self.locals[3][address]
 		elif CONST_LOCAL_BOTTOM_BOOLEAN <= address <= CONST_LOCAL_TOP_BOOLEAN:
 			if address not in self.locals[4]:
-				print("A local boolean variable is used bot not initialized")
+				print("A local boolean variable is used but not initialized")
 			else:
 				return self.locals[4][address]
 		elif CONST_LOCAL_BOTTOM_NULL <= address <= CONST_LOCAL_TOP_NULL:
 			if address not in self.locals[5]:
-				print("A local null variable is used bot not initialized")
+				print("A local null variable is used but not initialized")
 			else:
 				return self.locals[5][address]
 

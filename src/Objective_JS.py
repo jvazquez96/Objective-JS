@@ -6,14 +6,15 @@ from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
 from Grammar.Objective_JSListener import Objective_JSListener
 from VirtualMachine import VirtualMachine
- 
+
 def main(argv):
-    input = FileStream(argv[1])
+    fileName = argv[1]
+    input = FileStream(fileName)
     lexer = Objective_JSLexer(input)
     stream = CommonTokenStream(lexer)
     parser = Objective_JSParser(stream)
     tree = parser.inicio()
-    listener = Objective_JSListener()
+    listener = Objective_JSListener(fileName)
     walker = ParseTreeWalker()
     walker.walk(listener, tree)
     quadruples = listener.getQuadruples()

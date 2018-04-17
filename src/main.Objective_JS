@@ -135,6 +135,6 @@ Class HolaMundo {
 		read >> nala >> morgan >> quique;
 
 		var z : int;
-		z = sum(2, 20); + sum(3, 21);;
+		z = sum(2, 20) + sum(3, 21);
 	}
 }

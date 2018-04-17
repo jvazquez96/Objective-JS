@@ -83,7 +83,10 @@ inicio:
 	;
 
 main :
-	imports class_declaration
+	imports pasteImports (clase)* class_declaration
+	;
+
+pasteImports :
 	;
 
 clase :
@@ -240,7 +243,7 @@ argumentosAux:
 	;
 
 bloqueConstructor :
-	asignacion bloqueConstructor
+	asignacion SEMICOLON bloqueConstructor
 	|
 	;
 
@@ -270,7 +273,7 @@ preVars :
 	;
 
 vars_ :
-	VAR ID varsAux COLON tipo_dato varsRepeated
+	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
 	;
 
 varsAux:
@@ -279,7 +282,7 @@ varsAux:
 	;
 
 varsRepeated:
-	VAR ID varsAux COLON tipo_dato SEMICOLON varsRepeated
+	VAR ID varsAux COLON tipo_dato varsRepeated
 	|
 	;
 

@@ -3,7 +3,9 @@ from antlr4 import *
 
 import sys
 import re
+import os
 import numpy as np
+import fileinput
 from Structures.Cube import Cube
 from Structures.FunctionsDirectory import FunctionsDirectory
 from Structures.GO import GO
@@ -66,7 +68,8 @@ CONST_TEMPORAL_TOP_NULL = 17999
 # This class defines a complete listener for a parse tree produced by Objective_JSParser.
 class Objective_JSListener(ParseTreeListener):
 
-    def __init__(self):
+    def __init__(self, fileName):
+        self.fileName = fileName
         self.functions_directory = FunctionsDirectory()
         self.type = None
         # Default visibility
@@ -89,6 +92,7 @@ class Objective_JSListener(ParseTreeListener):
         self.current_param_counter = 0
         self.initMemoryAddresses()
         self.isGlobalVar = True
+        self.imports = []
 
 
     def resetMemoryAddresses(self):
@@ -504,8 +508,26 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#imports.
     def enterImports(self, ctx:Objective_JSParser.ImportsContext):
-        pass
+        if ctx.IMPORT() is not None:
+            file_name = ctx.ID().getText() + ".Objective_JS"
+            self.imports.append(file_name)
 
+    def enterPasteImports(self, ctx):
+        with open("temp_file.Objective_JS", "a") as temp_file:
+            for file in self.imports:
+                with open(file, "r") as imported_file:
+                    temp_file.write(imported_file.read())
+
+            with open(self.fileName, 'r') as init_file:
+                temp_file.write(init_file.read())
+
+        with open('original_copy.Objective_JS', 'w') as output, open(self.fileName, 'r') as input:
+            output.write(input.read())
+
+        with open(self.fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
+            output.write(input.read())
+
+        os.remove('temp_file.Objective_JS')
     # Exit a parse tree produced by Objective_JSParser#imports.
     def exitImports(self, ctx:Objective_JSParser.ImportsContext):
         pass
@@ -515,12 +537,13 @@ class Objective_JSListener(ParseTreeListener):
     def enterClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
         self.function_name = ctx.CLASSNAME().getText()
         self.functions_directory.create_table(self.function_name, InfoDirectory())
+        self.file_name = ctx.CLASSNAME().getText()
 
     # Exit a parse tree produced by Objective_JSParser#class_declaration.
     def exitClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
-        pass
-
-
+        with open('original_copy.Objective_JS','r') as input, open(self.fileName, 'w+') as output:
+            output.write(input.read())
+        os.remove('original_copy.Objective_JS')
     # Enter a parse tree produced by Objective_JSParser#main_header.
     def enterMain_header(self, ctx:Objective_JSParser.Main_headerContext):
         self.function_name = "main"
@@ -755,7 +778,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#emptyRule.
     def enterEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
-        pass
+        self.newFunction()
 
     # Exit a parse tree produced by Objective_JSParser#emptyRule.
     def exitEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
