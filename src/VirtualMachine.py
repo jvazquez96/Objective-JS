@@ -137,6 +137,15 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, val)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, val)
+			elif operator == "read":
+				val = int(input(""))
+				address = int(next_quadruple.getOperand1())
+				if self.is_constant(address):
+					self.set_constant(address, val)
+				elif self.is_local(address):
+					self.set_local(self.locals, address, val)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, val)
 			elif operator == "/":
 				val1 = self.getValue(operand1)
 				val2 = self.getValue(operand2)

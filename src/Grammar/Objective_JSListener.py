@@ -1205,7 +1205,12 @@ class Objective_JSListener(ParseTreeListener):
     def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
         valor = self.operandos.pop()
         id = self.getId(ctx.objeto().getText())
-        address = self.operandos.pop()
+
+        if self.operandos.empty():
+            address = self.getMemoryAddressFromVariable(id)
+        else:
+            address = self.operandos.pop()
+
         possibleType = self.types.pop()
         variableType = self.getTypeFromVariable(id)
         variableType = self.convertTypeToInt(variableType)
@@ -1214,7 +1219,6 @@ class Objective_JSListener(ParseTreeListener):
         if new_type == -1:
             print("Data type mismatch")
             sys.exit(0)
-            print("Error")
 
         cuadruplo = Quadruple(self.id, "=", valor, None, address)
         self.cuadruplos.append(cuadruplo)
@@ -1570,7 +1574,7 @@ class Objective_JSListener(ParseTreeListener):
         for key, value in self.functions_directory.getDirectory().items():
             if argument in value.getSymbolTable().getSymbols():
                 dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()
-                all_dimensions_argument = value.getSymbolTable().getContent(argument).getDim()
+                all_dimensions_argument.append(value.getSymbolTable().getContent(argument).getDim())
                 break
 
         all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
@@ -1583,6 +1587,7 @@ class Objective_JSListener(ParseTreeListener):
             else:
                 print("The function " + str(self.current_method_name) + " was expecting a list but received a matrix")
             sys.exit(0)
+
         for dimP, dimA in zip(all_dimensions_param, all_dimensions_argument):
             if dimP.getUpperBound() != dimA.getUpperBound():
                 if len(all_dimensions_argument) == 2:
@@ -1593,6 +1598,7 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
 
         quadruple = Quadruple(self.id, "param", argument_address, None, parameter_address)
+        quadruple.print()
         self.cuadruplos.append(quadruple)
         self.id += 1
 
@@ -1611,7 +1617,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#lectura.
     def enterLectura(self, ctx:Objective_JSParser.LecturaContext):
-        quadruple = Quadruple(self.id, "read", ctx.ID().getText(), None, None)
+        if self.operandos.empty():
+            address = self.getMemoryAddressFromVariable(ctx.ID().getText())
+        else:
+            address = self.operandos.pop()
+
+        quadruple = Quadruple(self.id, "read", address, None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
 
@@ -1623,7 +1634,11 @@ class Objective_JSListener(ParseTreeListener):
     # Enter a parse tree produced by Objective_JSParser#lecturaAux.
     def enterLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
         if ctx.INPUT_STREAM() is not None:
-            quadruple = Quadruple(self.id, "read",  ctx.ID().getText(), None, None)
+            if self.operandos.empty():
+                address = self.getMemoryAddressFromVariable(ctx.ID().getText())
+            else:
+                address = self.operandos.pop()
+            quadruple = Quadruple(self.id, "read",  address, None, None)
             self.id += 1
             self.cuadruplos.append(quadruple)
 

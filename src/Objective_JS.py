@@ -66,7 +66,7 @@ def main(argv):
         for quadruple in quadruples:
             file.write(str(quadruple.getId()) + "," + str(quadruple.getOperator()) + "," + str(quadruple.getOperand1()) + "," + str(quadruple.getOperand2()) + "," + str(quadruple.getResult()) + "\n")
 
-    #VirtualMachine()
+    VirtualMachine()
 
     # function_directory = listener.getFunctionDirectory()
     # for key, value in function_directory.getDirectory().items():

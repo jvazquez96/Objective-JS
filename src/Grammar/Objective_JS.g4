@@ -324,7 +324,7 @@ estatuto :
 	llamadaFunc SEMICOLON
 	| asignacion SEMICOLON
 	| condicion
-	| escritura
+	| escritura SEMICOLON
 	| ciclos
 	| vars_
 	| lectura SEMICOLON
