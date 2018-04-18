@@ -75,9 +75,12 @@ class VirtualMachine(object):
 		self.constants = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.quadruple_pointer = 0
 		self.pointer = Stack()
 		self.context_stack = Stack()
+		self.return_values = Stack()
 		self.start()
 
 	def resetMemory(self):
@@ -258,6 +261,17 @@ class VirtualMachine(object):
 				self.locals, self.temps = mem.getMemory()
 				return_address = self.pointer.pop() - 1
 				self.quadruple_pointer = return_address
+			elif operator == "return":
+				return_value = self.getValue(operand1)
+				self.return_values.push(return_value)
+			elif operator == "save_return":
+				return_value = self.return_values.pop()
+				if self.is_local(address):
+					self.set_local(self.locals, address, return_value)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, return_value)
+
+
 
 			self.quadruple_pointer += 1
 
@@ -369,27 +383,27 @@ class VirtualMachine(object):
 				return self.locals[0][address]
 		elif CONST_LOCAL_BOTTOM_FLOAT <= address <= CONST_LOCAL_TOP_FLOAT:
 			if address not in self.locals[1]:
-				print("A local float variable is used bot not initialized")
+				print("A local float variable is used but not initialized")
 			else:
 				return self.locals[1][address]
 		elif CONST_LOCAL_BOTTOM_CHAR <= address <= CONST_LOCAL_TOP_CHAR:
 			if address not in self.locals[2]:
-				print("A local char variable is used bot not initialized")
+				print("A local char variable is used but not initialized")
 			else:
 				return self.locals[2][address]
 		elif CONST_LOCAL_BOTTOM_STRING <= address <= CONST_LOCAL_TOP_STRING:
 			if address not in self.locals[3]:
-				print("A local string variable is used bot not initialized")
+				print("A local string variable is used but not initialized")
 			else:
 				return self.locals[3][address]
 		elif CONST_LOCAL_BOTTOM_BOOLEAN <= address <= CONST_LOCAL_TOP_BOOLEAN:
 			if address not in self.locals[4]:
-				print("A local boolean variable is used bot not initialized")
+				print("A local boolean variable is used but not initialized")
 			else:
 				return self.locals[4][address]
 		elif CONST_LOCAL_BOTTOM_NULL <= address <= CONST_LOCAL_TOP_NULL:
 			if address not in self.locals[5]:
-				print("A local null variable is used bot not initialized")
+				print("A local null variable is used but not initialized")
 			else:
 				return self.locals[5][address]
 

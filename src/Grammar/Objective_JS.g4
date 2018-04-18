@@ -78,12 +78,15 @@ WHITESPACE : [ \n\t\r]+ -> skip;
 // Delete this when actually doing the real rules.
 
 inicio:
-	clase
-	| main
+	main
+	| clase
 	;
 
 main :
-	imports class_declaration
+	(clase)* class_declaration
+	;
+
+pasteImports :
 	;
 
 clase :
@@ -192,7 +195,7 @@ func :
 	;
 
 funcAux:
-	RETURNS
+	RETURNS 
 	|
 	;
 
@@ -225,7 +228,7 @@ impFunc :
 	;
 
 impFuncAux2 :
-	RETURNS
+	RETURNS tipo_dato_no_list getValue
 	|
 	;
 
@@ -240,7 +243,7 @@ argumentosAux:
 	;
 
 bloqueConstructor :
-	asignacion bloqueConstructor
+	asignacion SEMICOLON bloqueConstructor
 	|
 	;
 
@@ -254,8 +257,14 @@ bloqueFuncAux :
 	;
 
 bloqueFuncAux2 :
-	RETURN hyperExpresion SEMICOLON
+	RETURN hyperExpresion getReturnType SEMICOLON
 	|
+	;
+
+getReturnType :
+	;
+
+getValue : 
 	;
 
 preVars :
@@ -312,18 +321,18 @@ tipo :
 	;
 
 estatuto :
-	llamadaFunc
-	| asignacion
+	llamadaFunc SEMICOLON
+	| asignacion SEMICOLON
 	| condicion
 	| escritura
 	| ciclos
 	| vars_
-	| lectura
-	| decInc
+	| lectura SEMICOLON
+	| decInc SEMICOLON
 	;
 
 asignacion :
-	objeto ASSIGNMENT hyperExpresion SEMICOLON
+	objeto ASSIGNMENT hyperExpresion
 	;
 
 condicion :
@@ -350,7 +359,7 @@ enterElse:
 	;
 
 escritura :
-	PRINT LEFT_PARENTHESIS hyperExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS SEMICOLON
+	PRINT LEFT_PARENTHESIS hyperExpresion printAfterExpresion escrituraAux RIGHT_PARENTHESIS
 	;
 
 printAfterExpresion :
@@ -393,7 +402,7 @@ doAux :
 	;
 
 llamadaFunc :
-	((THIS | ID) DOT)? ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS SEMICOLON
+	((THIS | ID) DOT)? ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS
 	;
 
 
@@ -414,7 +423,7 @@ argumentosLlamadaAux :
 	;
 
 lectura :
-	READ INPUT_STREAM ID lecturaAux SEMICOLON
+	READ INPUT_STREAM ID lecturaAux
 	;
 
 lecturaAux :
@@ -423,7 +432,7 @@ lecturaAux :
 	;
 
 decInc :
-	objeto decIncAux SEMICOLON
+	objeto decIncAux
 	;
 
 decIncAux :
@@ -507,6 +516,7 @@ factorParentesis :
 
 varCte :
 	objeto
+	| llamadaFunc
 	| TYPE_INT
 	| TYPE_FLOAT
 	| TYPE_STRING

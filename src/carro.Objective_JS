@@ -1,0 +1,38 @@
+Class Carro {
+	Carro();
+	Carro(string marca);
+	Attributes {
+		public : 
+			var marca : string;
+		private : 
+			var serie : int;
+	}
+	Methods {
+		public :
+			function getMarca () ;
+		private :
+			function getSerie () ;
+	}
+}
+Carro() {
+	marca = "default";
+}
+Carro (string marca2) {
+	marca = marca2;
+}
+
+Carro (string marca) {
+	marca = marca;
+}
+
+function getMarca() returns string {
+	return marca;
+}
+
+function getSerie() returns int {
+	return serie;
+}
+
+function printSomething() {
+	print("Homeland");
+}

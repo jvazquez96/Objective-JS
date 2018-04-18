@@ -13,7 +13,8 @@ Class HolaMundo {
 		var salma, morgan, luis, paco : int;
 		salma = argumentoDos * 23;
 		argumentoUno = 2 / 5;
-		return argumentoUno;
+		salma = 3;
+		return 27;
 	}
 
 	function funcionDos(int argumentoUno, int unoYMedio, float argumentoDos, string argumentoTres, bool nuevoArgumento) {
@@ -33,17 +34,16 @@ Class HolaMundo {
 	function minus(int a, int b) returns {
 		var res : int;
 		res = a - b;
-		print("ESTA FUNCION FUE LLAMADA POR OTRA FUNCION :O");
-		print("resta", res);
+		print("minus", res);
+		return res;
 	}
 	
 
 	function sum(int a, int b) returns {
 		var res : int;
 		res = a + b;
-		print("DENTRO DE UNA FUNCION", "SUMAAAAA", res);
-		minus(a, b);
-		return res;
+		print("sun", res);
+		return a;
 	}
 
 	main(){
@@ -128,10 +128,13 @@ Class HolaMundo {
 			i = i + 1;
 		}
 
-		sum(2, 19);
+		var s : int;
+		s = sum(2, 19);;
 		print("Estoy regresando de una funcion", "wuuu");
 		print("Elevando unos numeros en un main que los declare aqui", a^b);
 		read >> nala >> morgan >> quique;
 
+		var z : int;
+		z = sum(2, 20) + sum(3, 21);
 	}
 }
