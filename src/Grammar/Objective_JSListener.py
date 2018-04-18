@@ -1168,7 +1168,6 @@ class Objective_JSListener(ParseTreeListener):
             print("Error")
         # address = self.getMemoryAddressFromVariable(id)
         cuadruplo = Quadruple(self.id, "=", valor, None, address)
-        cuadruplo.print()
         self.cuadruplos.append(cuadruplo)
         self.id += 1
         self.operandos.pop()

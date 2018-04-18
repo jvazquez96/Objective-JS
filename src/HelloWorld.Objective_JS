@@ -3,6 +3,6 @@ Class HelloWorld {
 		var a : int;
 		var mat : list[8][8] int;
 		var i : list[10] int;
-		mat[i[5]][7] = 5;	
+		mat[i[5] + 5][7] = 5;	
 	}
 }
