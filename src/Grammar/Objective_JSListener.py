@@ -89,7 +89,8 @@ class Objective_JSListener(ParseTreeListener):
         self.current_param_counter = 0
         self.initMemoryAddresses()
         self.isGlobalVar = True
-        self.dim = Stack()
+        self.dims = Stack()
+        self.ids = Stack()
 
 
     def resetMemoryAddresses(self):
@@ -492,14 +493,14 @@ class Objective_JSListener(ParseTreeListener):
             return self.getTypeFromVariable(value)
 
     def convertTypeToInt(self, type):
-        if not isinstance(type, int):
-            if type == "int":
+        if type is not None and not isinstance(type, int):
+            if type == "int" or re.search("list(\[.*\])+int", type) is not None:
                 return 0
-            elif type == "float":
+            elif type == "float" or re.search("list(\[.*\])+float", type) is not None:
                 return 1
-            elif type == "char":
+            elif type == "char" or re.search("list(\[.*\])+char", type) is not None:
                 return 2
-            elif type == "string":
+            elif type == "string" or re.search("list(\[.*\])+string", type) is not None:
                 return 3
             elif type == "bool" or re.search("list(\[.*\])+bool", type) is not None:
                 return 4
@@ -1143,30 +1144,34 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#asignacion.
     def enterAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
+        # id = self.getId(ctx.objeto().getText())
+        # address = self.getMemoryAddressFromVariable(id)
+        # self.operandos.push(address)
+        # self.operadores.push('=')
         pass
 
     # Exit a parse tree produced by Objective_JSParser#asignacion.
     def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
-        string = True
-        char = True
-        id = ctx.objeto().getText()
         valor = self.operandos.pop()
+        id = self.getId(ctx.objeto().getText())
+        address = self.operandos.pop()
         possibleType = self.types.pop()
         variableType = self.getTypeFromVariable(id)
         variableType = self.convertTypeToInt(variableType)
-        print("Var: " + str(id))
-        print("variableType: " + str(variableType))
-        print("possibleType: " + str(possibleType))
+        # print("Var: " + str(id))
+        # print("variableType: " + str(variableType))
+        # print("possibleType: " + str(possibleType))
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
             print("Data type mismatch")
             sys.exit(0)
             print("Error")
-        address = self.getMemoryAddressFromVariable(id)
+        # address = self.getMemoryAddressFromVariable(id)
         cuadruplo = Quadruple(self.id, "=", valor, None, address)
-        #cuadruplo.print()
+        cuadruplo.print()
         self.cuadruplos.append(cuadruplo)
         self.id += 1
+        self.operandos.pop()
 
 
     # Enter a parse tree produced by Objective_JSParser#condicion.
@@ -1634,18 +1639,6 @@ class Objective_JSListener(ParseTreeListener):
     def exitDecIncAux(self, ctx:Objective_JSParser.DecIncAuxContext):
         pass
 
-    def getNumOfDim(self, id):
-        count = 0
-        size = len(id)
-        i = 0
-
-        while(i < size):
-            if(id[i] == '['):
-                count += 1
-            i += 1
-
-        self.dim.push(count)
-
     def getId(self, id):
         size = len(id)
         i = 0
@@ -1653,18 +1646,17 @@ class Objective_JSListener(ParseTreeListener):
 
         while(i < size):
             if(id[i] == '['):
-                return var
+                break
             else:
                 var += id[i]
             i += 1
+        return var
 
 
     # Enter a parse tree produced by Objective_JSParser#objeto.
     def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
         if ctx.objetoAux() is not None:
             if ctx.objetoAux().LEFT_SQUARE_BRACKET() is not None:
-                size = self.getNumOfDim(ctx.objetoAux().getText())
-                self.getNumOfDim(ctx.objetoAux().getText())
                 id = self.getId(ctx.objetoAux().getText())
             else:
                 id = ctx.objetoAux().getText()
@@ -1687,68 +1679,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#objeto.
     def exitObjeto(self, ctx:Objective_JSParser.ObjetoContext):
-        # Check if the dim stack is not empty
-        if self.dim.size() > 0:
-            # Gets the number of dimensions (array or matrix)
-            dims = self.dim.pop()
-            # Array
-            if dims == 1:
-                dim1 = self.operandos.pop()
-                type1 = self.types.pop()
-                if type1 != 0:
-                    print("Data type mismatch")
-                    sys.exit(0)
-
-                id = self.getId(ctx.objetoAux().getText())
-                dimensions = self.getDimsFromVariable(id)
-                cuadruplo = Quadruple(self.id, 'VER', dim1, 0, dimensions[0].getUpperBound())
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                cuadruplo = Quadruple(self.id, '+', dim1, "%" + str(self.getMemoryAddressFromVariable(id)), self.current_temp_int_counter)
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                self.current_temp_int_counter += 1
-            # Matrix
-            else:
-                dim2 = self.operandos.pop()
-                dim1 = self.operandos.pop()
-                type2 = self.types.pop()
-                type1 = self.types.pop()
-                if type1 != 0 or type2 != 0:
-                    print("Data type mismatch")
-                    sys.exit(0)
-                id = self.getId(ctx.objetoAux().getText())
-                dimensions = self.getDimsFromVariable(id)
-                # Dimension 1
-                cuadruplo = Quadruple(self.id, 'VER', dim1, 0, dimensions[0].getUpperBound())
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                cuadruplo = Quadruple(self.id, '*', dim1, "%" + str(dimensions[0].getM()), self.current_temp_int_counter)
-                self.operandos.push(self.current_temp_int_counter)
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                self.current_temp_int_counter += 1
-                # Dimension 2
-                cuadruplo = Quadruple(self.id, 'VER', dim2, 0, dimensions[1].getUpperBound())
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                cuadruplo = Quadruple(self.id, '+', self.operandos.pop(), dim2, self.current_temp_int_counter)
-                self.operandos.push(self.current_temp_int_counter)
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                self.current_temp_int_counter += 1
-                # Base direction
-                cuadruplo = Quadruple(self.id, '+', self.operandos.pop(), "%" + str(self.getMemoryAddressFromVariable(id)), self.current_temp_int_counter)
-                self.cuadruplos.append(cuadruplo)
-                cuadruplo.print()
-                self.id += 1
-                self.current_temp_int_counter += 1
+        pass
 
 
     # Enter a parse tree produced by Objective_JSParser#objetoAux.
@@ -1992,6 +1923,7 @@ class Objective_JSListener(ParseTreeListener):
                 self.id += 1
 
 
+
     # Enter a parse tree produced by Objective_JSParser#terminoOperadores.
     def enterTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
         if ctx.MULTIPLICATION_OPERATOR() is not None:
@@ -2128,3 +2060,106 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#matrix.
     def exitMatrix(self, ctx:Objective_JSParser.MatrixContext):
         pass
+
+    def enterVerifica_id(self, ctx:Objective_JSParser.Verifica_idContext):
+        id = ctx.ID().getText()
+        self.isVarDeclared(id)
+        dimensions = self.getDimsFromVariable(id)
+
+        if(len(dimensions) == 0):
+            print("Var " + id + " is not an array or matrix")
+            sys.exit(0)
+
+        self.ids.push(id)
+        self.dims.push(1)
+
+        type = self.normalizeTypes(self.getTypeFromVariable(id))
+        self.types.push(type)
+        self.operadores.push('[')
+
+    def enterVerifica_dim1(self, ctx:Objective_JSParser.Verifica_dim1Context):
+        id = self.ids.top()
+        dim = self.dims.top()
+        dimensions = self.getDimsFromVariable(id)
+
+        if self.types.top() != 0:
+            print("The index of the var " + id + " is not an integer")
+            sys.exit(0)
+
+        cuadruplo = Quadruple(self.id, 'VER', self.operandos.top(), 0, dimensions[0].getUpperBound())
+        self.cuadruplos.append(cuadruplo)
+        self.id += 1
+
+    def enterVerifica_arreglo(self, ctx:Objective_JSParser.Verifica_arregloContext):
+        id = self.ids.pop()
+        dim = self.dims.pop()
+        dimensions = self.getDimsFromVariable(id)
+
+        if(len(dimensions) != dim):
+            print("The var " + id + " is not of size 1")
+            sys.exit(0)
+
+        aux = self.operandos.pop()
+        self.types.pop()
+
+        cuadruplo = Quadruple(self.id, "+", aux, "%" + str(self.getMemoryAddressFromVariable(id)), self.current_temp_int_counter)
+        self.cuadruplos.append(cuadruplo)
+        self.id += 1
+
+        self.operandos.push("(" + str(self.current_temp_int_counter) + ")")
+        self.current_temp_int_counter += 1
+
+    def enterMatriz_aux(self, ctx:Objective_JSParser.Matriz_auxContext):
+        id = self.ids.pop()
+        dim = self.dims.pop()
+        dimensions = self.getDimsFromVariable(id)
+
+        type = self.types.pop()
+        aux = self.operandos.pop()
+
+        if type != 0:
+            print("The index of the var " + id + " is not an integer")
+            sys.exit(0)
+
+        cuadruplo = Quadruple(self.id, '*', aux, "%" + str(dimensions[0].getM()), self.current_temp_int_counter)
+        self.cuadruplos.append(cuadruplo)
+        self.id += 1
+        self.operandos.push(self.current_temp_int_counter)
+        self.current_temp_int_counter += 1
+
+        dim += 1
+        self.ids.push(id)
+        self.dims.push(dim)
+
+    def enterVerifica_dim2(self, ctx:Objective_JSParser.Verifica_dim2Context):
+        id = self.ids.pop()
+        dim = self.dims.pop()
+        dimensions = self.getDimsFromVariable(id)
+
+        if dim != len(dimensions):
+            print("The var " + id + " is not of size 2")
+            sys.exit(0)
+
+        aux2 = self.operandos.pop()
+        type = self.types.pop()
+        aux1 = self.operandos.pop()
+        self.types.pop()
+
+        if type != 0:
+            print("The index of the var " + id + " is not an integer")
+            sys.exit(0)
+
+        cuadruplo = Quadruple(self.id, "+", aux1, aux2, self.current_temp_int_counter)
+        self.cuadruplos.append(cuadruplo)
+        self.id += 1
+        self.operandos.push(self.current_temp_int_counter)
+        self.current_temp_int_counter += 1
+
+        aux = self.operandos.pop()
+        cuadruplo = Quadruple(self.id, "+", aux, "%" + str(self.getMemoryAddressFromVariable(id)), self.current_temp_int_counter)
+        self.cuadruplos.append(cuadruplo)
+        self.id += 1
+        self.operandos.push("(" + str(self.current_temp_int_counter) + ")")
+        self.current_temp_int_counter += 1
+
+        self.operadores.pop()

@@ -1,7 +1,8 @@
 Class HelloWorld {
 	main(){
-		var i : int;
-		var arreglo : list[10] int;
-		arreglo[9] = 6;		
+		var a : int;
+		var mat : list[8][8] int;
+		var i : list[10] int;
+		mat[i[5]][7] = 5;	
 	}
 }

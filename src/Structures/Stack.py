@@ -20,7 +20,7 @@ class Stack(object):
 			return self.elements[-1]
 
 	def push(self, element):
-		# Agrega un elemento al stack.
+		# Agrega un elemento al stack
 		self.elements.append(element)
 
 	def pop(self):

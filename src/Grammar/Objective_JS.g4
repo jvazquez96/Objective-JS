@@ -439,7 +439,7 @@ objetoAux:
 	THIS DOT ID
 	| ID DOT ID
 	| ID
-	| ID LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET matrix
+	| verifica_id LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET verifica_dim1 matrix
 	;
 
 
@@ -516,6 +516,22 @@ varCte :
 	;
 
 matrix :
-	LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET
-	|
+	matriz_aux LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET verifica_dim2
+	| verifica_arreglo
+	;
+
+verifica_id :
+	ID
+	;
+
+verifica_dim1 :
+	;
+
+verifica_arreglo :
+	;
+
+matriz_aux :
+	;
+
+verifica_dim2 :
 	;
