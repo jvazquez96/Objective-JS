@@ -279,6 +279,16 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, return_value)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, return_value)
+			elif operator == "VER":
+				val = self.getValue(operand1)
+				if not self.is_int(operand1):
+					print("The indices of a list must be an integer")
+					sys.exit(0)
+				lowerBound = self.getValue(operand2)
+				upperBound = self.getValue(address)
+				if val < lowerBound or val > upperBound:
+					print("The indices must be between the boundaris")
+					sys.exit(0)
 
 
 
@@ -313,6 +323,8 @@ class VirtualMachine(object):
 	def getValue(self, address):
 		if self.is_actual_value(address):
 			return self.get_actual_value(address)
+		elif self.is_address(address):
+			return self.get_value_pointed_by_address(address)
 		elif self.is_constant(int(address)):
 			return self.get_constant(int(address))
 		elif self.is_local(int(address)):
@@ -323,6 +335,9 @@ class VirtualMachine(object):
 	def is_actual_value(self, address):
 		return address.find("%") != -1
 
+	def is_address(self, address):
+		return address[0] == '('
+
 	def is_constant(self, address):
 		return CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_NULL
 
@@ -331,6 +346,16 @@ class VirtualMachine(object):
 
 	def is_temporal(self, address):
 		return CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_NULL
+
+	def get_value_pointed_by_addres(address):
+		new_address = address[1:-1]
+		new_address = int(new_address)
+		if self.is_global(new_address):
+			return self.get_constant(new_address)
+		elif self.is_local(new_address):
+			return self.get_local(new_address)
+		elif self.is_temporal(new_address):
+			return self.get_temporal(new_address)
 
 	def get_constant(self, address):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
