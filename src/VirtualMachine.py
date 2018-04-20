@@ -281,15 +281,15 @@ class VirtualMachine(object):
 					self.set_temporal(self.temps, address, return_value)
 			elif operator == "VER":
 				val = self.getValue(operand1)
-				if not self.is_int(operand1):
+				if not self.is_int(val):
 					print("The indices of a list must be an integer")
 					sys.exit(0)
+
 				lowerBound = self.getValue(operand2)
-				upperBound = self.getValue(address)
+				upperBound = address
 				if val < lowerBound or val > upperBound:
 					print("The indices must be between the boundaris")
 					sys.exit(0)
-
 
 
 			self.quadruple_pointer += 1

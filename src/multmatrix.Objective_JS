@@ -1,0 +1,10 @@
+Class Matrices {
+	function multiplicacion() {
+		print("HOLA");
+	}
+	main() {
+		var matrizA : list[3][3] int;
+		matrizA[1][2] = 2018;
+		print(matrizA[1][2]);
+	}
+}
