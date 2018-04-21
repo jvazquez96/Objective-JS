@@ -69,7 +69,15 @@ Class Merge {
 			merge(l, m, r);
 		}
 	}
+
+	function floor(float a) returns int{
+		return a - (a % 1);
+	}
 	main() {
+		var test : float;
+		read >> test;
+		print(test);
+		print(floor(test)):
 		var size : int;
 		size = 10;
 

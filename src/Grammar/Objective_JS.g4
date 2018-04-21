@@ -502,6 +502,7 @@ termino :
 terminoOperadores :
 	MULTIPLICATION_OPERATOR termino
 	| DIVISION_OPERATOR termino
+	| MODULUS_OPERATOR termino
 	|
 	;
 

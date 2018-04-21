@@ -1998,6 +1998,8 @@ class Objective_JSListener(ParseTreeListener):
             self.operadores.push('*')
         elif ctx.DIVISION_OPERATOR() is not None:
             self.operadores.push('/')
+        elif ctx.MODULUS_OPERATOR() is not None:
+            self.operadores.push('%')
 
     # Exit a parse tree produced by Objective_JSParser#terminoOperadores.
     def exitTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
@@ -2073,7 +2075,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#factor.
     def exitFactor(self, ctx:Objective_JSParser.FactorContext):
-        if self.operadores.top() == '/' or self.operadores.top() == '*':
+        if self.operadores.top() == '/' or self.operadores.top() == '*' or self.operadores.top() == '%':
             operando2 = self.operandos.pop()
             tipo1 = self.types.pop()
             operando1 = self.operandos.pop()
@@ -2082,8 +2084,10 @@ class Objective_JSListener(ParseTreeListener):
 
             if operador == '/':
                 number_op = 3
-            else:
+            elif operador == '*':
                 number_op = 2
+            else:
+                number_op = 5
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
             if new_type == 0:

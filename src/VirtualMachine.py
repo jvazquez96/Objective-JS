@@ -160,7 +160,13 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, val)
 			elif operator == "read":
-				val = int(input(""))
+				val = input("")
+
+				if val.find('.'):
+					val = float(val)
+				else:
+					val = int(val)
+					
 				if operand1[0] == '(':
 					address = self.getValue(operand1)
 				else:
@@ -209,6 +215,25 @@ class VirtualMachine(object):
 				else:
 					val2 = self.getValue(operand2)
 				res = val1 * val2
+				if self.is_constant(address):
+					self.set_constant(address, res)
+				elif self.is_local(address):
+					self.set_local(self.locals, address, res)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, res)
+			elif operator == "%":
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
+
+				res = val1 % val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
 				elif self.is_local(address):

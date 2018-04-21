@@ -8,7 +8,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3C")
-        buf.write("\u031b\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u031d\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -65,17 +65,17 @@ def serializedATN():
         buf.write("\nT\3U\3U\3U\3V\3V\3V\5V\u02bf\nV\3W\3W\3W\3X\3X\3X\3")
         buf.write("X\3X\5X\u02c9\nX\3Y\3Y\3Y\3Z\3Z\3Z\3Z\3Z\3Z\3Z\3Z\3Z\3")
         buf.write("Z\3Z\3Z\3Z\5Z\u02db\nZ\3[\3[\3[\3\\\3\\\3\\\3\\\3\\\5")
-        buf.write("\\\u02e5\n\\\3]\3]\3]\3^\3^\3^\3^\3^\5^\u02ef\n^\3_\3")
-        buf.write("_\5_\u02f3\n_\3`\3`\3`\3`\3a\3a\3a\3a\3a\3a\3a\3a\3a\3")
-        buf.write("a\3a\3a\3a\5a\u0306\na\3b\3b\3b\3b\3b\3b\3b\5b\u030f\n")
-        buf.write("b\3c\3c\3d\3d\3e\3e\3f\3f\3g\3g\3g\2\2h\2\4\6\b\n\f\16")
-        buf.write("\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDF")
-        buf.write("HJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086")
+        buf.write("\\\u02e5\n\\\3]\3]\3]\3^\3^\3^\3^\3^\3^\3^\5^\u02f1\n")
+        buf.write("^\3_\3_\5_\u02f5\n_\3`\3`\3`\3`\3a\3a\3a\3a\3a\3a\3a\3")
+        buf.write("a\3a\3a\3a\3a\3a\5a\u0308\na\3b\3b\3b\3b\3b\3b\3b\5b\u0311")
+        buf.write("\nb\3c\3c\3d\3d\3e\3e\3f\3f\3g\3g\3g\2\2h\2\4\6\b\n\f")
+        buf.write("\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@")
+        buf.write("BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086")
         buf.write("\u0088\u008a\u008c\u008e\u0090\u0092\u0094\u0096\u0098")
         buf.write("\u009a\u009c\u009e\u00a0\u00a2\u00a4\u00a6\u00a8\u00aa")
         buf.write("\u00ac\u00ae\u00b0\u00b2\u00b4\u00b6\u00b8\u00ba\u00bc")
         buf.write("\u00be\u00c0\u00c2\u00c4\u00c6\u00c8\u00ca\u00cc\2\6\3")
-        buf.write("\2<@\3\2\67;\4\2&&BB\3\2\t\n\2\u02ff\2\u00d0\3\2\2\2\4")
+        buf.write("\2<@\3\2\67;\4\2&&BB\3\2\t\n\2\u0302\2\u00d0\3\2\2\2\4")
         buf.write("\u00d5\3\2\2\2\6\u00da\3\2\2\2\b\u00dc\3\2\2\2\n\u00e5")
         buf.write("\3\2\2\2\f\u00e7\3\2\2\2\16\u00f2\3\2\2\2\20\u00f4\3\2")
         buf.write("\2\2\22\u00fc\3\2\2\2\24\u0101\3\2\2\2\26\u0103\3\2\2")
@@ -104,10 +104,10 @@ def serializedATN():
         buf.write("\u00a8\u02b8\3\2\2\2\u00aa\u02be\3\2\2\2\u00ac\u02c0\3")
         buf.write("\2\2\2\u00ae\u02c8\3\2\2\2\u00b0\u02ca\3\2\2\2\u00b2\u02da")
         buf.write("\3\2\2\2\u00b4\u02dc\3\2\2\2\u00b6\u02e4\3\2\2\2\u00b8")
-        buf.write("\u02e6\3\2\2\2\u00ba\u02ee\3\2\2\2\u00bc\u02f2\3\2\2\2")
-        buf.write("\u00be\u02f4\3\2\2\2\u00c0\u0305\3\2\2\2\u00c2\u030e\3")
-        buf.write("\2\2\2\u00c4\u0310\3\2\2\2\u00c6\u0312\3\2\2\2\u00c8\u0314")
-        buf.write("\3\2\2\2\u00ca\u0316\3\2\2\2\u00cc\u0318\3\2\2\2\u00ce")
+        buf.write("\u02e6\3\2\2\2\u00ba\u02f0\3\2\2\2\u00bc\u02f4\3\2\2\2")
+        buf.write("\u00be\u02f6\3\2\2\2\u00c0\u0307\3\2\2\2\u00c2\u0310\3")
+        buf.write("\2\2\2\u00c4\u0312\3\2\2\2\u00c6\u0314\3\2\2\2\u00c8\u0316")
+        buf.write("\3\2\2\2\u00ca\u0318\3\2\2\2\u00cc\u031a\3\2\2\2\u00ce")
         buf.write("\u00d1\5\4\3\2\u00cf\u00d1\5\b\5\2\u00d0\u00ce\3\2\2\2")
         buf.write("\u00d0\u00cf\3\2\2\2\u00d1\3\3\2\2\2\u00d2\u00d4\5\b\5")
         buf.write("\2\u00d3\u00d2\3\2\2\2\u00d4\u00d7\3\2\2\2\u00d5\u00d3")
@@ -326,35 +326,36 @@ def serializedATN():
         buf.write("\2\u02e3\u02e5\3\2\2\2\u02e4\u02df\3\2\2\2\u02e4\u02e1")
         buf.write("\3\2\2\2\u02e4\u02e3\3\2\2\2\u02e5\u00b7\3\2\2\2\u02e6")
         buf.write("\u02e7\5\u00bc_\2\u02e7\u02e8\5\u00ba^\2\u02e8\u00b9\3")
-        buf.write("\2\2\2\u02e9\u02ea\7\13\2\2\u02ea\u02ef\5\u00b8]\2\u02eb")
-        buf.write("\u02ec\7\f\2\2\u02ec\u02ef\5\u00b8]\2\u02ed\u02ef\3\2")
-        buf.write("\2\2\u02ee\u02e9\3\2\2\2\u02ee\u02eb\3\2\2\2\u02ee\u02ed")
-        buf.write("\3\2\2\2\u02ef\u00bb\3\2\2\2\u02f0\u02f3\5\u00c0a\2\u02f1")
-        buf.write("\u02f3\5\u00be`\2\u02f2\u02f0\3\2\2\2\u02f2\u02f1\3\2")
-        buf.write("\2\2\u02f3\u00bd\3\2\2\2\u02f4\u02f5\7\32\2\2\u02f5\u02f6")
-        buf.write("\5\u00a8U\2\u02f6\u02f7\7\33\2\2\u02f7\u00bf\3\2\2\2\u02f8")
-        buf.write("\u0306\5\u00a4S\2\u02f9\u0306\5\u0092J\2\u02fa\u0306\7")
-        buf.write("\67\2\2\u02fb\u0306\78\2\2\u02fc\u0306\7:\2\2\u02fd\u0306")
-        buf.write("\79\2\2\u02fe\u0306\7;\2\2\u02ff\u0300\7B\2\2\u0300\u0301")
-        buf.write("\7\34\2\2\u0301\u0302\5\u00b4[\2\u0302\u0303\7\35\2\2")
-        buf.write("\u0303\u0304\5\u00c2b\2\u0304\u0306\3\2\2\2\u0305\u02f8")
-        buf.write("\3\2\2\2\u0305\u02f9\3\2\2\2\u0305\u02fa\3\2\2\2\u0305")
-        buf.write("\u02fb\3\2\2\2\u0305\u02fc\3\2\2\2\u0305\u02fd\3\2\2\2")
-        buf.write("\u0305\u02fe\3\2\2\2\u0305\u02ff\3\2\2\2\u0306\u00c1\3")
-        buf.write("\2\2\2\u0307\u0308\5\u00caf\2\u0308\u0309\7\34\2\2\u0309")
-        buf.write("\u030a\5\u00b4[\2\u030a\u030b\7\35\2\2\u030b\u030c\5\u00cc")
-        buf.write("g\2\u030c\u030f\3\2\2\2\u030d\u030f\5\u00c8e\2\u030e\u0307")
-        buf.write("\3\2\2\2\u030e\u030d\3\2\2\2\u030f\u00c3\3\2\2\2\u0310")
-        buf.write("\u0311\7B\2\2\u0311\u00c5\3\2\2\2\u0312\u0313\3\2\2\2")
-        buf.write("\u0313\u00c7\3\2\2\2\u0314\u0315\3\2\2\2\u0315\u00c9\3")
-        buf.write("\2\2\2\u0316\u0317\3\2\2\2\u0317\u00cb\3\2\2\2\u0318\u0319")
-        buf.write("\3\2\2\2\u0319\u00cd\3\2\2\2\66\u00d0\u00d5\u00e5\u00fc")
-        buf.write("\u0101\u0114\u0118\u0126\u012c\u0132\u0138\u013e\u014e")
-        buf.write("\u0155\u015f\u0166\u0171\u0178\u0180\u0186\u0193\u019f")
-        buf.write("\u01a6\u01ad\u01b5\u01bc\u01c7\u01cf\u01d7\u01e5\u01f0")
-        buf.write("\u01f6\u0204\u021c\u023a\u024d\u0262\u0272\u0276\u027b")
-        buf.write("\u0289\u0293\u029f\u02b6\u02be\u02c8\u02da\u02e4\u02ee")
-        buf.write("\u02f2\u0305\u030e")
+        buf.write("\2\2\2\u02e9\u02ea\7\13\2\2\u02ea\u02f1\5\u00b8]\2\u02eb")
+        buf.write("\u02ec\7\f\2\2\u02ec\u02f1\5\u00b8]\2\u02ed\u02ee\7\r")
+        buf.write("\2\2\u02ee\u02f1\5\u00b8]\2\u02ef\u02f1\3\2\2\2\u02f0")
+        buf.write("\u02e9\3\2\2\2\u02f0\u02eb\3\2\2\2\u02f0\u02ed\3\2\2\2")
+        buf.write("\u02f0\u02ef\3\2\2\2\u02f1\u00bb\3\2\2\2\u02f2\u02f5\5")
+        buf.write("\u00c0a\2\u02f3\u02f5\5\u00be`\2\u02f4\u02f2\3\2\2\2\u02f4")
+        buf.write("\u02f3\3\2\2\2\u02f5\u00bd\3\2\2\2\u02f6\u02f7\7\32\2")
+        buf.write("\2\u02f7\u02f8\5\u00a8U\2\u02f8\u02f9\7\33\2\2\u02f9\u00bf")
+        buf.write("\3\2\2\2\u02fa\u0308\5\u00a4S\2\u02fb\u0308\5\u0092J\2")
+        buf.write("\u02fc\u0308\7\67\2\2\u02fd\u0308\78\2\2\u02fe\u0308\7")
+        buf.write(":\2\2\u02ff\u0308\79\2\2\u0300\u0308\7;\2\2\u0301\u0302")
+        buf.write("\7B\2\2\u0302\u0303\7\34\2\2\u0303\u0304\5\u00b4[\2\u0304")
+        buf.write("\u0305\7\35\2\2\u0305\u0306\5\u00c2b\2\u0306\u0308\3\2")
+        buf.write("\2\2\u0307\u02fa\3\2\2\2\u0307\u02fb\3\2\2\2\u0307\u02fc")
+        buf.write("\3\2\2\2\u0307\u02fd\3\2\2\2\u0307\u02fe\3\2\2\2\u0307")
+        buf.write("\u02ff\3\2\2\2\u0307\u0300\3\2\2\2\u0307\u0301\3\2\2\2")
+        buf.write("\u0308\u00c1\3\2\2\2\u0309\u030a\5\u00caf\2\u030a\u030b")
+        buf.write("\7\34\2\2\u030b\u030c\5\u00b4[\2\u030c\u030d\7\35\2\2")
+        buf.write("\u030d\u030e\5\u00ccg\2\u030e\u0311\3\2\2\2\u030f\u0311")
+        buf.write("\5\u00c8e\2\u0310\u0309\3\2\2\2\u0310\u030f\3\2\2\2\u0311")
+        buf.write("\u00c3\3\2\2\2\u0312\u0313\7B\2\2\u0313\u00c5\3\2\2\2")
+        buf.write("\u0314\u0315\3\2\2\2\u0315\u00c7\3\2\2\2\u0316\u0317\3")
+        buf.write("\2\2\2\u0317\u00c9\3\2\2\2\u0318\u0319\3\2\2\2\u0319\u00cb")
+        buf.write("\3\2\2\2\u031a\u031b\3\2\2\2\u031b\u00cd\3\2\2\2\66\u00d0")
+        buf.write("\u00d5\u00e5\u00fc\u0101\u0114\u0118\u0126\u012c\u0132")
+        buf.write("\u0138\u013e\u014e\u0155\u015f\u0166\u0171\u0178\u0180")
+        buf.write("\u0186\u0193\u019f\u01a6\u01ad\u01b5\u01bc\u01c7\u01cf")
+        buf.write("\u01d7\u01e5\u01f0\u01f6\u0204\u021c\u023a\u024d\u0262")
+        buf.write("\u0272\u0276\u027b\u0289\u0293\u029f\u02b6\u02be\u02c8")
+        buf.write("\u02da\u02e4\u02f0\u02f4\u0307\u0310")
         return buf.getvalue()
 
 
@@ -6053,6 +6054,9 @@ class Objective_JSParser ( Parser ):
         def DIVISION_OPERATOR(self):
             return self.getToken(Objective_JSParser.DIVISION_OPERATOR, 0)
 
+        def MODULUS_OPERATOR(self):
+            return self.getToken(Objective_JSParser.MODULUS_OPERATOR, 0)
+
         def getRuleIndex(self):
             return Objective_JSParser.RULE_terminoOperadores
 
@@ -6072,7 +6076,7 @@ class Objective_JSParser ( Parser ):
         localctx = Objective_JSParser.TerminoOperadoresContext(self, self._ctx, self.state)
         self.enterRule(localctx, 184, self.RULE_terminoOperadores)
         try:
-            self.state = 748
+            self.state = 750
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [Objective_JSParser.MULTIPLICATION_OPERATOR]:
@@ -6089,8 +6093,15 @@ class Objective_JSParser ( Parser ):
                 self.state = 746
                 self.termino()
                 pass
-            elif token in [Objective_JSParser.EOF, Objective_JSParser.POWER_OPERATOR, Objective_JSParser.EQUAL_OPERATOR, Objective_JSParser.SUM_OPERATOR, Objective_JSParser.SUBSTRACTION_OPERATOR, Objective_JSParser.NOT_EQUAL_OPERATOR, Objective_JSParser.GREATER_THAN_OPERATOR, Objective_JSParser.GREATER_OR_EQUAL_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OR_EQUAL_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.RIGHT_SQUARE_BRACKET, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
+            elif token in [Objective_JSParser.MODULUS_OPERATOR]:
                 self.enterOuterAlt(localctx, 3)
+                self.state = 747
+                self.match(Objective_JSParser.MODULUS_OPERATOR)
+                self.state = 748
+                self.termino()
+                pass
+            elif token in [Objective_JSParser.EOF, Objective_JSParser.POWER_OPERATOR, Objective_JSParser.EQUAL_OPERATOR, Objective_JSParser.SUM_OPERATOR, Objective_JSParser.SUBSTRACTION_OPERATOR, Objective_JSParser.NOT_EQUAL_OPERATOR, Objective_JSParser.GREATER_THAN_OPERATOR, Objective_JSParser.GREATER_OR_EQUAL_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OR_EQUAL_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.RIGHT_SQUARE_BRACKET, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA]:
+                self.enterOuterAlt(localctx, 4)
 
                 pass
             else:
@@ -6137,17 +6148,17 @@ class Objective_JSParser ( Parser ):
         localctx = Objective_JSParser.FactorContext(self, self._ctx, self.state)
         self.enterRule(localctx, 186, self.RULE_factor)
         try:
-            self.state = 752
+            self.state = 754
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [Objective_JSParser.THIS, Objective_JSParser.TYPE_INT, Objective_JSParser.TYPE_FLOAT, Objective_JSParser.TYPE_CHAR, Objective_JSParser.TYPE_STRING, Objective_JSParser.TYPE_BOOL, Objective_JSParser.ID]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 750
+                self.state = 752
                 self.varCte()
                 pass
             elif token in [Objective_JSParser.LEFT_PARENTHESIS]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 751
+                self.state = 753
                 self.factorParentesis()
                 pass
             else:
@@ -6197,11 +6208,11 @@ class Objective_JSParser ( Parser ):
         self.enterRule(localctx, 188, self.RULE_factorParentesis)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 754
-            self.match(Objective_JSParser.LEFT_PARENTHESIS)
-            self.state = 755
-            self.hyperExpresion()
             self.state = 756
+            self.match(Objective_JSParser.LEFT_PARENTHESIS)
+            self.state = 757
+            self.hyperExpresion()
+            self.state = 758
             self.match(Objective_JSParser.RIGHT_PARENTHESIS)
         except RecognitionException as re:
             localctx.exception = re
@@ -6276,62 +6287,62 @@ class Objective_JSParser ( Parser ):
         localctx = Objective_JSParser.VarCteContext(self, self._ctx, self.state)
         self.enterRule(localctx, 190, self.RULE_varCte)
         try:
-            self.state = 771
+            self.state = 773
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,50,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 758
+                self.state = 760
                 self.objeto()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 759
+                self.state = 761
                 self.llamadaFunc()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 760
+                self.state = 762
                 self.match(Objective_JSParser.TYPE_INT)
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 761
+                self.state = 763
                 self.match(Objective_JSParser.TYPE_FLOAT)
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 762
+                self.state = 764
                 self.match(Objective_JSParser.TYPE_STRING)
                 pass
 
             elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 763
+                self.state = 765
                 self.match(Objective_JSParser.TYPE_CHAR)
                 pass
 
             elif la_ == 7:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 764
+                self.state = 766
                 self.match(Objective_JSParser.TYPE_BOOL)
                 pass
 
             elif la_ == 8:
                 self.enterOuterAlt(localctx, 8)
-                self.state = 765
-                self.match(Objective_JSParser.ID)
-                self.state = 766
-                self.match(Objective_JSParser.LEFT_SQUARE_BRACKET)
                 self.state = 767
-                self.expresion()
+                self.match(Objective_JSParser.ID)
                 self.state = 768
-                self.match(Objective_JSParser.RIGHT_SQUARE_BRACKET)
+                self.match(Objective_JSParser.LEFT_SQUARE_BRACKET)
                 self.state = 769
+                self.expresion()
+                self.state = 770
+                self.match(Objective_JSParser.RIGHT_SQUARE_BRACKET)
+                self.state = 771
                 self.matrix()
                 pass
 
@@ -6391,25 +6402,25 @@ class Objective_JSParser ( Parser ):
         localctx = Objective_JSParser.MatrixContext(self, self._ctx, self.state)
         self.enterRule(localctx, 192, self.RULE_matrix)
         try:
-            self.state = 780
+            self.state = 782
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [Objective_JSParser.LEFT_SQUARE_BRACKET]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 773
-                self.matriz_aux()
-                self.state = 774
-                self.match(Objective_JSParser.LEFT_SQUARE_BRACKET)
                 self.state = 775
-                self.expresion()
+                self.matriz_aux()
                 self.state = 776
-                self.match(Objective_JSParser.RIGHT_SQUARE_BRACKET)
+                self.match(Objective_JSParser.LEFT_SQUARE_BRACKET)
                 self.state = 777
+                self.expresion()
+                self.state = 778
+                self.match(Objective_JSParser.RIGHT_SQUARE_BRACKET)
+                self.state = 779
                 self.verifica_dim2()
                 pass
-            elif token in [Objective_JSParser.EOF, Objective_JSParser.TIMES, Objective_JSParser.INCREMENT_OPERATOR, Objective_JSParser.DECREMENT_OPERATOR, Objective_JSParser.MULTIPLICATION_OPERATOR, Objective_JSParser.DIVISION_OPERATOR, Objective_JSParser.POWER_OPERATOR, Objective_JSParser.EQUAL_OPERATOR, Objective_JSParser.ASSIGNMENT, Objective_JSParser.SUM_OPERATOR, Objective_JSParser.SUBSTRACTION_OPERATOR, Objective_JSParser.NOT_EQUAL_OPERATOR, Objective_JSParser.GREATER_THAN_OPERATOR, Objective_JSParser.GREATER_OR_EQUAL_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OR_EQUAL_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.RIGHT_SQUARE_BRACKET, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA, Objective_JSParser.INPUT_STREAM]:
+            elif token in [Objective_JSParser.EOF, Objective_JSParser.TIMES, Objective_JSParser.INCREMENT_OPERATOR, Objective_JSParser.DECREMENT_OPERATOR, Objective_JSParser.MULTIPLICATION_OPERATOR, Objective_JSParser.DIVISION_OPERATOR, Objective_JSParser.MODULUS_OPERATOR, Objective_JSParser.POWER_OPERATOR, Objective_JSParser.EQUAL_OPERATOR, Objective_JSParser.ASSIGNMENT, Objective_JSParser.SUM_OPERATOR, Objective_JSParser.SUBSTRACTION_OPERATOR, Objective_JSParser.NOT_EQUAL_OPERATOR, Objective_JSParser.GREATER_THAN_OPERATOR, Objective_JSParser.GREATER_OR_EQUAL_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OPERATOR, Objective_JSParser.LESS_THAN_OR_EQUAL_OPERATOR, Objective_JSParser.LOGICAL_AND_OPERATOR, Objective_JSParser.LOGICAL_OR_OPERATOR, Objective_JSParser.RIGHT_PARENTHESIS, Objective_JSParser.RIGHT_SQUARE_BRACKET, Objective_JSParser.SEMICOLON, Objective_JSParser.COMMA, Objective_JSParser.INPUT_STREAM]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 779
+                self.state = 781
                 self.verifica_arreglo()
                 pass
             else:
@@ -6452,7 +6463,7 @@ class Objective_JSParser ( Parser ):
         self.enterRule(localctx, 194, self.RULE_verifica_id)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 782
+            self.state = 784
             self.match(Objective_JSParser.ID)
         except RecognitionException as re:
             localctx.exception = re
