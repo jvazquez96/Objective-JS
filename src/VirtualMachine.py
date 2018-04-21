@@ -405,10 +405,8 @@ class VirtualMachine(object):
 					for i in range(size):
 						address += start
 						if operand1[0] != '%':
-							print("Address: " + str(address))
 							new_operand = str(int(operand1) + i)
 							val = self.getValue(new_operand)
-							print("Val: " + str(val))
 						else:
 							val = self.getValue(operand1)
 						self.set_local(self.new_locals, address, val)
@@ -417,9 +415,6 @@ class VirtualMachine(object):
 					self.set_temporal(self.new_temps, address, val)
 			elif operator == "GO.SUB":
 				self.locals = self.new_locals
-				for key, value in self.new_locals[0].items():
-					print("Key: " + str(key))
-					print("Value: " + str(value))
 				self.temps = self.new_temps
 				self.pointer.push(self.quadruple_pointer + 1)
 				self.quadruple_pointer = address - 2

@@ -1005,7 +1005,7 @@ class Objective_JSListener(ParseTreeListener):
                 total_size, number_dimensions, dimensions = self.parseList(type)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
                 if len(dimensions) == 2:
-                    self.current_local_int_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_int_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+float", type) is not None:
@@ -1015,7 +1015,7 @@ class Objective_JSListener(ParseTreeListener):
                 # print(id + " - " + str(self.current_local_float_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
                 if len(dimensions) == 2:
-                    self.current_local_float_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_float_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+char", type) is not None:
@@ -1024,7 +1024,7 @@ class Objective_JSListener(ParseTreeListener):
                 total_size, number_dimensions, dimensions = self.parseList(type)
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
                 if len(dimensions) == 2:
-                    self.current_local_char_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_char_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+string", type) is not None:
@@ -1034,7 +1034,7 @@ class Objective_JSListener(ParseTreeListener):
                 # print(id + " - " + str(self.current_local_string_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
                 if len(dimensions) == 2:
-                    self.current_local_string_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_string_counter += (dimensions[0].getUpperBound())
             elif re.search("list(\[[0-9]+\])+bool", type) is not None:
@@ -1044,7 +1044,7 @@ class Objective_JSListener(ParseTreeListener):
                 # print(id + " - " + str(self.current_local_boolean_counter))
                 self.argumentos.push_param(id, type_number, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
                 if len(dimensions) == 2:
-                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) + (dimensions[1].getUpperBound())
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_boolean_counter += (dimensions[0].getUpperBound())
 

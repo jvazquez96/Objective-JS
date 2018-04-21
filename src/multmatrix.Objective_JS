@@ -6,10 +6,10 @@ Class Matrices {
 		while (i < 3) {
 			while (j < 3) {
 				print(n[i][j]);
-				j++;
+				j = j + 1;
 			}
 			j = 0;
-			i++;
+			i = i + 1;
 		}
 	}
 	main() {

@@ -8,7 +8,6 @@ class Param(object):
 		self.dim = dim
 		self.dimensions = dimensions
 		self.address = address
-		print("isList: " + str(isList))
 
 	def getType(self):
 		return self.type
