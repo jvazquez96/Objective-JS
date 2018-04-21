@@ -161,7 +161,13 @@ class VirtualMachine(object):
 					self.set_temporal(self.temps, address, val)
 			elif operator == "read":
 				val = int(input(""))
-				address = int(operand1)
+				if operand1[0] == '(':
+					address = self.getValue(operand1)
+				else:
+					address = operand1
+
+				address = int(address)
+
 				if self.is_constant(address):
 					self.set_constant(address, val)
 				elif self.is_local(address):

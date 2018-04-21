@@ -97,6 +97,7 @@ class Objective_JSListener(ParseTreeListener):
         self.imports = []
         self.only_class = False
         self.is_arr_or_mat = False
+        self.reads = Stack()
 
 
     def resetMemoryAddresses(self):
@@ -1619,8 +1620,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#lectura.
     def enterLectura(self, ctx:Objective_JSParser.LecturaContext):
+        pass
+
+    # Exit a parse tree produced by Objective_JSParser#lectura.
+    def exitLectura(self, ctx:Objective_JSParser.LecturaContext):
         if self.operandos.empty():
-            address = self.getMemoryAddressFromVariable(ctx.ID().getText())
+            address = self.getMemoryAddressFromVariable(ctx.objeto().getText())
         else:
             address = self.operandos.pop()
 
@@ -1628,25 +1633,26 @@ class Objective_JSListener(ParseTreeListener):
         self.id += 1
         self.cuadruplos.append(quadruple)
 
-    # Exit a parse tree produced by Objective_JSParser#lectura.
-    def exitLectura(self, ctx:Objective_JSParser.LecturaContext):
-        pass
+        while not self.reads.empty():
+            quadruple = self.reads.pop()
+            self.cuadruplos.append(quadruple)
 
 
     # Enter a parse tree produced by Objective_JSParser#lecturaAux.
     def enterLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
-        if ctx.INPUT_STREAM() is not None:
-            if self.operandos.empty():
-                address = self.getMemoryAddressFromVariable(ctx.ID().getText())
-            else:
-                address = self.operandos.pop()
-            quadruple = Quadruple(self.id, "read",  address, None, None)
-            self.id += 1
-            self.cuadruplos.append(quadruple)
+        pass
 
     # Exit a parse tree produced by Objective_JSParser#lecturaAux.
     def exitLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
-        pass
+        if ctx.INPUT_STREAM() is not None:
+            if self.operandos.empty():
+                address = self.getMemoryAddressFromVariable(ctx.objeto().getText())
+            else:
+                address = self.operandos.pop()
+            
+            quadruple = Quadruple(self.id, "read",  address, None, None)
+            self.id += 1
+            self.reads.push(quadruple)
 
 
     # Enter a parse tree produced by Objective_JSParser#decInc.

@@ -423,11 +423,11 @@ argumentosLlamadaAux :
 	;
 
 lectura :
-	READ INPUT_STREAM ID lecturaAux
+	READ INPUT_STREAM objeto lecturaAux
 	;
 
 lecturaAux :
-	INPUT_STREAM ID lecturaAux
+	INPUT_STREAM objeto lecturaAux
 	|
 	;
 
