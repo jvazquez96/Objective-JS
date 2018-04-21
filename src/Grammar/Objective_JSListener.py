@@ -220,8 +220,8 @@ class Objective_JSListener(ParseTreeListener):
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
             dimension = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getDimensions()
             return dimension
-        # elif self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var):
-        #     return self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var)
+        elif self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var):
+            return self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var)
         # Then check in the global scope
         for key, value in self.functions_directory.getDirectory().items():
             if var in value.getSymbolTable().getSymbols():
@@ -326,7 +326,6 @@ class Objective_JSListener(ParseTreeListener):
             if self.isGlobalVar:
                 self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-                print("Memory address of: " + str(id) + " = " + str(self.current_local_int_counter))
                 self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
 
             if len(dimensions) == 2:
@@ -334,7 +333,6 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
-                    print("Starting memory for new var: " + str(self.current_local_int_counter))
             else:
                 if self.isGlobalVar:
                     self.current_global_int_counter += (dimensions[0].getUpperBound())
@@ -1571,7 +1569,7 @@ class Objective_JSListener(ParseTreeListener):
         parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]  
         parameter_address = self.functions_directory.getTable(self.current_method_name).getParamTable().getAddress(parameter)
         dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
-        dimensions_argument = 1
+        dimensions_argument = 0
         all_dimensions_argument = []
         argument = self.getVarNameFromMemoryAddress(argument)
         for key, value in self.functions_directory.getDirectory().items():
@@ -1584,6 +1582,7 @@ class Objective_JSListener(ParseTreeListener):
         if argument_type != parameter_type:
             print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
             sys.exit(0)
+
 
         if dimensions_param != dimensions_argument:
             if dimensions_param > dimensions_argument:
@@ -1602,7 +1601,8 @@ class Objective_JSListener(ParseTreeListener):
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
 
-        quadruple = Quadruple(self.id, "param", argument_address, dimensions_argument, parameter_address)
+        size = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getListSize()
+        quadruple = Quadruple(self.id, "param", argument_address, size, parameter_address)
         #quadruple.print()
         self.cuadruplos.append(quadruple)
         self.id += 1

@@ -1,10 +1,21 @@
 Class Matrices {
-	function multiplicacion(list[3][3] int matriz) {
-		print("HOLA");
+	function multiplicacion(list[3][3] int n) {
+		var i, j: int;
+		i = 0;
+		j = 0;
+		while (i < 3) {
+			while (j < 3) {
+				print(n[i][j]);
+				j++;
+			}
+			j = 0;
+			i++;
+		}
 	}
 	main() {
 		var matrizA : list[3][3] int;
 		var result : list[3][3] int;
+		var list2 : list[2] int;
 		matrizA[0][0] = 1;
 		matrizA[0][1] = 2;
 		matrizA[0][2] = 3;
@@ -40,18 +51,7 @@ Class Matrices {
 			i++;
 			j = 0;
 		}
-
-		i = 0;
-		j = 0;
 		print("matriz despues de multiplicar");
-		while (i < 3) {
-			while (j < 3) {
-				print(result[i][j]);
-				j++;
-			}
-			i++;
-			j = 0;
-		}
 		multiplicacion(result);
 	}
 }
