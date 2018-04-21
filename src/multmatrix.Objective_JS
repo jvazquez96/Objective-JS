@@ -24,33 +24,7 @@ Class Matrices {
 		result[2][0] = 0;
 		result[2][1] = 0;
 		result[2][2] = 0;
-
-
 		var i, j, k : int;
-		i = 0;
-		j = 0;
-		k = 0;
-		print("matriz de resultados");
-		while (i < 3) {
-			while (j < 3) {
-				print(result[i][j]);
-				j++;
-			}
-			i++;
-			j = 0;
-		}
-		i = 0;
-		j = 0;
-		print("matrizA");
-		while (i < 3) {
-			while (j < 3) {
-				print(matrizA[i][j]);
-				j++;
-			}
-			i++;
-			j = 0;
-		}
-
 		i = 0;
 		j = 0;
 		k = 0;

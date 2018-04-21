@@ -127,8 +127,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "-":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 - val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -156,8 +164,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, val)
 			elif operator == "/":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 / val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -184,8 +200,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "^":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = pow(val1,val2)
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -194,8 +218,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "!=":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 != val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -204,8 +236,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "&&":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 and val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -214,8 +254,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "||":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 or val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -224,8 +272,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == ">":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 > val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -234,8 +290,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "<":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 < val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -244,8 +308,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == ">=":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 >= val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
@@ -254,8 +326,16 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "<=":
-				val1 = self.getValue(operand1)
-				val2 = self.getValue(operand2)
+				if operand1[0] == '(':
+					val1 = self.getValue(operand1)
+					val1 = self.getValue(str(val1))
+				else:
+					val1 = self.getValue(operand1)
+				if operand2[0] == '(':
+					val2 = self.getValue(operand2)
+					val2 = self.getValue(str(val2))
+				else:
+					val2 = self.getValue(operand2)
 				res = val1 <= val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
