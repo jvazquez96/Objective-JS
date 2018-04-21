@@ -104,3 +104,6 @@ ENV/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Object file
+src/archivo.obj

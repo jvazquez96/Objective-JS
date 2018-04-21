@@ -294,13 +294,12 @@ class VirtualMachine(object):
 				else:
 					val1 = self.getValue(operand1)
 
-
-				if operand1[0] == '(':
+				if operand2[0] == '(':
 					val2 = self.getValue(operand2)
 					val2 = self.getValue(str(val2))
 				else:
 					val2 = self.getValue(operand2)
-
+					
 				res = val1 > val2
 				if self.is_constant(address):
 					self.set_constant(address, res)
