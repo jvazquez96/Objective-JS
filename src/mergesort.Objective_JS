@@ -70,13 +70,6 @@ Class Merge {
 		}
 	}
 	main() {
-		var x : list[5] int;
-		print("Give me x[2] also x[4] and x[3]");
-		read >> x[2] >> x[4] >> x[3];
-		print("X[2]", x[2]);
-		print("X[4]", x[4]);
-		print("X[3]", x[3]);
-
 		var size : int;
 		size = 10;
 
