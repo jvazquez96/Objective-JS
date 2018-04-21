@@ -325,6 +325,7 @@ class Objective_JSListener(ParseTreeListener):
             if self.isGlobalVar:
                 self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
+                print("Memory address of: " + str(id) + " = " + str(self.current_local_int_counter))
                 self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
 
             if len(dimensions) == 2:
@@ -332,6 +333,7 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    print("Starting memory for new var: " + str(self.current_local_int_counter))
             else:
                 if self.isGlobalVar:
                     self.current_global_int_counter += (dimensions[0].getUpperBound())
@@ -1944,7 +1946,6 @@ class Objective_JSListener(ParseTreeListener):
             operando1 = self.operandos.pop()
             tipo2 = self.types.pop()
             operador = self.operadores.pop()
-
             if operador == '+':
                 number_op = 0
             else:
@@ -2176,6 +2177,7 @@ class Objective_JSListener(ParseTreeListener):
         self.id += 1
 
         self.operandos.push("(" + str(self.current_temp_int_counter) + ")")
+        self.types.push(0)
         self.current_temp_int_counter += 1
 
     def enterMatriz_aux(self, ctx:Objective_JSParser.Matriz_auxContext):
@@ -2194,6 +2196,7 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(cuadruplo)
         self.id += 1
         self.operandos.push(self.current_temp_int_counter)
+        self.types.push(0)
         self.current_temp_int_counter += 1
 
         dim += 1
@@ -2212,7 +2215,7 @@ class Objective_JSListener(ParseTreeListener):
         aux2 = self.operandos.pop()
         type = self.types.pop()
         aux1 = self.operandos.pop()
-        self.types.pop()
+        # self.types.pop()
 
         if type != 0:
             print("The index of the var " + id + " is not an integer")
@@ -2233,6 +2236,7 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(cuadruplo)
         self.id += 1
         self.operandos.push("(" + str(self.current_temp_int_counter) + ")")
+        self.types.push(0)
         self.current_temp_int_counter += 1
 
         self.operadores.pop()
