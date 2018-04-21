@@ -1576,17 +1576,19 @@ class Objective_JSListener(ParseTreeListener):
         argument = self.getVarNameFromMemoryAddress(argument)
         for key, value in self.functions_directory.getDirectory().items():
             if argument in value.getSymbolTable().getSymbols():
-                dimensions_argument = value.getSymbolTable().getContent(argument).getListSize()
-                all_dimensions_argument.append(value.getSymbolTable().getContent(argument).getDim())
+                dimensions_argument = len(value.getSymbolTable().getContent(argument).getDimensions())
+                all_dimensions_argument = value.getSymbolTable().getContent(argument).getDimensions()
                 break
 
         all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
         if argument_type != parameter_type:
             print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
             sys.exit(0)
+
         if dimensions_param != dimensions_argument:
             if dimensions_param > dimensions_argument:
                 print("The function " + str(self.current_method_name) + " was expecting a matrix but received a list")
+                sys.exit(0)
             else:
                 print("The function " + str(self.current_method_name) + " was expecting a list but received a matrix")
             sys.exit(0)
@@ -1600,7 +1602,7 @@ class Objective_JSListener(ParseTreeListener):
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
 
-        quadruple = Quadruple(self.id, "param", argument_address, None, parameter_address)
+        quadruple = Quadruple(self.id, "param", argument_address, dimensions_argument, parameter_address)
         #quadruple.print()
         self.cuadruplos.append(quadruple)
         self.id += 1

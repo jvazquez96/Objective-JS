@@ -1,5 +1,5 @@
 Class Matrices {
-	function multiplicacion() {
+	function multiplicacion(list[3][3] int matriz) {
 		print("HOLA");
 	}
 	main() {
@@ -52,5 +52,6 @@ Class Matrices {
 			i++;
 			j = 0;
 		}
+		multiplicacion(result);
 	}
 }
