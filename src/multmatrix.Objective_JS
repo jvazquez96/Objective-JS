@@ -4,7 +4,41 @@ Class Matrices {
 	}
 	main() {
 		var matrizA : list[3][3] int;
-		matrizA[1][2] = 2018;
-		print(matrizA[1][2]);
+		var result : list[3][3] int;
+		matrizA[0][0] = 1;
+		matrizA[0][1] = 2;
+		matrizA[0][2] = 3;
+		matrizA[1][0] = 4;
+		matrizA[1][1] = 5;
+		matrizA[1][2] = 6;
+		matrizA[2][0] = 7;
+		matrizA[2][1] = 8;
+		matrizA[2][2] = 9;
+		var i, j, k : int;
+		i = 0;
+		j = 0;
+		k = 0;
+
+		result[0][0] = 0;
+		result[0][1] = 0;
+		result[0][2] = 0;
+		result[1][0] = 0;
+		result[1][1] = 0;
+		result[1][2] = 0;
+		result[2][0] = 0;
+		result[2][1] = 0;
+		result[2][2] = 0;
+		while (i < 3) {
+			while (j < 3) {
+				while (k < 3) {
+					result[i][j] = result[i][j] + 2;
+					k++;
+				}
+				j++;
+				k = 0;
+			}
+			i++;
+			j = 0;
+		}
 	}
 }

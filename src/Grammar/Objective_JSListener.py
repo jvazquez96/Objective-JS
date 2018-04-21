@@ -255,7 +255,7 @@ class Objective_JSListener(ParseTreeListener):
                 totalSize *= dim
                 isFirst = True
         if number_dimensions == 2: # Matrix:
-            dimensions[0].setM(dimensions[1].getUpperBound())
+            dimensions[0].setM(dimensions[1].getUpperBound()+1)
             dimensions[1].setM(0)
         else: # List
             dimensions[0].setM(0)
@@ -2155,7 +2155,7 @@ class Objective_JSListener(ParseTreeListener):
             print("The index of the var " + id + " is not an integer")
             sys.exit(0)
 
-        cuadruplo = Quadruple(self.id, 'VER', self.operandos.top(), 0, dimensions[0].getUpperBound())
+        cuadruplo = Quadruple(self.id, 'VER', self.operandos.top(), "%" + str(0), "%" + str(dimensions[0].getUpperBound()))
         self.cuadruplos.append(cuadruplo)
         self.id += 1
 
@@ -2218,7 +2218,7 @@ class Objective_JSListener(ParseTreeListener):
             print("The index of the var " + id + " is not an integer")
             sys.exit(0)
 
-        cuadruplo = Quadruple(self.id, 'VER', aux2, 0, dimensions[1].getUpperBound())
+        cuadruplo = Quadruple(self.id, 'VER', aux2,"%" + str(0), "%" + str(dimensions[1].getUpperBound()))
         self.cuadruplos.append(cuadruplo)
         self.id += 1
 

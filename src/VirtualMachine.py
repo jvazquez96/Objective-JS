@@ -97,8 +97,7 @@ class VirtualMachine(object):
 			operand2 = next_quadruple.getOperand2()
 
 			# next_quadruple.print()
-
-			if address != "None":
+			if (address != "None" and address[0] != '(') and address[0] != '%':
 				address = int(address)
 
 			if operator == "GO.TO":
@@ -131,6 +130,8 @@ class VirtualMachine(object):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "=":
 				val = self.getValue(operand1)
+				if not self.is_int(address):
+					address = self.getValue(address)
 				if self.is_constant(address):
 					self.set_constant(address, val)
 				elif self.is_local(address):
@@ -139,7 +140,7 @@ class VirtualMachine(object):
 					self.set_temporal(self.temps, address, val)
 			elif operator == "read":
 				val = int(input(""))
-				address = int(next_quadruple.getOperand1())
+				address = int(operand1)
 				if self.is_constant(address):
 					self.set_constant(address, val)
 				elif self.is_local(address):
@@ -247,8 +248,12 @@ class VirtualMachine(object):
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
 			elif operator == "print":
-				val = self.getValue(operand1)
-				print(str(val))
+				if operand1[0] == '(':
+					val = self.getValue(operand1)
+					print(str(self.getValue(str(val))))
+				else:
+					val = self.getValue(operand1)
+					print(str(val))
 			elif operator == "ERA":
 				current_context = Memory(self.locals, self.temps)
 				self.context_stack.push(current_context)
@@ -284,11 +289,10 @@ class VirtualMachine(object):
 				if not self.is_int(val):
 					print("The indices of a list must be an integer")
 					sys.exit(0)
-
 				lowerBound = self.getValue(operand2)
-				upperBound = address
-				if val < lowerBound or val > upperBound:
-					print("The indices must be between the boundaris")
+				upperBound = self.getValue(address)
+				if val < lowerBound or val >= upperBound:
+					print("The indices must be between the boundaries")
 					sys.exit(0)
 
 
@@ -347,15 +351,16 @@ class VirtualMachine(object):
 	def is_temporal(self, address):
 		return CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_NULL
 
-	def get_value_pointed_by_addres(address):
+	def get_value_pointed_by_address(self, address):
 		new_address = address[1:-1]
-		new_address = int(new_address)
-		if self.is_global(new_address):
-			return self.get_constant(new_address)
-		elif self.is_local(new_address):
-			return self.get_local(new_address)
-		elif self.is_temporal(new_address):
-			return self.get_temporal(new_address)
+		if self.is_constant(int(new_address)):
+			new_address_2 = self.get_constant(int(new_address))
+		elif self.is_local(int(new_address)):
+			new_address_2 = self.get_local(int(new_address))
+		elif self.is_temporal(int(new_address)):
+			new_address_2 = self.get_temporal(int(new_address))
+
+		return new_address_2
 
 	def get_constant(self, address):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
