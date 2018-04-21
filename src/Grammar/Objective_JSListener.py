@@ -384,10 +384,9 @@ class Objective_JSListener(ParseTreeListener):
             isList = True
             self.functions_directory.addString(self.function_name, False, total_size)
             if self.isGlobalVar:                
-                self.functions_directory.getInfoDirectory(self.current_global_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
             else:
-               
-                self.functions_directory.getInfoDirectory(self.current_local_string_counter, self.function_name).push_frame(id, type, isList, total_size, number_dimensions, dimensions)
+                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
             if len(dimensions) == 2:
                 if self.isGlobalVar:
                     self.current_global_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())

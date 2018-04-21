@@ -161,11 +161,7 @@ class VirtualMachine(object):
 					self.set_temporal(self.temps, address, val)
 			elif operator == "read":
 				val = input("")
-
-				if val.find('.'):
-					val = float(val)
-				else:
-					val = int(val)
+				val = self.get_actual_value(val)
 					
 				if operand1[0] == '(':
 					address = self.getValue(operand1)
@@ -447,7 +443,6 @@ class VirtualMachine(object):
 			self.quadruple_pointer += 1
 
 	def get_actual_value(self, value):
-		value = value[1:]
 		if self.is_int(value):
 			return int(value)
 		elif self.is_float(value):
@@ -474,6 +469,7 @@ class VirtualMachine(object):
 
 	def getValue(self, address):
 		if self.is_actual_value(address):
+			address = address[1:]
 			return self.get_actual_value(address)
 		elif self.is_address(address):
 			return self.get_value_pointed_by_address(address)
