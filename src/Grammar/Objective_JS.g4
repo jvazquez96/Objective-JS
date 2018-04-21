@@ -476,12 +476,12 @@ superExpresion :
 	;
 
 superExpresionOperadores :
-	GREATER_THAN_OPERATOR expresion
-	| GREATER_OR_EQUAL_THAN_OPERATOR expresion
-	| LESS_THAN_OPERATOR expresion
-	| LESS_THAN_OR_EQUAL_OPERATOR expresion
-	| NOT_EQUAL_OPERATOR expresion
-	| EQUAL_OPERATOR expresion
+	GREATER_THAN_OPERATOR superExpresion
+	| GREATER_OR_EQUAL_THAN_OPERATOR superExpresion
+	| LESS_THAN_OPERATOR superExpresion
+	| LESS_THAN_OR_EQUAL_OPERATOR superExpresion
+	| NOT_EQUAL_OPERATOR superExpresion
+	| EQUAL_OPERATOR superExpresion
 	|
 	;
 
@@ -490,8 +490,8 @@ expresion :
 	;
 
 expresionOperadores :
-	SUM_OPERATOR termino
-	| SUBSTRACTION_OPERATOR termino
+	SUM_OPERATOR expresion
+	| SUBSTRACTION_OPERATOR expresion
 	|
 	;
 
@@ -522,7 +522,7 @@ varCte :
 	| TYPE_STRING
 	| TYPE_CHAR
 	| TYPE_BOOL
-	| ID LEFT_SQUARE_BRACKET TYPE_INT RIGHT_SQUARE_BRACKET matrix
+	| ID LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET matrix
 	;
 
 matrix :

@@ -219,8 +219,8 @@ class Objective_JSListener(ParseTreeListener):
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
             dimension = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getDimensions()
             return dimension
-        elif self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var):
-            return self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var)
+        # elif self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var):
+        #     return self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var)
         # Then check in the global scope
         for key, value in self.functions_directory.getDirectory().items():
             if var in value.getSymbolTable().getSymbols():
@@ -1600,7 +1600,7 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit(0)
 
         quadruple = Quadruple(self.id, "param", argument_address, None, parameter_address)
-        quadruple.print()
+        #quadruple.print()
         self.cuadruplos.append(quadruple)
         self.id += 1
 
@@ -2179,6 +2179,8 @@ class Objective_JSListener(ParseTreeListener):
         self.operandos.push("(" + str(self.current_temp_int_counter) + ")")
         self.types.push(0)
         self.current_temp_int_counter += 1
+
+        self.operadores.pop()
 
     def enterMatriz_aux(self, ctx:Objective_JSParser.Matriz_auxContext):
         id = self.ids.pop()

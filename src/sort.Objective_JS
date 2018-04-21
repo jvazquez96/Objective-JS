@@ -1,0 +1,54 @@
+Class Merge {
+	var array, aux1, aux2 : list[6] int;
+
+	function printArray(int size) {
+		var i : int;
+		i = 0;
+		while(i < size){
+			print(array[i]);
+			i++;
+		}
+	}
+
+	function swap(int a, int b){
+		var temp : int;
+		temp = array[a];
+		array[a] = array[b];
+		array[b] = temp;
+	}
+
+	function bubbleSort(int n){
+		var i, j, aux : int;
+
+		i = 0;
+		while(i < (n-1)){
+			j = 0;
+			while(j < n-i-1){
+				if(array[j] > array[j + 1]){
+					swap(j, j + 1);
+				}
+				j++;
+			}
+			i++;
+		}
+	}
+	main() {
+		var size : int;
+		size = 6;
+
+		array[0] = 12;
+		array[1] = 11;
+		array[2] = 13;
+		array[3] = 5;
+		array[4] = 6;
+		array[5] = 7;
+
+		print("Original");
+		printArray(size);
+
+		bubbleSort(size);
+
+		print("Despues del merge");
+		printArray(size);
+	}
+}

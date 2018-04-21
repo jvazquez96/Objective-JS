@@ -1,0 +1,95 @@
+Class Merge {
+	var array : list[10] int;
+
+	function printArray(int size) {
+		var i : int;
+		i = 0;
+		while(i < size){
+			print(array[i]);
+			i++;
+		}
+	}
+
+	function merge(int l, int m, int r){
+		var i, j, k, n1, n2 : int;
+		n1 = m - l + 1;
+		n2 = r - m;
+
+		var left : list[10] int;
+		var right : list[10] int;
+
+		i = 0;
+		while(i < n1){
+			left[i] = array[l + i];
+			i++;
+		}
+
+		j = 0;
+		while(j < n2){
+			right[j] = array[m + 1 + j];
+			j++;
+		}
+
+		i = 0;
+		j = 0;
+		k = l;
+
+		while(i < n1 && j < n2){
+			if(left[i] <= right[j]){
+				array[k] = left[i];
+				i++;
+			}else{
+				array[k] = right[j];
+				j++;
+			}
+			k++;
+		}
+
+		while(i < n1){
+			array[k] = left[i];
+			i++;
+			k++;
+		}
+
+
+		while(j < n2){
+			array[k] = right[j];
+			j++;
+			k++;
+		}
+		
+	}
+
+	function mergesort(int l, int r){
+		if(l < r){
+			var m : int;
+			m = l + (r - 1)/2;
+			mergesort(l, m);
+			mergesort(m+1, r);
+			merge(l, m, r);
+		}
+	}
+	main() {
+		var size : int;
+		size = 10;
+
+		array[0] = 21;
+		array[1] = 45;
+		array[2] = 3;
+		array[3] = 14;
+		array[4] = 72;
+		array[5] = 47;
+		array[6] = 10;
+		array[7] = 12;
+		array[8] = 7;
+		array[9] = 18;
+
+		print("Before");
+		printArray(size);
+
+		mergesort(0, size-1);
+
+		print("After");
+		printArray(size);
+	}
+}
