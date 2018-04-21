@@ -1,6 +1,5 @@
 Class Merge {
 	var array : list[10] int;
-
 	function printArray(int size) {
 		var i : int;
 		i = 0;
@@ -10,10 +9,10 @@ Class Merge {
 		}
 	}
 
-	function merge(int l, int m, int r){
+	function merge(int l, int m, int ri){
 		var i, j, k, n1, n2 : int;
 		n1 = m - l + 1;
-		n2 = r - m;
+		n2 = ri - m;
 
 		var left : list[10] int;
 		var right : list[10] int;
@@ -57,7 +56,6 @@ Class Merge {
 			j++;
 			k++;
 		}
-		
 	}
 
 	function mergesort(int l, int r){
@@ -69,15 +67,7 @@ Class Merge {
 			merge(l, m, r);
 		}
 	}
-
-	function floor(float a) returns int{
-		return a - (a % 1);
-	}
 	main() {
-		var test : float;
-		read >> test;
-		print(test);
-		print(floor(test)):
 		var size : int;
 		size = 10;
 
@@ -94,8 +84,8 @@ Class Merge {
 
 		print("Before");
 		printArray(size);
-
 		mergesort(0, size-1);
+
 
 		print("After");
 		printArray(size);
