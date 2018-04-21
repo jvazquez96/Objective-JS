@@ -14,10 +14,6 @@ Class Matrices {
 		matrizA[2][0] = 7;
 		matrizA[2][1] = 8;
 		matrizA[2][2] = 9;
-		var i, j, k : int;
-		i = 0;
-		j = 0;
-		k = 0;
 
 		result[0][0] = 0;
 		result[0][1] = 0;
@@ -28,8 +24,12 @@ Class Matrices {
 		result[2][0] = 0;
 		result[2][1] = 0;
 		result[2][2] = 0;
+
+
+		var i, j, k : int;
 		i = 0;
 		j = 0;
+		k = 0;
 		print("matriz de resultados");
 		while (i < 3) {
 			while (j < 3) {
@@ -50,6 +50,10 @@ Class Matrices {
 			i++;
 			j = 0;
 		}
+
+		i = 0;
+		j = 0;
+		k = 0;
 		while (i < 3) {
 			while (j < 3) {
 				while (k < 3) {

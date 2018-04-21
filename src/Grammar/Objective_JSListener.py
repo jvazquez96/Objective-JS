@@ -2192,7 +2192,7 @@ class Objective_JSListener(ParseTreeListener):
             print("The index of the var " + id + " is not an integer")
             sys.exit(0)
 
-        cuadruplo = Quadruple(self.id, '*', aux, "%" + str(dimensions[0].getM()), self.current_temp_int_counter)
+        cuadruplo = Quadruple(self.id, '*', aux, "%" + str(dimensions[0].getM()-1), self.current_temp_int_counter)
         self.cuadruplos.append(cuadruplo)
         self.id += 1
         self.operandos.push(self.current_temp_int_counter)
