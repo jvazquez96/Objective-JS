@@ -226,7 +226,7 @@ class Objective_JSListener(ParseTreeListener):
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
             dimension = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getDimensions()
             return dimension
-        elif self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var):
+        elif var in self.functions_directory.getTable(self.function_name).getParamTable().getParameters():
             return self.functions_directory.getTable(self.function_name).getParamTable().getDimensions(var)
         # Then check in the global scope
         for key, value in self.functions_directory.getDirectory().items():
@@ -291,7 +291,6 @@ class Objective_JSListener(ParseTreeListener):
             if id in self.attributes.keys():
                 print("Attribute: " + id + " is already defined")
                 sys.exit(0)
-
 
         isList = False
         total_size = 1
@@ -1024,19 +1023,19 @@ class Objective_JSListener(ParseTreeListener):
             type_number = 4
         elif self.type == "null":
             type_number = 5
-        elif re.search("list(\[.\])+int", self.type) is not None:
+        elif re.search("list(\[.*\])+int", self.type) is not None:
             type_number = 0
             self.is_arr_or_mat = True
-        elif re.search("list(\[.\])+float", self.type) is not None:
+        elif re.search("list(\[.*\])+float", self.type) is not None:
             type_number = 1
             self.is_arr_or_mat = True
-        elif re.search("list(\[.\])+char", self.type) is not None:
+        elif re.search("list(\[.*\])+char", self.type) is not None:
             type_number = 2
             self.is_arr_or_mat = True
-        elif re.search("list(\[.\])+string", self.type) is not None:
+        elif re.search("list(\[.*\])+string", self.type) is not None:
             type_number = 3
             self.is_arr_or_mat = True
-        elif re.search("list(\[.\])+bool", self.type) is not None:
+        elif re.search("list(\[.*\])+bool", self.type) is not None:
             type_number = 4
             self.is_arr_or_mat = True
         elif self.type in self.classes:
@@ -1647,22 +1646,35 @@ class Objective_JSListener(ParseTreeListener):
 
     def getVarNameFromMemoryAddress(self, address):
         for funtion_name, info in self.functions_directory.getDirectory().items():
-            for var, info2 in info.getSymbolTable().getSymbols().items():
-                if address == info2.getAddress():
-                    return var
+            for var1, info2 in info.getSymbolTable().getSymbols().items():
+                if address == info2.getAddress() and self.function_name == funtion_name:
+                    return var1
+        for var, info2 in self.functions_directory.getTable(self.function_name).getParamTable().getParameters().items():
+            if address == info2.getAddress():
+                return var
+            # for var2, info3 in info.getParamTable().getParameters().items():
+            #     print("Par: " + str(var2) + " with address: " + str(info3.getAddress()))
+            #     if address == info3.getAddress() and funtion_name == self.current_method_name:
+            #         return var2
 
     # Exit a parse tree produced by Objective_JSParser#verifyArgument.
     def exitVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
         argument = self.operandos.pop()
         argument_address = argument
         argument_type = self.types.pop()
-
-
         argument_type = self.normalizeTypes(argument_type)
+        parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]
         parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
         parameter_type = self.normalizeTypes(parameter_type)
-        parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]  
         parameter_address = self.functions_directory.getTable(self.current_method_name).getParamTable().getAddress(parameter)
+        # print("Argument address: " + str(argument_address))
+        # if CONST_TEMPORAL_BOTTOM_INT <= argument_address <= CONST_TEMPORAL_TOP_INT:
+        #     if argument_type != parameter_type:
+        #         print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)))
+        #         sys.exit(0)
+        #     quadruple = Quadruple(self.id, "param", argument_address, 1, parameter_address)
+        #     self.cuadruplos.append(quadruple)
+        # else:
         dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
         dimensions_argument = 0
         all_dimensions_argument = []
@@ -1672,6 +1684,9 @@ class Objective_JSListener(ParseTreeListener):
                 dimensions_argument = len(value.getSymbolTable().getContent(argument).getDimensions())
                 all_dimensions_argument = value.getSymbolTable().getContent(argument).getDimensions()
                 break
+            if argument in value.getParamTable().getParameters():
+                dimensions_argument = len(value.getParamTable().getParam(argument).getDimensions())
+                all_dimensions_argument = value.getParamTable().getParam(argument).getDimensions()
 
         all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
         if argument_type != parameter_type:
