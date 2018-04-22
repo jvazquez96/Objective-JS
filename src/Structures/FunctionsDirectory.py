@@ -1,3 +1,5 @@
+import sys
+
 class FunctionsDirectory(object):
 
 	def __init__(self):

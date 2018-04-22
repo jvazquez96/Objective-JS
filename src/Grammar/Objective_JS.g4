@@ -125,7 +125,7 @@ bloqueClase :
 	;
 
 constructor :
-	CLASSNAME LEFT_PARENTHESIS constructorAux RIGHT_PARENTHESIS SEMICOLON constructorAux2
+	CLASSNAME LEFT_PARENTHESIS constructorAux addConsTable RIGHT_PARENTHESIS SEMICOLON constructorAux2 
 	;
 
 constructorAux :
@@ -152,7 +152,7 @@ atributosPublicAux :
 	;
 
 atributosPrivate :
-	PRIVATE COLON vars_
+	PRIVATE COLON vars_ atributosPrivateAux
 	|
 	;
 
@@ -195,8 +195,11 @@ func :
 	;
 
 funcAux:
-	RETURNS 
+	RETURNS tipo_dato_no_list getValue
 	|
+	;
+
+addConsTable :
 	;
 
 argumentosDecl:
@@ -310,6 +313,7 @@ tipo_dato_no_list:
 	| CHAR
 	| STRING
 	| BOOL
+	| CLASSNAME
 	;
 
 tipo : 

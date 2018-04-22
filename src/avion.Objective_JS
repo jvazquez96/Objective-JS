@@ -1,0 +1,21 @@
+Class Avion{
+	Avion();
+	Avion(string marca, int serie);
+	Attributes {
+		public : 
+			var marca : string;
+			var llantas : string;
+			var asientos : int;
+		private : 
+			var serie : int;
+			var capacidad : int;
+			var peso : float;
+	}
+	Methods {
+		public :
+			function getMarca (int uno, float dos) ;
+			function getMarca2 (string batman, bool laabuelitadebatman) ;
+		private :
+			function getSerie (char doritos) ;
+	}
+}

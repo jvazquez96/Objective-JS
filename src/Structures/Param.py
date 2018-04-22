@@ -9,6 +9,9 @@ class Param(object):
 		self.dimensions = dimensions
 		self.address = address
 
+	def getId(self):
+		return self.id
+
 	def getType(self):
 		return self.type
 

@@ -1,0 +1,7 @@
+import Avion
+
+Class Prueba{
+	main(){
+		var avion : Avion;
+	}
+}

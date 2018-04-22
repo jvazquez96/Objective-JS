@@ -18,6 +18,7 @@ class InfoDirectory(object):
 		self.param_table = ParamTable()
 		# Address where the function starts
 		self.start_address = 0
+		self.accessible = None
 
 	def createInfo(self, symbol_table, return_type):
 		self.symbol_table = symbol_table
@@ -153,3 +154,9 @@ class InfoDirectory(object):
 
 	def getVariables(self):
 		return self.local_variables
+
+	def setAccessibility(self, accessibility):
+		self.accessible = accessibility
+
+	def getAccessibility(self):
+		return self.accessible

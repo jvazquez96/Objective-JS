@@ -18,3 +18,7 @@ class ParamTable(object):
 		return self.parameters[id].getAddress()
 	def getDimensions(self, id):
 		return self.parameters[id].getDimensions()
+	def getSize(self, id):
+		return self.parameters[id].getListSize()
+	def getId(self, id):
+		return self.parameters[id].getId()

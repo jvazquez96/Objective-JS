@@ -16,6 +16,8 @@ from Structures.SymbolTable import SymbolTable
 from Structures.Quadruple import Quadruple
 from Structures.Dimensions import Dimensions
 from Structures.ParamTable import ParamTable
+from Structures.Classes import Classes
+from Structures.Atts import Atts
 
 if __name__ is not None and "." in __name__:
     from .Objective_JSParser import Objective_JSParser
@@ -73,7 +75,7 @@ class Objective_JSListener(ParseTreeListener):
         self.functions_directory = FunctionsDirectory()
         self.type = None
         # Default visibility
-        self.visibility = "private"
+        self.accessible = False
         self.does_returns = None
         self.function_name = None
         self.argumentos = ParamTable()
@@ -98,6 +100,10 @@ class Objective_JSListener(ParseTreeListener):
         self.only_class = False
         self.is_arr_or_mat = False
         self.reads = Stack()
+        self.classes = dict()
+        self.className = None
+        self.attributes = dict()
+        self.methods = FunctionsDirectory()
 
 
     def resetMemoryAddresses(self):
@@ -231,8 +237,19 @@ class Objective_JSListener(ParseTreeListener):
         """
         Create a new class in the funtion
         """
+        # COMENTAR
         self.function_name = className
         self.functions_directory.create_table(self.function_name, InfoDirectory())
+
+
+        if className in self.classes.items():
+            print("The class was already defined")
+            sys.exit(0)
+        else:
+            self.className = className
+            self.classes[className] = Classes()
+            self.classes[className].setName(className)
+
 
     def parseList(self, type):
         totalSize = 1
@@ -262,13 +279,19 @@ class Objective_JSListener(ParseTreeListener):
             dimensions[0].setM(0)
         return totalSize, number_dimensions, dimensions
 
-    def newVars(self, id, type, visibility, mat_or_arr):
+    def newVars(self, id, type, mat_or_arr):
         """
         Adds a new variable into the function_directory
         """
-        if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
-            print("Syntax error!! Variable: " + id + " is already defined")
-            sys.exit(0)
+        if self.className is None:
+            if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
+                print("Syntax error!! Variable: " + id + " is already defined")
+                sys.exit(0)
+        else:
+            if id in self.attributes.keys():
+                print("Attribute: " + id + " is already defined")
+                sys.exit(0)
+
 
         isList = False
         total_size = 1
@@ -276,147 +299,177 @@ class Objective_JSListener(ParseTreeListener):
         number_dimensions = 0
         if type == "int" or type == 0 and not mat_or_arr:
             number_dimensions += 1
-            self.functions_directory.addInt(self.function_name, False, 1)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_global_int_counter += 1
+            if self.className is None:
+                self.functions_directory.addInt(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_int_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_int_counter += 1
             else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_int_counter += 1
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif type == "float" or type == 1 and not mat_or_arr:
             number_dimensions += 1
-            self.functions_directory.addFloat(self.function_name, False, 1)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_global_float_counter += 1
+            if self.className is None:
+                self.functions_directory.addFloat(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_float_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_float_counter += 1
             else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_float_counter += 1
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif type == "char" or type == 2 and not mat_or_arr:
             number_dimensions += 1
-            self.functions_directory.addChar(self.function_name, False, 1)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_global_char_counter += 1
+            if self.className is None:
+                self.functions_directory.addChar(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_char_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_char_counter += 1
             else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_char_counter += 1
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif type == "string" or type == 3 and not mat_or_arr:
             number_dimensions += 1
-            self.functions_directory.addString(self.function_name, False, 1)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_global_string_counter += 1
+            if self.className is None:
+                self.functions_directory.addString(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_string_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_string_counter += 1
             else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_string_counter += 1
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif type == "bool" or type == 4 and not mat_or_arr:
             number_dimensions += 1
-            self.functions_directory.addBool(self.function_name, False, 1)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_global_boolean_counter += 1
+            if self.className is None:
+                self.functions_directory.addBool(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_boolean_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_boolean_counter += 1
             else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_boolean_counter += 1
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif re.search("list(\[.*\])+int", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
-            self.functions_directory.addInt(self.function_name, False, total_size)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if self.className is None:
+                self.functions_directory.addInt(self.function_name, False, total_size)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
 
-            if len(dimensions) == 2:
-                if self.isGlobalVar:
-                    self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    if self.isGlobalVar:
+                        self.current_global_int_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_int_counter += (dimensions[0].getUpperBound())
             else:
-                if self.isGlobalVar:
-                    self.current_global_int_counter += (dimensions[0].getUpperBound())
-                else:
-                    self.current_local_int_counter += (dimensions[0].getUpperBound())
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif re.search("list(\[.*\])+float", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
-            self.functions_directory.addFloat(self.function_name, False, total_size)
-            if self.isGlobalVar:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if self.className is None:
+                self.functions_directory.addFloat(self.function_name, False, total_size)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
 
-            if len(dimensions) == 2:
-                if self.isGlobalVar:
-                    self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    if self.isGlobalVar:
+                        self.current_global_float_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_float_counter += (dimensions[0].getUpperBound())
             else:
-                if self.isGlobalVar:
-                    self.current_global_float_counter += (dimensions[0].getUpperBound())
-                else:
-                    self.current_local_float_counter += (dimensions[0].getUpperBound())
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif re.search("list(\[.*\])+char", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
-            self.functions_directory.addChar(self.function_name, False, total_size)
-            if self.isGlobalVar:
-                # print(id + " - " + str(self.current_global_char_counter))
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            else:
-                # print(id + " - " + str(self.current_local_char_counter))
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+            if self.className is None:
+                self.functions_directory.addChar(self.function_name, False, total_size)
+                if self.isGlobalVar:
+                    # print(id + " - " + str(self.current_global_char_counter))
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                else:
+                    # print(id + " - " + str(self.current_local_char_counter))
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
 
-            if len(dimensions) == 2:
-                if self.isGlobalVar:
-                    self.current_global_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    if self.isGlobalVar:
+                        self.current_global_char_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_char_counter += (dimensions[0].getUpperBound())
             else:
-                if self.isGlobalVar:
-                    self.current_global_char_counter += (dimensions[0].getUpperBound())
-                else:
-                    self.current_local_char_counter += (dimensions[0].getUpperBound())
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
 
         elif re.search("list(\[.*\])+string", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
-            self.functions_directory.addString(self.function_name, False, total_size)
-            if self.isGlobalVar:                
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            else:
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if len(dimensions) == 2:
-                if self.isGlobalVar:
-                    self.current_global_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+            if self.className is None:
+                self.functions_directory.addString(self.function_name, False, total_size)
+                if self.isGlobalVar:                
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
                 else:
-                    self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
-            else:
-                if self.isGlobalVar:
-                    self.current_global_string_counter += (dimensions[0].getUpperBound())
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_string_counter += (dimensions[0].getUpperBound())
+                    if self.isGlobalVar:
+                        self.current_global_string_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_string_counter += (dimensions[0].getUpperBound())
+            else:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
         elif re.search("list(\[.*\])+bool", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
-            self.functions_directory.addBool(self.function_name, False, total_size)
-            if self.isGlobalVar:
-               
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            else:
-               
-                self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
-            if len(dimensions) == 2:
+            if self.className is None:
+                self.functions_directory.addBool(self.function_name, False, total_size)
                 if self.isGlobalVar:
-                    self.current_global_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                   
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
                 else:
-                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                   
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    if self.isGlobalVar:
+                        self.current_global_boolean_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_boolean_counter += (dimensions[0].getUpperBound())
             else:
-                if self.isGlobalVar:
-                    self.current_global_boolean_counter += (dimensions[0].getUpperBound())
-                else:
-                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
 
     def newFunction(self):
         """
@@ -524,7 +577,8 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
-        pass
+        self.attributes = dict()
+        self.className = None
 
 
     # Enter a parse tree produced by Objective_JSParser#imports.
@@ -600,7 +654,13 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#claseAux.
     def enterClaseAux(self, ctx:Objective_JSParser.ClaseAuxContext):
-        pass
+        if ctx.INHERITS() is not None:
+            inherits = ctx.CLASSNAME().getText()
+            if inherits in self.classes.items():
+                self.classes[self.className].setInherits(inherits)
+            else:
+                print("Class " + inherits + " not defined")
+                sys.exit(0)
 
     # Exit a parse tree produced by Objective_JSParser#claseAux.
     def exitClaseAux(self, ctx:Objective_JSParser.ClaseAuxContext):
@@ -618,7 +678,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#constructor.
     def enterConstructor(self, ctx:Objective_JSParser.ConstructorContext):
-        pass
+        if ctx.CLASSNAME().getText() != self.className:
+            print("The constructor has a different name")
+            sys.exit(0)
 
     # Exit a parse tree produced by Objective_JSParser#constructor.
     def exitConstructor(self, ctx:Objective_JSParser.ConstructorContext):
@@ -649,12 +711,11 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#atributos.
     def exitAtributos(self, ctx:Objective_JSParser.AtributosContext):
-        pass
-
+        self.classes[self.className].setAttributes(self.attributes)
 
     # Enter a parse tree produced by Objective_JSParser#atributosPublic.
     def enterAtributosPublic(self, ctx:Objective_JSParser.AtributosPublicContext):
-        self.visibility = ctx.PUBLIC().getText()
+        self.accessible = True
 
     # Exit a parse tree produced by Objective_JSParser#atributosPublic.
     def exitAtributosPublic(self, ctx:Objective_JSParser.AtributosPublicContext):
@@ -672,7 +733,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#atributosPrivate.
     def enterAtributosPrivate(self, ctx:Objective_JSParser.AtributosPrivateContext):
-        self.visibility = ctx.PRIVATE().getText()
+        self.accessible = False
 
     # Exit a parse tree produced by Objective_JSParser#atributosPrivate.
     def exitAtributosPrivate(self, ctx:Objective_JSParser.AtributosPrivateContext):
@@ -703,12 +764,13 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#metodos.
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
-        pass
+        self.classes[self.className].addMethodsTable(self.methods)
+        self.methods = FunctionsDirectory()
 
 
     # Enter a parse tree produced by Objective_JSParser#metodosPublicos.
     def enterMetodosPublicos(self, ctx:Objective_JSParser.MetodosPublicosContext):
-        pass
+        self.accessible = True
 
     # Exit a parse tree produced by Objective_JSParser#metodosPublicos.
     def exitMetodosPublicos(self, ctx:Objective_JSParser.MetodosPublicosContext):
@@ -726,7 +788,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#metodosPrivados.
     def enterMetodosPrivados(self, ctx:Objective_JSParser.MetodosPrivadosContext):
-        pass
+        self.accessible = False
 
     # Exit a parse tree produced by Objective_JSParser#metodosPrivados.
     def exitMetodosPrivados(self, ctx:Objective_JSParser.MetodosPrivadosContext):
@@ -744,7 +806,8 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#func.
     def enterFunc(self, ctx:Objective_JSParser.FuncContext):
-        pass
+        self.function_name = ctx.ID().getText()
+        self.argumentos = ParamTable()
 
     # Exit a parse tree produced by Objective_JSParser#func.
     def exitFunc(self, ctx:Objective_JSParser.FuncContext):
@@ -757,21 +820,44 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#funcAux.
     def exitFuncAux(self, ctx:Objective_JSParser.FuncAuxContext):
-        pass
+        if self.function_name in self.methods.getDirectory().keys():
+            print("Function already defined")
+            sys.exit(0)
+            
+        self.methods.create_table(self.function_name, InfoDirectory())
+        self.methods.getTable(self.function_name).setParamTable(self.argumentos)
+        self.methods.getTable(self.function_name).setAccessibility(self.accessible)
+        if ctx.RETURNS() is None:
+            self.does_returns = None
+        else:
+            self.does_returns = "returns"
+            return_type = ctx.tipo_dato_no_list().getText()
+            self.methods.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosDecl.
     def enterArgumentosDecl(self, ctx:Objective_JSParser.ArgumentosDeclContext):
-        pass
+        if ctx.ID() is not None:
+            id = ctx.ID().getText()
+            self.type = ctx.tipo_dato().getText()
+            self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosDecl.
     def exitArgumentosDecl(self, ctx:Objective_JSParser.ArgumentosDeclContext):
         pass
 
+    def enterAddConsTable(self,  ctx:Objective_JSParser.AddConsTableContext):
+        self.classes[self.className].addConstructorParams(self.argumentos)
+        self.resetMemoryAddresses()
+        self.argumentos = ParamTable()
+
 
     # Enter a parse tree produced by Objective_JSParser#argumentosDeclAux.
     def enterArgumentosDeclAux(self, ctx:Objective_JSParser.ArgumentosDeclAuxContext):
-        pass
+        if ctx.ID() is not None:
+            id = ctx.ID().getText()
+            self.type = ctx.tipo_dato().getText()
+            self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosDeclAux.
     def exitArgumentosDeclAux(self, ctx:Objective_JSParser.ArgumentosDeclAuxContext):
@@ -839,7 +925,7 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
-            self.newArgument(id, self.type, self.visibility)
+            self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentos.
     def exitArgumentos(self, ctx:Objective_JSParser.ArgumentosContext):
@@ -851,7 +937,7 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
-            self.newArgument(id, self.type, self.visibility)
+            self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosAux.
     def exitArgumentosAux(self, ctx:Objective_JSParser.ArgumentosAuxContext):
@@ -953,10 +1039,15 @@ class Objective_JSListener(ParseTreeListener):
         elif re.search("list(\[.\])+bool", self.type) is not None:
             type_number = 4
             self.is_arr_or_mat = True
+        elif self.type in self.classes:
+            type_number = self.type
+        else:
+            print("The type is not supported")
+            sys.exit(0)
 
-        self.newVars(id, type_number, self.visibility, self.is_arr_or_mat)
+        self.newVars(id, type_number, self.is_arr_or_mat)
 
-    def newArgument(self, id, type, visibility):
+    def newArgument(self, id, type):
         """
         Adds a new parameter into the parameter table
         """
@@ -1056,7 +1147,7 @@ class Objective_JSListener(ParseTreeListener):
     def enterVarsAux(self, ctx:Objective_JSParser.VarsAuxContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
-            self.newVars(id, self.type, self.visibility, self.is_arr_or_mat)
+            self.newVars(id, self.type, self.is_arr_or_mat)
 
     # Exit a parse tree produced by Objective_JSParser#varsAux.
     def exitVarsAux(self, ctx:Objective_JSParser.VarsAuxContext):
@@ -1122,8 +1213,13 @@ class Objective_JSListener(ParseTreeListener):
             elif self.isList(self.type) and self.isBool(self.type):
                 type_number = 4
                 self.is_arr_or_mat = True
+            elif self.type in self.classes:
+                type_number = self.type
+            else:
+                print("The type is not supported")
+                sys.exit(0)
 
-            self.newVars(id, type_number, self.visibility, self.is_arr_or_mat)
+            self.newVars(id, type_number, self.is_arr_or_mat)
 
     # Exit a parse tree produced by Objective_JSParser#varsRepeated.
     def exitVarsRepeated(self, ctx:Objective_JSParser.VarsRepeatedContext):
@@ -1581,7 +1677,6 @@ class Objective_JSListener(ParseTreeListener):
         if argument_type != parameter_type:
             print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
             sys.exit(0)
-
 
         if dimensions_param != dimensions_argument:
             if dimensions_param > dimensions_argument:
