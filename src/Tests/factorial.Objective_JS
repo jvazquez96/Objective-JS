@@ -1,0 +1,15 @@
+Class Factorial {
+	function factorial(int n) returns int {
+		if (n == 1) {
+			n = 1;
+		} else {
+			n = n * factorial(n-1);
+		}
+		return n;
+	}
+	main() {
+		var n : int;
+		read >> n;
+		print(factorial(n));
+	}
+}

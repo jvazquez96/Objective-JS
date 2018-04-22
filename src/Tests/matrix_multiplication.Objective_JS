@@ -51,7 +51,6 @@ Class Matrices {
 			i++;
 			j = 0;
 		}
-		print("matriz despues de multiplicar");
 		multiplicacion(result);
 	}
 }
