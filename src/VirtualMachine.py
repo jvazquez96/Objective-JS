@@ -49,7 +49,7 @@ CONST_TEMPORAL_TOP_NULL = 17999
 class Memory():
 
 	def __init__(self, locals, temps):
-					# int, float, char, string, boolean, null
+		# int, float, char, string, boolean, null
 		self.locals = locals
 		self.temps = temps
 
@@ -77,6 +77,7 @@ class VirtualMachine(object):
 		self.temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.object_contexts = dict()
 		self.quadruple_pointer = 0
 		self.pointer = Stack()
 		self.context_stack = Stack()
@@ -408,10 +409,23 @@ class VirtualMachine(object):
 					val = self.getValue(operand1)
 					print(str(val))
 			elif operator == "ERA":
-				current_context = Memory(self.locals, self.temps)
-				self.context_stack.push(current_context)
-				self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
-				self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+				if operand2 != "None": # We have an object context
+					context = int(operand2)
+					if context in self.object_contexts.keys():
+						object_context = self.object_contexts[context]
+						self.new_locals, self.new_temps = object_context.getMemory()
+					else:
+						self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
+						self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+						new_context = Memory(self.new_locals, self.new_temps)
+						self.object_contexts[context] = new_context
+					current_context = Memory(self.locals, self.temps)
+					self.context_stack.push(current_context)
+				else:
+					current_context = Memory(self.locals, self.temps)
+					self.context_stack.push(current_context)
+					self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
+					self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 			elif operator == "param":
 				size = int(operand2)
 				if self.is_local(address):
