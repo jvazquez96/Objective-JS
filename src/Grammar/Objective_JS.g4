@@ -230,7 +230,10 @@ emptyRule :
 
 impFunc :
 	FUNCTION ID LEFT_PARENTHESIS argumentos RIGHT_PARENTHESIS impFuncAux2 bloqueFunc impFunc
-	|
+	| deleteFunctions
+	;
+
+deleteFunctions :
 	;
 
 impFuncAux2 :

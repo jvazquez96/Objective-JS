@@ -63,11 +63,39 @@ class Classes(object):
 
 		for key, value in real_params:
 			if my_params[iterator].getId() != key or my_params[iterator].getType() != value.getType():
-				print("Wrong parameters in constructor")
+				print("Wrong param in constructor")
 				sys.exit(0)
 			iterator += 1
 
 		self.constructorsVerified += 1
+
+	def verifyMethod(self, function_name, argumentos, return_type):
+		if function_name in self.methods.getDirectory().keys():
+			declared = self.methods.getDirectory()[function_name].getParamTable().getParameters().items()
+			used = argumentos.getParameters().items()
+			aux = []
+			iterator = 0
+
+			if len(declared) != len(used):
+				print("Wrong number of params in function")
+				sys.exit(0)
+
+
+			for key, value in declared:
+				aux.append(value)
+
+			for key, value in used:
+				if aux[iterator].getId() != key or aux[iterator].getType() != value.getType():
+					print("Wrong param in function")
+					sys.exit(0)
+				iterator += 1
+
+			if return_type != self.methods.getDirectory()[function_name].getReturnType():
+				print("Wrong returning type")
+				sys.exit(0)
+		else:
+			print("Function " + function_name + " was not declared")
+			sys.exit(0)
 
 	def copyAtts(self, inherits):
 		for key, value in inherits.attributes.items():
@@ -102,6 +130,7 @@ class Classes(object):
 		for key, value in self.methods.getDirectory().items():
 			print("Function: " + key)
 			print("Accessibility: " + str(value.getAccessibility()))
+			print("Type: " + str(value.getReturnType()))
 			for key2, value2 in value.getParamTable().getParameters().items():
 				print("Var name: " + key2)
 

@@ -923,16 +923,36 @@ class Objective_JSListener(ParseTreeListener):
     def exitImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
         pass
 
+    def exitDeleteFunctions(self, ctx:Objective_JSParser.DeleteFunctionsContext):
+        self.methods = FunctionsDirectory()
+
 
     # Enter a parse tree produced by Objective_JSParser#impFuncAux2.
     def enterImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
-        self.newFunction()
+        if self.className is None:
+            self.newFunction()
+            if ctx.RETURNS() is None:
+                self.does_returns = None
+            elif self.className is None:
+                self.does_returns = "returns"
+                return_type = ctx.tipo_dato_no_list().getText()
+                self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
+
+        if self.function_name in self.methods.getDirectory().keys():
+            print("Function already implemented")
+            sys.exit(0)
+
+        
         if ctx.RETURNS() is None:
             self.does_returns = None
+            return_type = None
         else:
             self.does_returns = "returns"
             return_type = ctx.tipo_dato_no_list().getText()
-            self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
+            return_type = self.normalizeTypes(return_type)
+
+        self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
+        self.methods.create_table(self.function_name, InfoDirectory())
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
     def exitImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
@@ -1005,7 +1025,8 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#bloqueFuncAux2.
     def exitBloqueFuncAux2(self, ctx:Objective_JSParser.BloqueFuncAux2Context):
-        self.functions_directory.remove_info(self.function_name)
+        if self.className is None:
+            self.functions_directory.remove_info(self.function_name)
         self.function_name = None
 
     def enterGetReturnType(self, ctx):
