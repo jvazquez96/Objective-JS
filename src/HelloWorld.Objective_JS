@@ -1,9 +1,9 @@
+import avion
+import carro
+
 Class HelloWorld {
 	main(){
 		var a : int;
-		var mat : list[8][8] int;
-		var i : list[10] int;
-		var j : list[54] float;
-		mat[i[7] * 7][7 - 5] = 5;	
+		a = 5;
 	}
 }

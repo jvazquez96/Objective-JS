@@ -2,6 +2,7 @@ from Structures.Info import Info
 from Structures.FunctionsDirectory import FunctionsDirectory
 from Structures.ParamTable import ParamTable
 from Structures.Atts import Atts
+import sys
 
 class Classes(object):
 
@@ -34,6 +35,26 @@ class Classes(object):
 
 	def addMethodsTable(self, FunctionsDirectory):
 		self.methods = FunctionsDirectory
+
+	def copyInfo(self, inherits):
+		self.copyAtts(inherits)
+		self.copyMethods(inherits)
+
+	def copyAtts(self, inherits):
+		for key, value in inherits.attributes.items():
+			if key in self.attributes.keys():
+				print(key + " from " + inherits.getName() + " already defined in " + self.name)
+				sys.exit(0)
+			else:
+				self.attributes[key] = value
+
+	def copyMethods(self, inherits):
+		for key, value in inherits.methods.getDirectory().items():
+			if key in self.methods.getDirectory().keys():
+				print(key + " from " + inherits.getName() + " already defined in " + self.name)
+				sys.exit(0)
+			else:
+				self.methods.getDirectory()[key] = value
 
 	def printConstuctorTable(self):
 		for key, value in self.constructors[self.numberOfCons-1].getParameters().items():

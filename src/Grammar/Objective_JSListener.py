@@ -246,7 +246,6 @@ class Objective_JSListener(ParseTreeListener):
             print("The class was already defined")
             sys.exit(0)
         else:
-            print("Class Name in newClass: " + className)
             self.className = className
             self.classes[className] = Classes()
             self.classes[className].setName(className)
@@ -578,6 +577,8 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
+        if self.classes[self.className].getInherits() is not None:
+            self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
         self.classes[self.className].printInfo()
         self.attributes = dict()
         self.className = None
@@ -659,7 +660,7 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.INHERITS() is not None:
             inherits = ctx.CLASSNAME().getText()
             if self.className == inherits:
-                print("Class " + self.className + " cannot inherit from himself")
+                print("Class " + self.className + " cannot inherits from himself")
                 sys.exit(0)
             elif inherits in self.classes.keys():
                 self.classes[self.className].setInherits(inherits)

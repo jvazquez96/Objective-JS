@@ -1,4 +1,5 @@
 import Carro
+import Avion
 Class Prueba{
 	main(){
 	}

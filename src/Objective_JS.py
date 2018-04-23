@@ -14,25 +14,30 @@ def preprocess(fileName):
     for line in lines:
         if re.search("import\ [a-zA-Z]+", line) is not None:
             imported_class = line[7:-1] + ".Objective_JS"
+            print("File: " + str(imported_class))
             with open("temp_file.Objective_JS", "a") as temp_file:
                 with open(imported_class, "r") as imported_class:
                     temp_file.write(imported_class.read())
                     temp_file.write("\n")
+                    print(imported_class.read())
 
-                with open(fileName, 'r') as init_file:
-                    temp_file.write(init_file.read())
+    with open('temp_file.Objective_JS', 'a') as temp_file:
+        with open(fileName, 'r') as init_file:
+            temp_file.write(init_file.read())
 
-            with open('original_copy.Objective_JS', 'w') as output, open(fileName, 'r') as input:
-                output.write(input.read())
+    with open('original_copy.Objective_JS', 'w') as output, open(fileName, 'r') as input:
+        output.write(input.read())
 
-            with open(fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
-                datas = input.readlines()
-            with open(fileName, 'w+') as output:
-                for data in datas:
-                    if re.search("import\ [a-zA-Z]+", data) is None:
-                        output.write(data)
-            # with open(fileName, 'w+') as output:
-            #     output.write("\n")
+    with open(fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
+        datas = input.readlines()
+    with open(fileName, 'w+') as output:
+        for data in datas:
+            if re.search("import\ [a-zA-Z]+", data) is None:
+                output.write(data)
+    # debuging the new file
+    # with open(fileName, 'r') as file:
+    #     print(file.read())
+
     if os.path.exists('temp_file.Objective_JS'):
         os.remove('temp_file.Objective_JS')
 

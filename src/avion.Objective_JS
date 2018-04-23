@@ -1,4 +1,4 @@
-Class Avion{
+Class Avion Inherits Carro{
 	Avion();
 	Avion(string marca, int serie);
 	Attributes {

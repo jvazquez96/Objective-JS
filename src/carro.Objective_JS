@@ -1,16 +1,16 @@
-Class Carro {
+Class Carro{
 	Carro();
 	Carro(string marca);
 	Attributes {
 		public : 
-			var marca : string;
+			var modelo : string;
 		private : 
-			var serie : int;
+			var anio : int;
 	}
 	Methods {
 		public :
-			function getMarca () ;
+			function getModelo () ;
 		private :
-			function getSerie () ;
+			function getAnio () ;
 	}
 }
