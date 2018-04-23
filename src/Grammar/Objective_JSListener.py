@@ -474,30 +474,31 @@ class Objective_JSListener(ParseTreeListener):
         """
         Adds a new function into the function directory
         """
-        if self.function_name not in self.functions_directory.getDirectory():
-            self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
-            self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
-            start_address = len(self.cuadruplos) + 1
-            self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
-            for key, value in self.argumentos.getParameters().items():
-                if value.getType() == 0:
-                    self.functions_directory.addInt(self.function_name, True, 1)
-                    self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
-                elif value.getType() == 1:
-                    self.functions_directory.addFloat(self.function_name, True, 1)
-                    self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
-                elif value.getType() == 2:
-                    self.functions_directory.addChar(self.function_name, True, 1)
-                    self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
-                elif value.getType() == 3:
-                    self.functions_directory.addString(self.function_name, True, 1)
-                    self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
-                elif value.getType() == 4:
-                    self.functions_directory.addBool(self.function_name, True, 1)
-                    self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
-        else:
-            print("Syntax error!! Function: " + self.function_name + " is already defined")
-            sys.exit(0)
+        if self.className is None:
+            if self.function_name not in self.functions_directory.getDirectory():
+                self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
+                self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
+                start_address = len(self.cuadruplos) + 1
+                self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
+                for key, value in self.argumentos.getParameters().items():
+                    if value.getType() == 0:
+                        self.functions_directory.addInt(self.function_name, True, 1)
+                        self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
+                    elif value.getType() == 1:
+                        self.functions_directory.addFloat(self.function_name, True, 1)
+                        self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
+                    elif value.getType() == 2:
+                        self.functions_directory.addChar(self.function_name, True, 1)
+                        self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
+                    elif value.getType() == 3:
+                        self.functions_directory.addString(self.function_name, True, 1)
+                        self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
+                    elif value.getType() == 4:
+                        self.functions_directory.addBool(self.function_name, True, 1)
+                        self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
+            else:
+                print("Syntax error!! Function: " + self.function_name + " is already defined")
+                sys.exit(0)
 
     def convertIntToStringType(self, type):
         if type == 0:
@@ -579,7 +580,7 @@ class Objective_JSListener(ParseTreeListener):
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
-        self.classes[self.className].printInfo()
+        #self.classes[self.className].printInfo()
         self.attributes = dict()
         self.className = None
 
@@ -771,6 +772,7 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#metodos.
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
         self.classes[self.className].addMethodsTable(self.methods)
+        self.argumentos = ParamTable()
         self.methods = FunctionsDirectory()
 
 
@@ -881,11 +883,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#impConstructor.
     def enterImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
-        self.function_name = ctx.CLASSNAME().getText()
-        self.function_name += "Constructor"
-        if self.function_name in self.functions_directory.getDirectory():
-            self.constructores = self.constructores + 1
-            self.function_name += str(self.constructores)
+        if ctx.CLASSNAME().getText() != self.className:
+            print("The constructor name is wrong")
+            sys.exit()
 
     # Exit a parse tree produced by Objective_JSParser#impConstructor.
     def exitImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
@@ -896,10 +896,12 @@ class Objective_JSListener(ParseTreeListener):
     def enterEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
         self.newFunction()
 
+    def enterVerificaConstructores(self, ctx:Objective_JSParser.VerificaConstructoresContext):
+        pass
+
     # Exit a parse tree produced by Objective_JSParser#emptyRule.
     def exitEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
         pass
-
 
     # Enter a parse tree produced by Objective_JSParser#impFunc.
     def enterImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
@@ -956,8 +958,8 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#bloqueConstructor.
     def exitBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
+        self.classes[self.className].verifyConstructorParams(self.argumentos)
         self.argumentos = ParamTable()
-        self.functions_directory.remove_info(self.function_name)
 
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFunc.

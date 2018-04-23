@@ -1,6 +1,7 @@
 Class Avion Inherits Carro{
-	Avion();
+	Avion(int asientos);
 	Avion(string marca, int serie);
+	Avion(string marca, string llantas, int asientos, int serie, int capacidad, float peso);
 	Attributes {
 		public : 
 			var marca : string;
@@ -18,4 +19,13 @@ Class Avion Inherits Carro{
 		private :
 			function getSerie (char doritos) ;
 	}
+}
+Avion(int asientos){
+}
+
+Avion(string marca, int serie){
+}
+
+Avion(string marca, string llantas, int asientos, int serie, int capacidad, float peso){
+	
 }

@@ -213,8 +213,11 @@ argumentosDeclAux:
 	;
 
 impConstructores :
-	impConstructor impConstructores
+	impConstructor verificaConstructores impConstructores
 	|
+	;
+
+verificaConstructores :
 	;
 
 impConstructor :

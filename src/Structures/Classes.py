@@ -11,6 +11,7 @@ class Classes(object):
 		self.inherits = None
 		self.constructors = []
 		self.numberOfCons = 0
+		self.constructorsVerified = 0
 		self.attributes = None
 		self.methods = None
 
@@ -39,6 +40,31 @@ class Classes(object):
 	def copyInfo(self, inherits):
 		self.copyAtts(inherits)
 		self.copyMethods(inherits)
+
+	def verifyConstructorParams(self, params):
+		if self.constructorsVerified == self.numberOfCons:
+			print("Constructor implemented but not defined")
+			sys.exit(0)
+			
+		params_declared = self.constructors[self.constructorsVerified].getParameters().items()
+		real_params = params.getParameters().items()
+		my_params = [] 
+		iterator = 0
+
+		if len(params_declared) != len(real_params):
+			print("Wrong number of params in constructor")
+			sys.exit()
+
+		for key, value in params_declared:
+			my_params.append(value)
+
+		for key, value in real_params:
+			if my_params[iterator].getId() != key or my_params[iterator].getType() != value.getType():
+				print("Wrong parameters in constructor")
+				sys.exit(0)
+			iterator += 1
+
+		self.constructorsVerified += 1
 
 	def copyAtts(self, inherits):
 		for key, value in inherits.attributes.items():
