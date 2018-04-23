@@ -64,7 +64,9 @@ CONST_TEMPORAL_TOP_FLOAT = 14999
 CONST_TEMPORAL_TOP_CHAR = 15999
 CONST_TEMPORAL_TOP_STRING = 16999
 CONST_TEMPORAL_TOP_BOOLEAN = 17999
-CONST_TEMPORAL_TOP_NULL = 17999
+CONST_TEMPORAL_TOP_NULL = 18999
+
+CONST_OBJECTS_START_ADDRESS = 19999
 
 
 # This class defines a complete listener for a parse tree produced by Objective_JSParser.
@@ -104,6 +106,7 @@ class Objective_JSListener(ParseTreeListener):
         self.className = None
         self.attributes = dict()
         self.methods = FunctionsDirectory()
+        self.object_counter = CONST_OBJECTS_START_ADDRESS
 
 
     def resetMemoryAddresses(self):
@@ -469,7 +472,15 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_local_boolean_counter += (dimensions[0].getUpperBound())
             else:
                 self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
-
+        else: # It's an object
+            number_dimensions += 1
+            if self.className is None:
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.object_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.object_counter += 1
     def newFunction(self):
         """
         Adds a new function into the function directory
@@ -1050,7 +1061,6 @@ class Objective_JSListener(ParseTreeListener):
         elif self.type in self.classes:
             type_number = self.type
         else:
-            print("The type is not supported")
             sys.exit(0)
 
         self.newVars(id, type_number, self.is_arr_or_mat)
@@ -1226,7 +1236,6 @@ class Objective_JSListener(ParseTreeListener):
             else:
                 print("The type is not supported")
                 sys.exit(0)
-
             self.newVars(id, type_number, self.is_arr_or_mat)
 
     # Exit a parse tree produced by Objective_JSParser#varsRepeated.
@@ -1577,6 +1586,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#llamadaFunc.
     def enterLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
+        if (len(ctx.ID()) == 2): # Check if you are trying to call a class method from a primitive
+            type = self.functions_directory.getInfoDirectory(self.function_name).getContent(ctx.ID()[0].getText()).getType()
+            if not isinstance(type, str):
+                print("Trying to call a class method from a primitive")
+                sys.exit(0)
+
         if ctx.THIS() is not None or len(ctx.ID()) == 1: #Local method
             self.current_method_name = ctx.ID()[0].getText()
             if self.current_method_name not in  self.functions_directory.getDirectory():
@@ -1585,6 +1600,17 @@ class Objective_JSListener(ParseTreeListener):
             quadruple = Quadruple(self.id, "ERA", self.current_method_name, None, None)
             self.id += 1
             self.cuadruplos.append(quadruple)
+        elif ctx.THIS() is None and len(ctx.ID()) == 2 is not None: #Class method
+            self.current_method_name = ctx.ID()[1].getText()
+            var = ctx.ID()[0].getText()
+            type = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getType()
+            if self.current_method_name not in self.classes[type].getMethods().getDirectory():
+                print("The function: " + str(self.current_method_name) + " doesn't exist at class")
+                sys.exit(0)
+            object_address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
+            quadruple = Quadruple(self.id, "ERA", self.current_method_name, object_address, None)
+            self.cuadruplos.append(quadruple)
+            self.id += 1
 
     def normalizeTypes(self, type):
         if isinstance(type, str):
@@ -1614,21 +1640,44 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#llamadaFunc.
     def exitLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
-        if self.current_param_counter != len(self.functions_directory.getTable(self.current_method_name).getParams()):
-            print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
-            print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
-            sys.exit(0)
-        start_address = self.functions_directory.getTable(self.current_method_name).getStartAddress()
-        quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
-        self.cuadruplos.append(quadruple)
-        self.id += 1
-        self.current_param_counter = 0
-        if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
-            quadruple = Quadruple(self.id, "save_return",self.current_method_name, None,self.current_temp_int_counter)
-            self.operandos.push(self.current_temp_int_counter)
-            self.id += 1
-            self.current_temp_int_counter += 1
+        var = ctx.ID()[0].getText()
+        if (len(ctx.ID()) > 1):
+            type = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getType()
+        if self.current_method_name in self.functions_directory.getDirectory():
+            if self.current_param_counter != len(self.functions_directory.getTable(self.current_method_name).getParams()):
+                print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
+                print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
+                sys.exit(0)
+            start_address = self.functions_directory.getTable(self.current_method_name).getStartAddress()
+            quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
             self.cuadruplos.append(quadruple)
+            self.id += 1
+            self.current_param_counter = 0
+            if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
+                quadruple = Quadruple(self.id, "save_return",self.current_method_name, None,self.current_temp_int_counter)
+                self.operandos.push(self.current_temp_int_counter)
+                self.id += 1
+                self.current_temp_int_counter += 1
+                self.cuadruplos.append(quadruple)
+        elif self.current_method_name in self.classes[type].getMethods().getDirectory():
+            pass
+            # Everything is going to be commented until issue 15 is resolved
+            # if self.current_param_counter != len(self.classes[type].getMethods().getTable(self.current_method_name).getParams()):
+            #     print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
+            #     print(str(self.current_param_counter) + " were given, but " + str(len(self.classes[type].getMethods().getTable(self.current_method_name).getParams())) + " were expected")
+            #     sys.exit(0)
+            # start_address = self.classes[type].getMethods().getTable(self.current_method_name).getStartAddress()
+            # quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
+            # self.cuadruplos.append(quadruple)
+            # self.id += 1
+            # self.current_param_counter = 0
+            # if self.classes[type].getMethods().getTable(self.current_method_name).getReturnType() is not None:
+            #     quadruple = Quadruple(self.id, "save_return", self.current_method_name, None, self.current_temp_int_counter)
+            #     self.operandos.push(self.current_temp_int_counter)
+            #     self.id += 1
+            #     self.current_temp_int_counter += 1
+            #     self.cuadruplos.append(quadruple)
+
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamada.

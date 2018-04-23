@@ -14,12 +14,10 @@ def preprocess(fileName):
     for line in lines:
         if re.search("import\ [a-zA-Z]+", line) is not None:
             imported_class = line[7:-1] + ".Objective_JS"
-            print("File: " + str(imported_class))
             with open("temp_file.Objective_JS", "a") as temp_file:
                 with open(imported_class, "r") as imported_class:
                     temp_file.write(imported_class.read())
                     temp_file.write("\n")
-                    print(imported_class.read())
 
     with open('temp_file.Objective_JS', 'a') as temp_file:
         with open(fileName, 'r') as init_file:

@@ -1,9 +1,10 @@
-import avion
 import carro
+import avion
 
 Class HelloWorld {
 	main(){
+		var boeing : Avion;
 		var a : int;
-		a = 5;
+		boeing.getModelo();
 	}
 }

@@ -30,6 +30,9 @@ class Classes(object):
 	def getInherits(self):
 		return self.inherits
 
+	def getMethods(self):
+		return self.methods
+
 	def addConstructorParams(self, ParamTable):
 		self.constructors.append(ParamTable)
 		self.numberOfCons += 1
