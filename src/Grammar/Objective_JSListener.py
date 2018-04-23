@@ -951,7 +951,8 @@ class Objective_JSListener(ParseTreeListener):
             return_type = ctx.tipo_dato_no_list().getText()
             return_type = self.normalizeTypes(return_type)
 
-        self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
+        if self.className is not None:
+            self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
         self.methods.create_table(self.function_name, InfoDirectory())
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
