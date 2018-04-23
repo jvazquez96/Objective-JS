@@ -14,25 +14,3 @@ Class Carro {
 			function getSerie () ;
 	}
 }
-Carro() {
-	marca = "default";
-}
-Carro (string marca2) {
-	marca = marca2;
-}
-
-Carro (string marca) {
-	marca = marca;
-}
-
-function getMarca() returns string {
-	return marca;
-}
-
-function getSerie() returns int {
-	return serie;
-}
-
-function printSomething() {
-	print("Homeland");
-}

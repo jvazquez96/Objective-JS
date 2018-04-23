@@ -1,7 +1,5 @@
-import Avion
-
+import Carro
 Class Prueba{
 	main(){
-		var avion : Avion;
 	}
 }

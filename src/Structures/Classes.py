@@ -55,3 +55,8 @@ class Classes(object):
 			for key2, value2 in value.getParamTable().getParameters().items():
 				print("Var name: " + key2)
 
+	def printInfo(self):
+		print("Class name: " + self.name)
+		print("Inherits: " + str(self.inherits))
+		self.printAtts()
+		self.printMethods()
