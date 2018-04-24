@@ -382,8 +382,8 @@ class Objective_JSListener(ParseTreeListener):
                 self.current_global_boolean_counter += 1
             else:
                 self.methods.addBool(self.function_name, False, 1)
-                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_bool_counter, id, type, isList, total_size, number_dimensions, dimensions)
-                self.current_local_bool_counter += 1
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_boolean_counter += 1
         elif re.search("list(\[.*\])+int", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -550,11 +550,11 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_global_boolean_counter += (dimensions[0].getUpperBound())
             else:
                 self.methods.addBool(self.function_name, False, total_size)
-                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_bool_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
                 if len(dimensions) == 2:
-                    self.current_local_bool_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
-                    self.current_local_bool_counter += (dimensions[0].getUpperBound())
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
 
         else: # It's an object
             number_dimensions += 1
@@ -661,9 +661,13 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
+        self.classes[self.className].updateMethods(self.methods)
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
         #self.classes[self.className].printInfo()
+        self.methods = FunctionsDirectory()
+        self.argumentos = ParamTable()
+        self.function_name = None
         self.attributes = dict()
         self.className = None
 
@@ -962,7 +966,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#impConstructores.
     def exitImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
-        pass
+        self.methods = FunctionsDirectory()
 
 
     # Enter a parse tree produced by Objective_JSParser#impConstructor.
@@ -997,7 +1001,8 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     def exitDeleteFunctions(self, ctx:Objective_JSParser.DeleteFunctionsContext):
-        self.methods = FunctionsDirectory()
+        # self.methods = FunctionsDirectory()
+        pass
 
 
     # Enter a parse tree produced by Objective_JSParser#impFuncAux2.
@@ -1012,7 +1017,7 @@ class Objective_JSListener(ParseTreeListener):
                 self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
         else:
             if self.function_name in self.methods.getDirectory().keys():
-                print("Function already implemented")
+                print("Function " + self.function_name + " already implemented")
                 sys.exit(0)
             
             if ctx.RETURNS() is None:
@@ -1024,7 +1029,8 @@ class Objective_JSListener(ParseTreeListener):
                 return_type = self.normalizeTypes(return_type)
 
             self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
-            self.methods = self.classes[self.className].getMethodTable(self.function_name)
+            self.methods.create_table(self.function_name, InfoDirectory(SymbolTable()))
+            self.methods.getTable(self.function_name).setParamTable(self.argumentos)
             self.newFunction()
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
@@ -1083,10 +1089,6 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(quadruple)
         self.registros = 1
         self.resetMemoryAddresses()
-
-        if self.className is not None:
-            self.classes[self.className].updateMethodTable(self.function_name, self.methods)
-
         self.function_name = None
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFuncAux.

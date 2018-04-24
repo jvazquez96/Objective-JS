@@ -100,8 +100,8 @@ class Classes(object):
 	def getMethodTable(self, function_name):
 		return self.methods.getDirectory()[function_name]
 
-	def updateMethodTable(self, function_name, table):
-		self.methods.getDirectory()[function_name] = table
+	def updateMethods(self, table):
+		self.methods = table
 
 	def copyAtts(self, inherits):
 		for key, value in inherits.attributes.items():
@@ -131,6 +131,7 @@ class Classes(object):
 			print("ID: " + str(key))
 			print("Type: " + str(value.getType()))
 			print("Accesible: " + str(value.isAccessible()))
+			print("Address: " + str(value.getAddress()))
 
 	def printMethods(self):
 		for key, value in self.methods.getDirectory().items():
@@ -139,8 +140,16 @@ class Classes(object):
 			print("Type: " + str(value.getReturnType()))
 			for key2, value2 in value.getParamTable().getParameters().items():
 				print("Var name: " + key2)
+				print("Type: " + str(value2.getType()))
+				print("Address: " + str(value2.getAddress()))
+			for key2, value2 in value.getSymbolTable().getSymbols().items():
+				print("Var name: " + key2)
+				print("Type: " + str(value2.getType()))
+				print("Address: " + str(value2.getAddress()))
+
 
 	def printInfo(self):
+		print("------------------------------------------------------")
 		print("Class name: " + self.name)
 		print("Inherits: " + str(self.inherits))
 		self.printAtts()

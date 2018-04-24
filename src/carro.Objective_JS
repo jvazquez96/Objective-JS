@@ -14,3 +14,7 @@ Class Carro{
 			function getAnio () ;
 	}
 }
+
+function getModelo(){
+	var prueba : int;
+}

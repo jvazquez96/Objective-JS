@@ -30,4 +30,9 @@ Avion(string marca, string llantas, int asientos, int serie, int capacidad, floa
 }
 
 function getMarca(int uno, float dos) returns string{
+	var tres : int;
+}
+
+function getMarca2(string batman, bool laabuelitadebatman){
+	var tres : int;
 }
