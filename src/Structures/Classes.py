@@ -77,7 +77,7 @@ class Classes(object):
 			iterator = 0
 
 			if len(declared) != len(used):
-				print("Wrong number of params in function")
+				print("Wrong number of params in function " + function_name)
 				sys.exit(0)
 
 
@@ -86,12 +86,12 @@ class Classes(object):
 
 			for key, value in used:
 				if aux[iterator].getId() != key or aux[iterator].getType() != value.getType():
-					print("Wrong param in function")
+					print("Wrong param in function " + function_name)
 					sys.exit(0)
 				iterator += 1
 
 			if return_type != self.methods.getDirectory()[function_name].getReturnType():
-				print("Wrong returning type")
+				print("Wrong returning type in function " + function_name)
 				sys.exit(0)
 		else:
 			print("Function " + function_name + " was not declared")

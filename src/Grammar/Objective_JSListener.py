@@ -491,25 +491,12 @@ class Objective_JSListener(ParseTreeListener):
                 self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
                 start_address = len(self.cuadruplos) + 1
                 self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
-                for key, value in self.argumentos.getParameters().items():
-                    if value.getType() == 0:
-                        self.functions_directory.addInt(self.function_name, True, 1)
-                        self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
-                    elif value.getType() == 1:
-                        self.functions_directory.addFloat(self.function_name, True, 1)
-                        self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
-                    elif value.getType() == 2:
-                        self.functions_directory.addChar(self.function_name, True, 1)
-                        self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
-                    elif value.getType() == 3:
-                        self.functions_directory.addString(self.function_name, True, 1)
-                        self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
-                    elif value.getType() == 4:
-                        self.functions_directory.addBool(self.function_name, True, 1)
-                        self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
             else:
                 print("Syntax error!! Function: " + self.function_name + " is already defined")
                 sys.exit(0)
+        else:
+            start_address = len(self.cuadruplos) + 1
+            self.methods.getTable(self.function_name).setStartAddress(start_address)
 
     def convertIntToStringType(self, type):
         if type == 0:
@@ -905,7 +892,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#emptyRule.
     def enterEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
-        self.newFunction()
+        pass
 
     def enterVerificaConstructores(self, ctx:Objective_JSParser.VerificaConstructoresContext):
         pass
@@ -937,23 +924,23 @@ class Objective_JSListener(ParseTreeListener):
                 self.does_returns = "returns"
                 return_type = ctx.tipo_dato_no_list().getText()
                 self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
-
-        if self.function_name in self.methods.getDirectory().keys():
-            print("Function already implemented")
-            sys.exit(0)
-
-        
-        if ctx.RETURNS() is None:
-            self.does_returns = None
-            return_type = None
         else:
-            self.does_returns = "returns"
-            return_type = ctx.tipo_dato_no_list().getText()
-            return_type = self.normalizeTypes(return_type)
+            if self.function_name in self.methods.getDirectory().keys():
+                print("Function already implemented")
+                sys.exit(0)
 
-        if self.className is not None:
+            
+            if ctx.RETURNS() is None:
+                self.does_returns = None
+                return_type = None
+            else:
+                self.does_returns = "returns"
+                return_type = ctx.tipo_dato_no_list().getText()
+                return_type = self.normalizeTypes(return_type)
+
             self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
-        self.methods.create_table(self.function_name, InfoDirectory())
+            self.methods.create_table(self.function_name, InfoDirectory())
+            self.newFunction()
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
     def exitImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
