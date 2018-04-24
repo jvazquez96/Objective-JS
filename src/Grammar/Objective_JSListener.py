@@ -310,7 +310,8 @@ class Objective_JSListener(ParseTreeListener):
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_int_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
+                self.current_local_int_counter += 1
         elif type == "float" or type == 1 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -322,7 +323,8 @@ class Objective_JSListener(ParseTreeListener):
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_float_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                self.current_local_float_counter += 1
         elif type == "char" or type == 2 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -334,7 +336,8 @@ class Objective_JSListener(ParseTreeListener):
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_char_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_char_counter)
+                self.current_local_char_counter += 1
         elif type == "string" or type == 3 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -346,7 +349,8 @@ class Objective_JSListener(ParseTreeListener):
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_string_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
+                self.current_local_string_counter += 1
         elif type == "bool" or type == 4 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -358,7 +362,8 @@ class Objective_JSListener(ParseTreeListener):
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_boolean_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
+                self.current_local_boolean_counter += 1
         elif re.search("list(\[.*\])+int", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -380,7 +385,12 @@ class Objective_JSListener(ParseTreeListener):
                     else:
                         self.current_local_int_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_int_counter)
+                if len(dimensions) == 2:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound())
+
         elif re.search("list(\[.*\])+float", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -402,7 +412,12 @@ class Objective_JSListener(ParseTreeListener):
                     else:
                         self.current_local_float_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_float_counter)
+                if len(dimensions) == 2:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound())
+
         elif re.search("list(\[.*\])+char", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -426,7 +441,11 @@ class Objective_JSListener(ParseTreeListener):
                     else:
                         self.current_local_char_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimension, self.current_local_char_counter)
+                if len(dimensions) == 2:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound())
 
         elif re.search("list(\[.*\])+string", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -448,7 +467,12 @@ class Objective_JSListener(ParseTreeListener):
                     else:
                         self.current_local_string_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_string_counter)
+                if len(dimensions) == 2:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound())
+
         elif re.search("list(\[.*\])+bool", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -471,7 +495,12 @@ class Objective_JSListener(ParseTreeListener):
                     else:
                         self.current_local_boolean_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_local_boolean_counter)
+                if len(dimensions) == 2:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
+
         else: # It's an object
             number_dimensions += 1
             if self.className is None:
@@ -481,6 +510,7 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.object_counter += 1
+                    
     def newFunction(self):
         """
         Adds a new function into the function directory
