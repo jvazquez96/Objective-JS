@@ -97,6 +97,12 @@ class Classes(object):
 			print("Function " + function_name + " was not declared")
 			sys.exit(0)
 
+	def getMethodTable(self, function_name):
+		return self.methods.getDirectory()[function_name]
+
+	def updateMethodTable(self, function_name, table):
+		self.methods.getDirectory()[function_name] = table
+
 	def copyAtts(self, inherits):
 		for key, value in inherits.attributes.items():
 			if key in self.attributes.keys():
