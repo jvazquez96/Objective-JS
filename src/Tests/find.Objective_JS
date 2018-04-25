@@ -1,0 +1,39 @@
+Class Find{
+
+	function find(list[10] int arr, int n) returns bool{
+		var i : int;
+		var found : bool;
+		i = 0;
+		found = false;
+
+		while(i < 0){
+			if (arr[i] == n){
+				found = true;
+			}
+			i++;
+		}
+
+		return found;
+	}
+
+	main(){
+		var arr : list[10] int;
+		var i, n: int;
+		i = 0;
+		
+		while(i < 10){
+			arr[i] = i;
+			i++;
+		}
+
+		print("Give me n");
+		read >> n;
+
+		if(find(arr, n)){
+			print("Yes!! found the number");
+		}else{
+			print("No!! the number isn't in the list");
+		}
+
+	}
+}
