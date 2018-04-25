@@ -24,6 +24,9 @@ class Classes(object):
 	def setAttributes(self, attributes):
 		self.attributes = attributes
 
+	def getAttributes(self):
+		return self.attributes
+
 	def getName(self):
 		return self.name
 
@@ -95,6 +98,11 @@ class Classes(object):
 				sys.exit(0)
 		else:
 			print("Function " + function_name + " was not declared")
+			sys.exit(0)
+
+	def isAttribute(self, id):
+		if id not in self.attributes.keys():
+			print("Attribute " + id + " not declared in class " + self.name)
 			sys.exit(0)
 
 	def getMethodTable(self, function_name):

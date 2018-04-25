@@ -1,7 +1,9 @@
-1,GO.TO,None,None,8
+1,GO.TO,None,None,10
 2,endproc,None,None,None
 3,endproc,None,None,None
 4,endproc,None,None,None
 5,endproc,None,None,None
-6,endproc,None,None,None
+6,return,4001,None,None
 7,endproc,None,None,None
+8,=,10000,None,4001
+9,endproc,None,None,None

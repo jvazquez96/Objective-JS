@@ -215,15 +215,22 @@ class Objective_JSListener(ParseTreeListener):
         for the type of variable
         """
         # First check in the local scope
-        if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
-            address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
-            return address
-        elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
-            return self.functions_directory.getTable(self.function_name).getParamTable().getAddress(var)
-        # Then check in the global scope
-        for key, value in self.functions_directory.getDirectory().items():
-            if var in value.getSymbolTable().getSymbols():
-                return value.getSymbolTable().getContent(var).getAddress()
+        if self.className is not None:
+            if var not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+            else:
+                table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+            return table[var].getAddress()
+        else:
+            if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
+                address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
+                return address
+            elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
+                return self.functions_directory.getTable(self.function_name).getParamTable().getAddress(var)
+            # Then check in the global scope
+            for key, value in self.functions_directory.getDirectory().items():
+                if var in value.getSymbolTable().getSymbols():
+                    return value.getSymbolTable().getContent(var).getAddress()
 
     def getDimsFromVariable(self, var):
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
@@ -1420,15 +1427,42 @@ class Objective_JSListener(ParseTreeListener):
     def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
         valor = self.operandos.pop()
         id = self.getId(ctx.objeto().getText())
+        variableType = None
 
         if self.operandos.empty():
-            address = self.getMemoryAddressFromVariable(id)
+            if id.find('.') != -1:
+                id = id[5:]
+                if id not in self.attributes.keys():
+                    print("Var " + id + " used but not defined")
+                    sys.exit(0)
+                else:
+                    address = self.attributes[id].getAddress()
+                    variableType = self.attributes[id].getType()
+                    variableType = self.convertTypeToInt(variableType)
+            elif self.className is not None:
+                if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                    if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                        print("Var " + id + " used but not defined")
+                        sys.exit(0)
+                    else:
+                        table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+                        address = table[id].getAddress()
+                        variableType = table[id].getType()
+                        variableType = self.convertTypeToInt(variableType)
+                else:
+                    table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+                    address = table[id].getAddress()
+                    variableType = table[id].getType()
+                    variableType = self.convertTypeToInt(variableType)
+            else:
+               address = self.getMemoryAddressFromVariable(id)
         else:
             address = self.operandos.pop()
 
         possibleType = self.types.pop()
-        variableType = self.getTypeFromVariable(id)
-        variableType = self.convertTypeToInt(variableType)
+        if variableType is None:
+            variableType = self.getTypeFromVariable(id)
+            variableType = self.convertTypeToInt(variableType)
 
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
@@ -2003,15 +2037,30 @@ class Objective_JSListener(ParseTreeListener):
         return var
 
 
+
+    def isAttribute(self, id):
+        self.classes[self.className].isAttribute(id)
+
+
     # Enter a parse tree produced by Objective_JSParser#objeto.
     def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
         if ctx.objetoAux() is not None:
             if ctx.objetoAux().LEFT_SQUARE_BRACKET() is not None:
                 id = self.getId(ctx.objetoAux().getText())
+                self.isVarDeclared(id)
+            elif ctx.objetoAux().THIS() is not None:
+                id = ctx.objetoAux().getText()[5:]
+                self.isAttribute(id)
             else:
                 id = ctx.objetoAux().getText()
+                if self.className is None:
+                    self.isVarDeclared(id)
+                else:
+                    if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                        if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                            print("Var " + id + " used but not defined")
+                            sys.exit(0)
 
-            self.isVarDeclared(id)
             if self.do_object:
                 type = self.getTypeFromVariable(id)
                 type = self.convertTypeToInt(type)
@@ -2276,9 +2325,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
         pass
 
-
     # Enter a parse tree produced by Objective_JSParser#factor.
     def enterFactor(self, ctx:Objective_JSParser.FactorContext):
+        address = None
         if ctx.varCte() is not None:
             if ctx.varCte().llamadaFunc() is not None:
                 function_name = ctx.varCte().getText().split('(')[0]
@@ -2290,8 +2339,31 @@ class Objective_JSListener(ParseTreeListener):
                     self.types.push(return_type)
             elif ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
                 value = ctx.varCte().getText()
-                type = self.getTypeFromFactor(ctx, value)
-                type = self.convertTypeToInt(type)
+                if value.find('.') != -1 and self.className is not None:
+                    value = value[5:]
+                    self.classes[self.className].isAttribute(value)
+                    type = self.attributes[value].getType()
+                    type = self.convertTypeToInt(type)
+                    address = self.attributes[value].getAddress()
+                elif self.className is not None and ctx.varCte().TYPE_INT() is None and ctx.varCte().TYPE_FLOAT() is None:
+                    if value not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                        if value not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                            print("Var " + value + " used but not defined")
+                            sys.exit(0)
+                        else:
+                            table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+                            type = table[value].getType()
+                            type = self.convertTypeToInt(type)
+                            address = table[value].getAddress()
+                    else:
+                        table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+                        type = table[value].getType()
+                        type = self.convertTypeToInt(type)
+                        address = table[value].getAddress()
+                else:
+                    type = self.getTypeFromFactor(ctx, value)
+                    type = self.convertTypeToInt(type)
+
                 try:
                     number = int(value)
                     self.operandos.push('%'+str(number))
@@ -2309,27 +2381,33 @@ class Objective_JSListener(ParseTreeListener):
                             self.operandos.push('%'+str(value))
                             self.current_local_boolean_counter += 1
                         elif type == 0:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_int_counter += 1
                         elif type == 1:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_float_counter += 1
                         elif type == 2:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_char_counter += 1
                         elif type == 3:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_string_counter += 1
                         elif type == 4:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_boolean_counter += 1
                         elif type == 5:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_null_counter += 1
                 self.types.push(type)
