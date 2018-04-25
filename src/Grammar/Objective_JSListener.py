@@ -215,15 +215,22 @@ class Objective_JSListener(ParseTreeListener):
         for the type of variable
         """
         # First check in the local scope
-        if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
-            address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
-            return address
-        elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
-            return self.functions_directory.getTable(self.function_name).getParamTable().getAddress(var)
-        # Then check in the global scope
-        for key, value in self.functions_directory.getDirectory().items():
-            if var in value.getSymbolTable().getSymbols():
-                return value.getSymbolTable().getContent(var).getAddress()
+        if self.className is not None:
+            if var not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+            else:
+                table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+            return table[var].getAddress()
+        else:
+            if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
+                address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
+                return address
+            elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(var):
+                return self.functions_directory.getTable(self.function_name).getParamTable().getAddress(var)
+            # Then check in the global scope
+            for key, value in self.functions_directory.getDirectory().items():
+                if var in value.getSymbolTable().getSymbols():
+                    return value.getSymbolTable().getContent(var).getAddress()
 
     def getDimsFromVariable(self, var):
         if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var):
@@ -240,10 +247,6 @@ class Objective_JSListener(ParseTreeListener):
         """
         Create a new class in the funtion
         """
-        # COMENTAR
-        # self.function_name = className
-        # self.functions_directory.create_table(self.function_name, InfoDirectory())
-
 
         if className in self.classes.keys():
             print("The class was already defined")
@@ -290,9 +293,13 @@ class Objective_JSListener(ParseTreeListener):
             if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
                 print("Syntax error!! Variable: " + id + " is already defined")
                 sys.exit(0)
-        else:
+        elif self.function_name is None:
             if id in self.attributes.keys():
                 print("Attribute: " + id + " is already defined")
+                sys.exit(0)
+        else:
+            if id in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                print("Syntax error!! Variable: " + id + " is already defined")
                 sys.exit(0)
 
         isList = False
@@ -309,8 +316,13 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_int_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_int_counter)
+                self.current_global_int_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addInt(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_int_counter += 1
         elif type == "float" or type == 1 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -321,8 +333,13 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_float_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_float_counter)
+                self.current_global_float_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addFloat(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_float_counter += 1
         elif type == "char" or type == 2 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -333,8 +350,13 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_char_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_char_counter)
+                self.current_global_char_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addChar(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_char_counter += 1
         elif type == "string" or type == 3 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -345,8 +367,13 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_string_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_string_counter)
+                self.current_global_string_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addString(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_string_counter += 1
         elif type == "bool" or type == 4 and not mat_or_arr:
             number_dimensions += 1
             if self.className is None:
@@ -357,8 +384,13 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_local_boolean_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_boolean_counter)
+                self.current_global_boolean_counter += 1
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addBool(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_boolean_counter += 1
         elif re.search("list(\[.*\])+int", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -379,8 +411,19 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_global_int_counter += (dimensions[0].getUpperBound())
                     else:
                         self.current_local_int_counter += (dimensions[0].getUpperBound())
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_int_counter)
+                if len(dimensions) == 2:
+                    self.current_global_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_global_int_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addInt(self.function_name, False, total_size)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_int_counter += (dimensions[0].getUpperBound())
         elif re.search("list(\[.*\])+float", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -401,8 +444,20 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_global_float_counter += (dimensions[0].getUpperBound())
                     else:
                         self.current_local_float_counter += (dimensions[0].getUpperBound())
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_float_counter)
+                if len(dimensions) == 2:
+                    self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_global_float_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addFloat(self.function_name, False, total_size)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_float_counter += (dimensions[0].getUpperBound())
+
         elif re.search("list(\[.*\])+char", self.type) is not None:
             isList = True
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -425,8 +480,19 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_global_char_counter += (dimensions[0].getUpperBound())
                     else:
                         self.current_local_char_counter += (dimensions[0].getUpperBound())
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimension, self.current_global_char_counter)
+                if len(dimensions) == 2:
+                    self.current_global_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_global_char_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addChar(self.function_name, False, total_size)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_char_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_char_counter += (dimensions[0].getUpperBound())
 
         elif re.search("list(\[.*\])+string", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
@@ -447,8 +513,21 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_global_string_counter += (dimensions[0].getUpperBound())
                     else:
                         self.current_local_string_counter += (dimensions[0].getUpperBound())
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_string_counter)
+                if len(dimensions) == 2:
+                    self.current_global_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_global_string_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addString(self.function_name, False, total_size)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_string_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_string_counter += (dimensions[0].getUpperBound())
+
+
         elif re.search("list(\[.*\])+bool", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -470,8 +549,20 @@ class Objective_JSListener(ParseTreeListener):
                         self.current_global_boolean_counter += (dimensions[0].getUpperBound())
                     else:
                         self.current_local_boolean_counter += (dimensions[0].getUpperBound())
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_boolean_counter)
+                if len(dimensions) == 2:
+                    self.current_global_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_global_boolean_counter += (dimensions[0].getUpperBound())
             else:
-                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions)
+                self.methods.addBool(self.function_name, False, total_size)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                if len(dimensions) == 2:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    self.current_local_boolean_counter += (dimensions[0].getUpperBound())
+
         else: # It's an object
             number_dimensions += 1
             if self.className is None:
@@ -481,35 +572,36 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.object_counter += 1
+
     def newFunction(self):
         """
         Adds a new function into the function directory
         """
         if self.className is None:
             if self.function_name not in self.functions_directory.getDirectory():
+                print("Creating function: " + str(self.function_name))
+                print("self.argumentos: " + str(self.argumentos))
                 self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
                 self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
                 start_address = len(self.cuadruplos) + 1
                 self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
                 for key, value in self.argumentos.getParameters().items():
                     if value.getType() == 0:
-                        self.functions_directory.addInt(self.function_name, True, 1)
                         self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
                     elif value.getType() == 1:
-                        self.functions_directory.addFloat(self.function_name, True, 1)
                         self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
                     elif value.getType() == 2:
-                        self.functions_directory.addChar(self.function_name, True, 1)
                         self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
                     elif value.getType() == 3:
-                        self.functions_directory.addString(self.function_name, True, 1)
                         self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
                     elif value.getType() == 4:
-                        self.functions_directory.addBool(self.function_name, True, 1)
                         self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
             else:
                 print("Syntax error!! Function: " + self.function_name + " is already defined")
                 sys.exit(0)
+        else:
+            start_address = len(self.cuadruplos) + 1
+            self.methods.getTable(self.function_name).setStartAddress(start_address)
 
     def convertIntToStringType(self, type):
         if type == 0:
@@ -589,9 +681,13 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
+        self.classes[self.className].updateMethods(self.methods)
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
         #self.classes[self.className].printInfo()
+        self.methods = FunctionsDirectory()
+        self.argumentos = ParamTable()
+        self.function_name = None
         self.attributes = dict()
         self.className = None
 
@@ -725,11 +821,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#atributos.
     def enterAtributos(self, ctx:Objective_JSParser.AtributosContext):
-        pass
+        self.function_name = None
 
     # Exit a parse tree produced by Objective_JSParser#atributos.
     def exitAtributos(self, ctx:Objective_JSParser.AtributosContext):
         self.classes[self.className].setAttributes(self.attributes)
+        self.resetMemoryAddresses()
 
     # Enter a parse tree produced by Objective_JSParser#atributosPublic.
     def enterAtributosPublic(self, ctx:Objective_JSParser.AtributosPublicContext):
@@ -889,7 +986,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#impConstructores.
     def exitImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
-        pass
+        self.methods = FunctionsDirectory()
 
 
     # Enter a parse tree produced by Objective_JSParser#impConstructor.
@@ -905,7 +1002,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#emptyRule.
     def enterEmptyRule(self, ctx:Objective_JSParser.EmptyRuleContext):
-        self.newFunction()
+        pass
 
     def enterVerificaConstructores(self, ctx:Objective_JSParser.VerificaConstructoresContext):
         pass
@@ -924,7 +1021,8 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     def exitDeleteFunctions(self, ctx:Objective_JSParser.DeleteFunctionsContext):
-        self.methods = FunctionsDirectory()
+        # self.methods = FunctionsDirectory()
+        pass
 
 
     # Enter a parse tree produced by Objective_JSParser#impFuncAux2.
@@ -937,23 +1035,23 @@ class Objective_JSListener(ParseTreeListener):
                 self.does_returns = "returns"
                 return_type = ctx.tipo_dato_no_list().getText()
                 self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
-
-        if self.function_name in self.methods.getDirectory().keys():
-            print("Function already implemented")
-            sys.exit(0)
-
-        
-        if ctx.RETURNS() is None:
-            self.does_returns = None
-            return_type = None
         else:
-            self.does_returns = "returns"
-            return_type = ctx.tipo_dato_no_list().getText()
-            return_type = self.normalizeTypes(return_type)
+            if self.function_name in self.methods.getDirectory().keys():
+                print("Function " + self.function_name + " already implemented")
+                sys.exit(0)
+            
+            if ctx.RETURNS() is None:
+                self.does_returns = None
+                return_type = None
+            else:
+                self.does_returns = "returns"
+                return_type = ctx.tipo_dato_no_list().getText()
+                return_type = self.normalizeTypes(return_type)
 
-        if self.className is not None:
             self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
-        self.methods.create_table(self.function_name, InfoDirectory())
+            self.methods.create_table(self.function_name, InfoDirectory(SymbolTable()))
+            self.methods.getTable(self.function_name).setParamTable(self.argumentos)
+            self.newFunction()
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
     def exitImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
@@ -992,6 +1090,11 @@ class Objective_JSListener(ParseTreeListener):
     def exitBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
         self.classes[self.className].verifyConstructorParams(self.argumentos)
         self.argumentos = ParamTable()
+        self.resetMemoryAddresses()
+        quadruple = Quadruple(self.id, "endproc", None, None, None)
+        self.id += 1
+        self.cuadruplos.append(quadruple)
+        self.registros = 1
 
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFunc.
@@ -1006,10 +1109,7 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(quadruple)
         self.registros = 1
         self.resetMemoryAddresses()
-        quadruple = Quadruple(self.id, "resetAddress", None, None, None)
-        self.id += 1
-        self.cuadruplos.append(quadruple)
-        self.registros = 1
+        self.function_name = None
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFuncAux.
     def enterBloqueFuncAux(self, ctx:Objective_JSParser.BloqueFuncAuxContext):
@@ -1340,15 +1440,42 @@ class Objective_JSListener(ParseTreeListener):
     def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
         valor = self.operandos.pop()
         id = self.getId(ctx.objeto().getText())
+        variableType = None
 
         if self.operandos.empty():
-            address = self.getMemoryAddressFromVariable(id)
+            if id.find('.') != -1:
+                id = id[5:]
+                if id not in self.attributes.keys():
+                    print("Var " + id + " used but not defined")
+                    sys.exit(0)
+                else:
+                    address = self.attributes[id].getAddress()
+                    variableType = self.attributes[id].getType()
+                    variableType = self.convertTypeToInt(variableType)
+            elif self.className is not None:
+                if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                    if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                        print("Var " + id + " used but not defined")
+                        sys.exit(0)
+                    else:
+                        table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+                        address = table[id].getAddress()
+                        variableType = table[id].getType()
+                        variableType = self.convertTypeToInt(variableType)
+                else:
+                    table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+                    address = table[id].getAddress()
+                    variableType = table[id].getType()
+                    variableType = self.convertTypeToInt(variableType)
+            else:
+               address = self.getMemoryAddressFromVariable(id)
         else:
             address = self.operandos.pop()
 
         possibleType = self.types.pop()
-        variableType = self.getTypeFromVariable(id)
-        variableType = self.convertTypeToInt(variableType)
+        if variableType is None:
+            variableType = self.getTypeFromVariable(id)
+            variableType = self.convertTypeToInt(variableType)
 
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
@@ -1923,15 +2050,30 @@ class Objective_JSListener(ParseTreeListener):
         return var
 
 
+
+    def isAttribute(self, id):
+        self.classes[self.className].isAttribute(id)
+
+
     # Enter a parse tree produced by Objective_JSParser#objeto.
     def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
         if ctx.objetoAux() is not None:
             if ctx.objetoAux().LEFT_SQUARE_BRACKET() is not None:
                 id = self.getId(ctx.objetoAux().getText())
+                self.isVarDeclared(id)
+            elif ctx.objetoAux().THIS() is not None:
+                id = ctx.objetoAux().getText()[5:]
+                self.isAttribute(id)
             else:
                 id = ctx.objetoAux().getText()
+                if self.className is None:
+                    self.isVarDeclared(id)
+                else:
+                    if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                        if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                            print("Var " + id + " used but not defined")
+                            sys.exit(0)
 
-            self.isVarDeclared(id)
             if self.do_object:
                 type = self.getTypeFromVariable(id)
                 type = self.convertTypeToInt(type)
@@ -2196,9 +2338,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
         pass
 
-
     # Enter a parse tree produced by Objective_JSParser#factor.
     def enterFactor(self, ctx:Objective_JSParser.FactorContext):
+        address = None
         if ctx.varCte() is not None:
             if ctx.varCte().llamadaFunc() is not None:
                 function_name = ctx.varCte().getText().split('(')[0]
@@ -2210,8 +2352,31 @@ class Objective_JSListener(ParseTreeListener):
                     self.types.push(return_type)
             elif ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
                 value = ctx.varCte().getText()
-                type = self.getTypeFromFactor(ctx, value)
-                type = self.convertTypeToInt(type)
+                if value.find('.') != -1 and self.className is not None:
+                    value = value[5:]
+                    self.classes[self.className].isAttribute(value)
+                    type = self.attributes[value].getType()
+                    type = self.convertTypeToInt(type)
+                    address = self.attributes[value].getAddress()
+                elif self.className is not None and ctx.varCte().TYPE_INT() is None and ctx.varCte().TYPE_FLOAT() is None:
+                    if value not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                        if value not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
+                            print("Var " + value + " used but not defined")
+                            sys.exit(0)
+                        else:
+                            table = self.methods.getTable(self.function_name).getSymbolTable().getSymbols()
+                            type = table[value].getType()
+                            type = self.convertTypeToInt(type)
+                            address = table[value].getAddress()
+                    else:
+                        table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+                        type = table[value].getType()
+                        type = self.convertTypeToInt(type)
+                        address = table[value].getAddress()
+                else:
+                    type = self.getTypeFromFactor(ctx, value)
+                    type = self.convertTypeToInt(type)
+
                 try:
                     number = int(value)
                     self.operandos.push('%'+str(number))
@@ -2229,27 +2394,33 @@ class Objective_JSListener(ParseTreeListener):
                             self.operandos.push('%'+str(value))
                             self.current_local_boolean_counter += 1
                         elif type == 0:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_int_counter += 1
                         elif type == 1:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_float_counter += 1
                         elif type == 2:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_char_counter += 1
                         elif type == 3:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_string_counter += 1
                         elif type == 4:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_boolean_counter += 1
                         elif type == 5:
-                            address = self.getMemoryAddressFromVariable(value)
+                            if address is None:
+                                address = self.getMemoryAddressFromVariable(value)
                             self.operandos.push(address)
                             # self.current_local_null_counter += 1
                 self.types.push(type)

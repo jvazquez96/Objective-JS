@@ -24,6 +24,9 @@ class Classes(object):
 	def setAttributes(self, attributes):
 		self.attributes = attributes
 
+	def getAttributes(self):
+		return self.attributes
+
 	def getName(self):
 		return self.name
 
@@ -77,7 +80,7 @@ class Classes(object):
 			iterator = 0
 
 			if len(declared) != len(used):
-				print("Wrong number of params in function")
+				print("Wrong number of params in function " + function_name)
 				sys.exit(0)
 
 
@@ -86,16 +89,27 @@ class Classes(object):
 
 			for key, value in used:
 				if aux[iterator].getId() != key or aux[iterator].getType() != value.getType():
-					print("Wrong param in function")
+					print("Wrong param in function " + function_name)
 					sys.exit(0)
 				iterator += 1
 
 			if return_type != self.methods.getDirectory()[function_name].getReturnType():
-				print("Wrong returning type")
+				print("Wrong returning type in function " + function_name)
 				sys.exit(0)
 		else:
 			print("Function " + function_name + " was not declared")
 			sys.exit(0)
+
+	def isAttribute(self, id):
+		if id not in self.attributes.keys():
+			print("Attribute " + id + " not declared in class " + self.name)
+			sys.exit(0)
+
+	def getMethodTable(self, function_name):
+		return self.methods.getDirectory()[function_name]
+
+	def updateMethods(self, table):
+		self.methods = table
 
 	def copyAtts(self, inherits):
 		for key, value in inherits.attributes.items():
@@ -125,6 +139,7 @@ class Classes(object):
 			print("ID: " + str(key))
 			print("Type: " + str(value.getType()))
 			print("Accesible: " + str(value.isAccessible()))
+			print("Address: " + str(value.getAddress()))
 
 	def printMethods(self):
 		for key, value in self.methods.getDirectory().items():
@@ -133,8 +148,16 @@ class Classes(object):
 			print("Type: " + str(value.getReturnType()))
 			for key2, value2 in value.getParamTable().getParameters().items():
 				print("Var name: " + key2)
+				print("Type: " + str(value2.getType()))
+				print("Address: " + str(value2.getAddress()))
+			for key2, value2 in value.getSymbolTable().getSymbols().items():
+				print("Var name: " + key2)
+				print("Type: " + str(value2.getType()))
+				print("Address: " + str(value2.getAddress()))
+
 
 	def printInfo(self):
+		print("------------------------------------------------------")
 		print("Class name: " + self.name)
 		print("Inherits: " + str(self.inherits))
 		self.printAtts()

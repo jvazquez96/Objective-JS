@@ -14,7 +14,8 @@ Class Avion Inherits Carro{
 	}
 	Methods {
 		public :
-			function getMarca (int uno, float dos) returns string ;
+			function setMarca(string marca);
+			function getMarca () returns string ;
 			function getMarca2 (string batman, bool laabuelitadebatman) ;
 		private :
 			function getSerie (char doritos) returns int;
@@ -29,5 +30,10 @@ Avion(string marca, int serie){
 Avion(string marca, string llantas, int asientos, int serie, int capacidad, float peso){
 }
 
-function getMarca(int uno, float dos) returns string{
+function getMarca() returns string{
+	return this.marca;
+}
+
+function setMarca(string marca){
+	this.marca = marca;
 }
