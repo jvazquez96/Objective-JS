@@ -1,0 +1,13 @@
+import Seleccion
+import Futbolista
+import Entrenador
+
+Class Clases{
+	main(){
+		var jugador : Futbolista;
+		var entrenador : Entrenador;
+		var posicion : string;
+
+		jugador.setDorsal(10);
+	}
+}

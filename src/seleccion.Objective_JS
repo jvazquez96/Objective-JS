@@ -1,0 +1,62 @@
+Class Seleccion{
+	Seleccion();
+	Seleccion(string nombre, string apellidos, int edad);
+	Attributes {
+		public :
+			var nombre : string;
+			var apellidos : string;
+			var edad : int;
+		private :
+			var id : int;
+	}
+	Methods {
+		public :
+			function getNombre() returns string;
+			function getApellidos() returns string;
+			function getEdad() returns int;
+			function getId() returns int;
+			function setNombre(string nombre);
+			function setApellidos(string apellidos);
+			function setEdad(int edad);
+		private ;
+	}
+}
+Seleccion(){
+	this.nombre = "Juan";
+	this.apellidos = "Ortiz";
+	this.edad = 27;
+}
+
+Seleccion(string nombre, string apellidos, int edad){
+	this.nombre = nombre;
+	this.apellidos = apellidos;
+	this.edad = edad;
+}
+
+function getNombre() returns string{
+	return this.nombre;
+}
+
+function getApellidos() returns string{
+	return this.apellidos;
+}
+
+function getEdad() returns int{
+	return this.edad;
+}
+
+function getId() returns int{
+	return this.id;
+}
+
+function setNombre(string nombre){
+	this.nombre = nombre;
+}
+
+function setApellidos(string apellidos){
+	this.apellidos = apellidos;
+}
+
+function setEdad(int edad){
+	this.edad = edad;
+}

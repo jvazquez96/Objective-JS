@@ -1,0 +1,48 @@
+Class Futbolista Inherits Seleccion{
+	Futbolista();
+	Futbolista(string nombre, string apellidos, int edad, string posicion);
+	Attributes{
+		public :
+			var posicion : string;
+		private :
+			var dorsal : int;
+	}
+	Methods{
+		public :
+			function getPosicion() returns string;
+			function getDorsal() returns int;
+			function setPosicion(string posicion);
+			function setDorsal(int dorsal);
+		private ;
+	}
+}
+
+Futbolista(){
+	this.nombre = "Juan";
+	this.apellidos = "Ortiz";
+	this.edad = 22;
+	this.posicion = "Portero";
+}
+
+Futbolista(string nombre, string apellidos, int edad, string posicion){
+	this.nombre = nombre;
+	this.apellidos = apellidos;
+	this.edad = edad;
+	this.posicion = posicion;
+}
+
+function getPosicion() returns string{
+	return this.posicion;
+}
+
+function getDorsal() returns int{
+	return this.dorsal;
+}
+
+function setPosicion(string posicion){
+	this.posicion = posicion;
+}
+
+function setDorsal(int dorsal){
+	this.dorsal = dorsal;
+}

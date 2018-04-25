@@ -1,0 +1,36 @@
+Class Entrenador Inherits Seleccion{
+	Entrenador();
+	Entrenador(string nombre, string apellidos, int edad, string equipo);
+	Attributes{
+		public:
+			var equipo : string;
+	}
+	Methods{
+		public :
+			function getEquipo() returns string;
+			function setEquipo(string equipo);
+		private ;
+	}
+}
+
+Entrenador(){
+	this.nombre = "Ricardo";
+	this.apellidos = "Ferreti";
+	this.edad = 57;
+	this.equipo = "Tigres";
+}
+
+Entrenador(string nombre, string apellidos, int edad, string equipo){
+	this.nombre = nombre;
+	this.apellidos = apellidos;
+	this.edad = edad;
+	this.equipo = equipo;
+}
+
+function getEquipo() returns string{
+	return this.equipo;
+}
+
+function setEquipo(string equipo){
+	this.equipo = equipo;
+}

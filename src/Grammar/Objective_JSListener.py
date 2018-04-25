@@ -680,8 +680,6 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
         self.classes[self.className].updateMethods(self.methods)
-        if self.classes[self.className].getInherits() is not None:
-            self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
         #self.classes[self.className].printInfo()
         self.methods = FunctionsDirectory()
         self.argumentos = ParamTable()
@@ -878,6 +876,8 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#metodos.
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
         self.classes[self.className].addMethodsTable(self.methods)
+        if self.classes[self.className].getInherits() is not None:
+            self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
         self.argumentos = ParamTable()
         self.methods = FunctionsDirectory()
 
