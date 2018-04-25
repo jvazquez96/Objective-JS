@@ -54,11 +54,10 @@ class Classes(object):
 			
 		params_declared = self.constructors[self.constructorsVerified].getParameters().items()
 		real_params = params.getParameters().items()
-		print("Real params: " + str(real_params))
 		my_params = [] 
 		iterator = 0
 
-		if len(params_declared) != len(real_params):
+		if len(params_declared) != len(real_params): 
 			print("Wrong number of params in constructor")
 			sys.exit()
 

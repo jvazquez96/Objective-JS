@@ -1088,13 +1088,14 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#bloqueConstructor.
     def exitBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
-        self.classes[self.className].verifyConstructorParams(self.argumentos)
-        self.argumentos = ParamTable()
-        self.resetMemoryAddresses()
-        quadruple = Quadruple(self.id, "endproc", None, None, None)
-        self.id += 1
-        self.cuadruplos.append(quadruple)
-        self.registros = 1
+        if ctx.SEMICOLON() is None:
+            self.classes[self.className].verifyConstructorParams(self.argumentos)
+            self.argumentos = ParamTable()
+            self.resetMemoryAddresses()
+            quadruple = Quadruple(self.id, "endproc", None, None, None)
+            self.id += 1
+            self.cuadruplos.append(quadruple)
+            self.registros = 1
 
 
     # Enter a parse tree produced by Objective_JSParser#bloqueFunc.
