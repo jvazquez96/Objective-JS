@@ -579,8 +579,6 @@ class Objective_JSListener(ParseTreeListener):
         """
         if self.className is None:
             if self.function_name not in self.functions_directory.getDirectory():
-                print("Creating function: " + str(self.function_name))
-                print("self.argumentos: " + str(self.argumentos))
                 self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
                 self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
                 start_address = len(self.cuadruplos) + 1
@@ -991,7 +989,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#impConstructor.
     def enterImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
+        self.function_name = self.className
         if ctx.CLASSNAME().getText() != self.className:
+            print("Function name: " + str(self.function_name)) 
             print("The constructor name is wrong")
             sys.exit()
 
@@ -1453,7 +1453,22 @@ class Objective_JSListener(ParseTreeListener):
                     variableType = self.attributes[id].getType()
                     variableType = self.convertTypeToInt(variableType)
             elif self.className is not None:
-                if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                if self.function_name == self.className: # Constructor
+                    # Searching in the param table
+                    for paramTable in self.classes[self.function_name].getConstructorParams():
+                        for param, info in paramTable.getParameters().items():
+                            if param == id:
+                                address = info.getAddress()
+                                variableType = info.getType()
+                                variableType = self.convertTypeToInt(variableType)
+                                break
+                    for attributes, info in self.classes[self.function_name].getAttributes().items():
+                        if id == attributes:
+                            address = info.getAddress()
+                            variableType = info.getType()
+                            variableType = self.convertTypeToInt(variableType)
+                            break
+                elif id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
                     if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
                         print("Var " + id + " used but not defined")
                         sys.exit(0)
@@ -2069,7 +2084,10 @@ class Objective_JSListener(ParseTreeListener):
                 if self.className is None:
                     self.isVarDeclared(id)
                 else:
-                    if id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                    if self.function_name == self.className:
+                        # TODO(jorge o santiago): Checar si el objeto existe en la tabla de constructores
+                        pass
+                    elif id not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
                         if id not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
                             print("Var " + id + " used but not defined")
                             sys.exit(0)

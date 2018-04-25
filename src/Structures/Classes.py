@@ -54,6 +54,7 @@ class Classes(object):
 			
 		params_declared = self.constructors[self.constructorsVerified].getParameters().items()
 		real_params = params.getParameters().items()
+		print("Real params: " + str(real_params))
 		my_params = [] 
 		iterator = 0
 
@@ -133,6 +134,9 @@ class Classes(object):
 			print("Type: " + str(value.getType()))
 			print("Size: " + str(value.getListSize()))
 			print("Address: " + str(value.getAddress()))
+
+	def getConstructorParams(self):
+		return self.constructors
 
 	def printAtts(self):
 		for key, value in self.attributes.items():
