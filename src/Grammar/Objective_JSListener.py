@@ -693,6 +693,8 @@ class Objective_JSListener(ParseTreeListener):
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
         self.classes[self.className].updateMethods(self.methods)
         #self.classes[self.className].printInfo()
+        if self.classes[self.className].getInherits() is not None:
+            self.classes[self.className].copyMethods(self.classes[self.classes[self.className].getInherits()])
         self.methods = FunctionsDirectory()
         self.argumentos = ParamTable()
         self.function_name = None
@@ -889,7 +891,8 @@ class Objective_JSListener(ParseTreeListener):
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
         self.classes[self.className].addMethodsTable(self.methods)
         if self.classes[self.className].getInherits() is not None:
-            self.classes[self.className].copyInfo(self.classes[self.classes[self.className].getInherits()])
+            self.classes[self.className].copyAtts(self.classes[self.classes[self.className].getInherits()])
+
         self.argumentos = ParamTable()
         self.methods = FunctionsDirectory()
 
@@ -1507,6 +1510,7 @@ class Objective_JSListener(ParseTreeListener):
 
         new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
         if new_type == -1:
+            print("id: " + id)
             print("Data type mismatch")
             sys.exit(0)
 
@@ -1976,7 +1980,7 @@ class Objective_JSListener(ParseTreeListener):
             address = self.getMemoryAddressFromVariable(ctx.objeto().getText())
         else:
             address = self.operandos.pop()
-
+            
         quadruple = Quadruple(self.id, "read", address, None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)

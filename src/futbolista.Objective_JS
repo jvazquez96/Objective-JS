@@ -13,6 +13,7 @@ Class Futbolista Inherits Seleccion{
 			function getDorsal() returns int;
 			function setPosicion(string posicion);
 			function setDorsal(int dorsal);
+			function printInfo();
 		private ;
 	}
 }
@@ -45,4 +46,9 @@ function setPosicion(string posicion){
 
 function setDorsal(int dorsal){
 	this.dorsal = dorsal;
+}
+
+function printInfo(){
+	print("Dorsal", this.dorsal);
+	print("Nombre", this.nombre);
 }

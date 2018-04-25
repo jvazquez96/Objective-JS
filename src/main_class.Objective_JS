@@ -8,12 +8,29 @@ Class Clases{
 		print("HOLA");
 	}
 	main(){
-		var jugador : Futbolista;
+		var jugador, jugador2: Futbolista;
 		var entrenador : Entrenador;
 		var dorsal : int;
+		var nombre : string;
 
-		jugador.setDorsal(10);
+		print("Dorsal: ");
+		read >> dorsal;
+		print("Nombre: ");
+		read >> nombre;
 
-		dorsal = jugador.getDorsal();
+		jugador.setDorsal(dorsal);
+		jugador.setNombre(nombre);
+		jugador.printInfo();
+
+		print("Dorsal: ");
+		read >> dorsal;
+		print("Nombre: ");
+		read >> nombre;
+
+		jugador2.setDorsal(dorsal);
+		jugador2.setNombre(nombre);
+		jugador2.printInfo();
+
+		jugador.printInfo();
 	}
 }
