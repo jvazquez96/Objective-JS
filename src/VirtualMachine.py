@@ -48,17 +48,19 @@ CONST_TEMPORAL_TOP_NULL = 17999
 
 class Memory():
 
-	def __init__(self, locals, temps):
+	def __init__(self, locals, temps, constants):
 		# int, float, char, string, boolean, null
 		self.locals = locals
 		self.temps = temps
+		self.constants = constants
 
-	def saveMemory(self, locals, temps):
+	def saveMemory(self, locals, temps, constants):
 		self.locals = locals
 		self.temps = temps
+		self.constants = constants
 
 	def getMemory(self):
-		return self.locals, self.temps
+		return self.locals, self.temps, self.constants
 
 
 class VirtualMachine(object):
@@ -77,6 +79,7 @@ class VirtualMachine(object):
 		self.temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+		self.new_constants = [dict(), dict(), dict(), dict(), dict(), dict()]
 		self.object_contexts = dict()
 		self.quadruple_pointer = 0
 		self.pointer = Stack()
@@ -413,19 +416,21 @@ class VirtualMachine(object):
 					context = int(operand2)
 					if context in self.object_contexts.keys():
 						object_context = self.object_contexts[context]
-						self.new_locals, self.new_temps = object_context.getMemory()
+						self.new_locals, self.new_temps, self.new_constants = object_context.getMemory()
 					else:
 						self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 						self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
-						new_context = Memory(self.new_locals, self.new_temps)
+						self.new_constants = [dict(), dict(), dict(), dict(), dict(), dict()]
+						new_context = Memory(self.new_locals, self.new_temps, self.new_constants)
 						self.object_contexts[context] = new_context
-					current_context = Memory(self.locals, self.temps)
+					current_context = Memory(self.locals, self.temps, self.constants)
 					self.context_stack.push(current_context)
 				else:
-					current_context = Memory(self.locals, self.temps)
+					current_context = Memory(self.locals, self.temps, self.constants)
 					self.context_stack.push(current_context)
 					self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 					self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
+					self.new_constants = self.constants
 			elif operator == "param":
 				size = int(operand2)
 				if self.is_local(address):
@@ -444,11 +449,12 @@ class VirtualMachine(object):
 			elif operator == "GO.SUB":
 				self.locals = self.new_locals
 				self.temps = self.new_temps
+				self.constants = self.new_constants
 				self.pointer.push(self.quadruple_pointer + 1)
 				self.quadruple_pointer = address - 2
 			elif operator == "endproc":
 				mem = self.context_stack.pop()
-				self.locals, self.temps = mem.getMemory()
+				self.locals, self.temps, self.constants = mem.getMemory()
 				return_address = self.pointer.pop() - 1
 				self.quadruple_pointer = return_address
 			elif operator == "return":
