@@ -1809,23 +1809,23 @@ class Objective_JSListener(ParseTreeListener):
                 self.current_temp_int_counter += 1
                 self.cuadruplos.append(quadruple)
         elif self.current_method_name in self.classes[type].getMethods().getDirectory():
-            pass
+            # pass
             # Everything is going to be commented until issue 15 is resolved
-            # if self.current_param_counter != len(self.classes[type].getMethods().getTable(self.current_method_name).getParams()):
-            #     print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
-            #     print(str(self.current_param_counter) + " were given, but " + str(len(self.classes[type].getMethods().getTable(self.current_method_name).getParams())) + " were expected")
-            #     sys.exit(0)
-            # start_address = self.classes[type].getMethods().getTable(self.current_method_name).getStartAddress()
-            # quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
-            # self.cuadruplos.append(quadruple)
-            # self.id += 1
-            # self.current_param_counter = 0
-            # if self.classes[type].getMethods().getTable(self.current_method_name).getReturnType() is not None:
-            #     quadruple = Quadruple(self.id, "save_return", self.current_method_name, None, self.current_temp_int_counter)
-            #     self.operandos.push(self.current_temp_int_counter)
-            #     self.id += 1
-            #     self.current_temp_int_counter += 1
-            #     self.cuadruplos.append(quadruple)
+            if self.current_param_counter != len(self.classes[type].getMethods().getTable(self.current_method_name).getParams()):
+                print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
+                print(str(self.current_param_counter) + " were given, but " + str(len(self.classes[type].getMethods().getTable(self.current_method_name).getParams())) + " were expected")
+                sys.exit(0)
+            start_address = self.classes[type].getMethods().getTable(self.current_method_name).getStartAddress()
+            quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
+            self.cuadruplos.append(quadruple)
+            self.id += 1
+            self.current_param_counter = 0
+            if self.classes[type].getMethods().getTable(self.current_method_name).getReturnType() is not None:
+                quadruple = Quadruple(self.id, "save_return", self.current_method_name, None, self.current_temp_int_counter)
+                self.operandos.push(self.current_temp_int_counter)
+                self.id += 1
+                self.current_temp_int_counter += 1
+                self.cuadruplos.append(quadruple)
 
 
 
