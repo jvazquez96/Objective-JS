@@ -17,6 +17,9 @@ Class Carro{
 Carro() {
 	modelo = "20";	
 }
+Carro(string marca) {
+	marca = marca;
+}
 function getModelo(){
 	var prueba : int;
 	print("funcion de una clase");

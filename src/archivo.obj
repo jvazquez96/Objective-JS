@@ -1,14 +1,16 @@
-1,GO.TO,None,None,13
+1,GO.TO,None,None,15
 2,=,%"20",None,4000
 3,endproc,None,None,None
-4,print,%"funcion de una clase",None,None
+4,=,10000,None,10000
 5,endproc,None,None,None
-6,endproc,None,None,None
+6,print,%"funcion de una clase",None,None
 7,endproc,None,None,None
 8,endproc,None,None,None
-9,return,4001,None,None
+9,endproc,None,None,None
 10,endproc,None,None,None
-11,=,10000,None,4001
+11,return,4001,None,None
 12,endproc,None,None,None
-13,ERA,getModelo,19999,None
-14,GO.SUB,getModelo,None,4
+13,=,10000,None,4001
+14,endproc,None,None,None
+15,ERA,getModelo,19999,None
+16,GO.SUB,getModelo,None,6

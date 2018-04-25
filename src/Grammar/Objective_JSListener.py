@@ -2378,7 +2378,21 @@ class Objective_JSListener(ParseTreeListener):
                     type = self.convertTypeToInt(type)
                     address = self.attributes[value].getAddress()
                 elif self.className is not None and ctx.varCte().TYPE_INT() is None and ctx.varCte().TYPE_FLOAT() is None:
-                    if value not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
+                    if self.function_name == self.className:
+                        for paramTable in self.classes[self.function_name].getConstructorParams():
+                            for param, info in paramTable.getParameters().items():
+                                if param == value:
+                                    address = info.getAddress()
+                                    type = info.getType()
+                                    type = self.convertTypeToInt(type)
+                                    break
+                        for attributes, info in self.classes[self.function_name].getAttributes().items():
+                            if value == attributes:
+                                address = info.getAddress()
+                                type = info.getType()
+                                type = self.convertTypeToInt(type)
+                                break
+                    elif value not in self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters().keys():
                         if value not in self.methods.getTable(self.function_name).getSymbolTable().getSymbols().keys():
                             print("Var " + value + " used but not defined")
                             sys.exit(0)
