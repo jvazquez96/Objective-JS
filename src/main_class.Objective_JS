@@ -3,11 +3,17 @@ import Futbolista
 import Entrenador
 
 Class Clases{
+
+	function prueba(string hola){
+		print("HOLA");
+	}
 	main(){
 		var jugador : Futbolista;
 		var entrenador : Entrenador;
-		var posicion : string;
+		var dorsal : int;
 
 		jugador.setDorsal(10);
+
+		dorsal = jugador.getDorsal();
 	}
 }

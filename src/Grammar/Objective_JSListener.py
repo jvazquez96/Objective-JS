@@ -104,6 +104,7 @@ class Objective_JSListener(ParseTreeListener):
         self.reads = Stack()
         self.classes = dict()
         self.className = None
+        self.class_from_instance = False
         self.attributes = dict()
         self.methods = FunctionsDirectory()
         self.object_counter = CONST_OBJECTS_START_ADDRESS
@@ -600,6 +601,17 @@ class Objective_JSListener(ParseTreeListener):
         else:
             start_address = len(self.cuadruplos) + 1
             self.methods.getTable(self.function_name).setStartAddress(start_address)
+            for key, value in self.argumentos.getParameters().items():
+                if value.getType() == 0:
+                    self.methods.addParam(self.function_name, key, "int", value.getListSize())
+                elif value.getType() == 1:
+                    self.methods.addParam(self.function_name, key, "float", value.getListSize())
+                elif value.getType() == 2:
+                    self.methods.addParam(self.function_name, key, "char", value.getListSize())
+                elif value.getType() == 3:
+                    self.methods.addParam(self.function_name, key, "string", value.getListSize())
+                elif value.getType() == 4:
+                    self.methods.addParam(self.function_name, key, "bool", value.getListSize())
 
     def convertIntToStringType(self, type):
         if type == 0:
@@ -1751,6 +1763,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#llamadaFunc.
     def enterLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
+        self.call_from_instance = False
         if (len(ctx.ID()) == 2): # Check if you are trying to call a class method from a primitive
             type = self.functions_directory.getInfoDirectory(self.function_name).getContent(ctx.ID()[0].getText()).getType()
             if not isinstance(type, str):
@@ -1766,9 +1779,11 @@ class Objective_JSListener(ParseTreeListener):
             self.id += 1
             self.cuadruplos.append(quadruple)
         elif ctx.THIS() is None and len(ctx.ID()) == 2 is not None: #Class method
+            self.call_from_instance = True
             self.current_method_name = ctx.ID()[1].getText()
             var = ctx.ID()[0].getText()
             type = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getType()
+            self.type = type
             if self.current_method_name not in self.classes[type].getMethods().getDirectory():
                 print("The function: " + str(self.current_method_name) + " doesn't exist at class")
                 sys.exit(0)
@@ -1882,27 +1897,26 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#verifyArgument.
     def exitVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
+        if self.call_from_instance:
+            table = self.classes[self.type].getMethods().getTable(self.current_method_name)
+            directory = self.classes[self.type].getMethods().getDirectory()
+        else:
+            table = self.functions_directory.getTable(self.current_method_name)
+            directory = self.functions_directory.getDirectory()
+
         argument = self.operandos.pop()
         argument_address = argument
         argument_type = self.types.pop()
         argument_type = self.normalizeTypes(argument_type)
-        parameter = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][0]
-        parameter_type = self.functions_directory.getTable(self.current_method_name).getParams()[self.current_param_counter][1]
+        parameter = table.getParams()[self.current_param_counter][0]
+        parameter_type = table.getParams()[self.current_param_counter][1]
         parameter_type = self.normalizeTypes(parameter_type)
-        parameter_address = self.functions_directory.getTable(self.current_method_name).getParamTable().getAddress(parameter)
-        # print("Argument address: " + str(argument_address))
-        # if CONST_TEMPORAL_BOTTOM_INT <= argument_address <= CONST_TEMPORAL_TOP_INT:
-        #     if argument_type != parameter_type:
-        #         print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)))
-        #         sys.exit(0)
-        #     quadruple = Quadruple(self.id, "param", argument_address, 1, parameter_address)
-        #     self.cuadruplos.append(quadruple)
-        # else:
-        dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getRows()
+        parameter_address = table.getParamTable().getAddress(parameter)
+        dimensions_param = table.getParamTable().getParam(parameter).getRows()
         dimensions_argument = 0
         all_dimensions_argument = []
         argument = self.getVarNameFromMemoryAddress(argument)
-        for key, value in self.functions_directory.getDirectory().items():
+        for key, value in directory.items():
             if argument in value.getSymbolTable().getSymbols():
                 dimensions_argument = len(value.getSymbolTable().getContent(argument).getDimensions())
                 all_dimensions_argument = value.getSymbolTable().getContent(argument).getDimensions()
@@ -1911,7 +1925,7 @@ class Objective_JSListener(ParseTreeListener):
                 dimensions_argument = len(value.getParamTable().getParam(argument).getDimensions())
                 all_dimensions_argument = value.getParamTable().getParam(argument).getDimensions()
 
-        all_dimensions_param = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getDimensions()
+        all_dimensions_param = table.getParamTable().getParam(parameter).getDimensions()
         if argument_type != parameter_type:
             print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
             sys.exit(0)
@@ -1933,7 +1947,7 @@ class Objective_JSListener(ParseTreeListener):
                     print("The function " + str(self.current_method_name) + " was expecting a list of " + str(dimP.getUpperBound()) + " but received a list of " + str(dimA.getUpperBound()))
                 sys.exit(0)
 
-        size = self.functions_directory.getTable(self.current_method_name).getParamTable().getParam(parameter).getListSize()
+        size = table.getParamTable().getParam(parameter).getListSize()
         quadruple = Quadruple(self.id, "param", argument_address, size, parameter_address)
         #quadruple.print()
         self.cuadruplos.append(quadruple)
@@ -2362,13 +2376,27 @@ class Objective_JSListener(ParseTreeListener):
         address = None
         if ctx.varCte() is not None:
             if ctx.varCte().llamadaFunc() is not None:
-                function_name = ctx.varCte().getText().split('(')[0]
-                if not self.isFunctionDeclared(function_name):
-                    print("The function: " + str(function_name) + " doesn't exist")
-                    sys.exit(0)
+                if ctx.varCte().llamadaFunc().THIS() is None and len(ctx.varCte().llamadaFunc().ID()) == 2 is not None:
+                    self.call_from_instance = True
+                    self.current_method_name = ctx.varCte().llamadaFunc().ID()[1].getText()
+                    var = ctx.varCte().llamadaFunc().ID()[0].getText()
+                    type = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getType()
+                    self.type = type
+                    if self.current_method_name not in self.classes[type].getMethods().getDirectory():
+                        print("The function: " + str(self.current_method_name) + " doesn't exist at class")
+                        sys.exit(0)
+                    object_address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(var).getAddress()
+                    quadruple = Quadruple(self.id, "ERA", self.current_method_name, object_address, None)
+                    self.cuadruplos.append(quadruple)
+                    self.id += 1
                 else:
-                    return_type = self.functions_directory.getTable(function_name).getReturnType()
-                    self.types.push(return_type)
+                    function_name = ctx.varCte().getText().split('(')[0]
+                    if not self.isFunctionDeclared(function_name):
+                        print("The function: " + str(function_name) + " doesn't exist")
+                        sys.exit(0)
+                    else:
+                        return_type = self.functions_directory.getTable(function_name).getReturnType()
+                        self.types.push(return_type)
             elif ctx.varCte() is not None and ctx.varCte().TYPE_STRING() is None and ctx.varCte().TYPE_CHAR() is None:
                 value = ctx.varCte().getText()
                 if value.find('.') != -1 and self.className is not None:
