@@ -1,0 +1,29 @@
+Class Multiple {
+	main() {
+		var n : int;
+		read >> n;
+		if (n % 5 == 0) {
+			if (n == 5) {
+				print("es un cinco");
+			} elsif (n == 10) {
+				print("es un 10");
+			} else {
+				print("no es un cinco ni un 10");
+			}
+		} elsif (n % 3 == 0) {
+			if (n == 3) {
+				print("es un tres");
+			} else {
+				print("no es un tres pero es un multiplo de 3");
+			}
+		} elsif (n % 2 == 0) {
+			if (n == 2) {
+				print("Es un dos");
+			} elsif (n == 4) {
+				print("Es un cuatro");
+			} else {
+				print("No es un dos ni un cuatro");
+			}
+		}
+	}
+}
