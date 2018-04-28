@@ -49,6 +49,5 @@ function setDorsal(int dorsal){
 }
 
 function printInfo(){
-	print("Dorsal", this.dorsal);
-	print("Nombre", this.nombre);
+	print("Nombre: " + this.nombre);
 }
