@@ -476,6 +476,22 @@ class VirtualMachine(object):
 				if val < lowerBound or val >= upperBound:
 					print("The indices must be between the boundaries")
 					sys.exit(0)
+			elif operator == "attribute_access":
+				object_address = int(operand1)
+				attribute_address = operand2
+				dest_address = int(address)
+				if object_address not in self.object_contexts.keys():
+					print("Make sure to initalize the object before using it")
+					sys.exit(0)
+				object_context = self.object_contexts[object_address]
+				current_context = Memory(self.locals, self.temps, self.constants)
+				self.context_stack.push(current_context)
+				self.locals, self.temps, self.constants = object_context.getMemory()
+				value = self.getValue(attribute_address)
+				self.return_values.push(value)
+				mem = self.context_stack.pop()
+				self.locals, self.temps, self.constatns = mem.getMemory()
+
 
 
 			self.quadruple_pointer += 1

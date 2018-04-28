@@ -13,24 +13,7 @@ Class Clases{
 		var dorsal : int;
 		var nombre : string;
 
-		print("Dorsal: ");
-		read >> dorsal;
-		print("Nombre: ");
-		read >> nombre;
-
-		jugador.setDorsal(dorsal);
-		jugador.setNombre(nombre);
-		jugador.printInfo();
-
-		print("Dorsal: ");
-		read >> dorsal;
-		print("Nombre: ");
-		read >> nombre;
-
-		jugador2.setDorsal(dorsal);
-		jugador2.setNombre(nombre);
-		jugador2.printInfo();
-
-		jugador.printInfo();
+		jugador.setDorsal(10);
+		jugador.setNombre("Santiago");
 	}
 }

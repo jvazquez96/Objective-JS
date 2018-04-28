@@ -17,6 +17,7 @@ Class Avion Inherits Carro{
 			function setMarca(string marca);
 			function getMarca () returns string ;
 			function getMarca2 (string batman, bool laabuelitadebatman) ;
+			function printSomething() ;
 		private :
 			function getSerie (char doritos) returns int;
 	}
@@ -36,4 +37,7 @@ function getMarca() returns string{
 
 function setMarca(string marca){
 	this.marca = marca;
+}
+function printSomething() {
+	print("Something");
 }

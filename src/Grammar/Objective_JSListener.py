@@ -66,7 +66,7 @@ CONST_TEMPORAL_TOP_STRING = 16999
 CONST_TEMPORAL_TOP_BOOLEAN = 17999
 CONST_TEMPORAL_TOP_NULL = 18999
 
-CONST_OBJECTS_START_ADDRESS = 19999
+CONST_OBJECTS_START_ADDRESS = 19000
 
 
 # This class defines a complete listener for a parse tree produced by Objective_JSParser.
@@ -187,6 +187,9 @@ class Objective_JSListener(ParseTreeListener):
         if not exist:
             print(var + " is used but not defined!")
             sys.exit(0)
+
+    def isAttributeDeclared(self, var):
+        self.classes[self.className].isAttribute(var)
 
     def fill(self, end, next):
         """
@@ -573,6 +576,12 @@ class Objective_JSListener(ParseTreeListener):
                 else:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.object_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_int_counter)
+                self.current_global_int_counter += 1
+            else:
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_int_counter += 1
 
     def newFunction(self):
         """
@@ -2085,9 +2094,46 @@ class Objective_JSListener(ParseTreeListener):
 
 
 
-    def isAttribute(self, id):
+    def isAttributeDeclared(self, id):
         self.classes[self.className].isAttribute(id)
 
+    def saveReturnType(self, type, operand1, operand2):
+        if type == 0: # int
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_int_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_int_counter)
+            self.current_temp_int_counter += 1
+            self.cuadruplos.append(quadruple)
+        elif type == 1: # float
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_float_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_float_counter)
+            self.current_temp_float_counter += 1
+            self.cuadruplos.append(quadruple)
+        elif type == 2: # char
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_char_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_char_counter)
+            self.current_temp_char_counter += 1
+            self.cuadruplos.append(quadruple)
+        elif type == 3: # string
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_string_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_string_counter)
+            self.current_temp_string_counter += 1
+            self.cuadruplos.append(quadruple)
+        elif type == 4: # boolean
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_boolean_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_boolean_counter)
+            self.current_temp_boolean_counter += 1
+            self.cuadruplos.append(quadruple)
+        elif type == 5: # null
+            quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_null_counter)
+            self.id += 1
+            self.operandos.push(self.current_temp_null_counter)
+            self.current_temp_null_counter += 1
+            self.cuadruplos.append(quadruple)
 
     # Enter a parse tree produced by Objective_JSParser#objeto.
     def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
@@ -2097,10 +2143,49 @@ class Objective_JSListener(ParseTreeListener):
                 self.isVarDeclared(id)
             elif ctx.objetoAux().THIS() is not None:
                 id = ctx.objetoAux().getText()[5:]
-                self.isAttribute(id)
+                self.isAttributeDeclared(id)
             else:
                 id = ctx.objetoAux().getText()
-                if self.className is None:
+                if len(ctx.objetoAux().ID()) == 2: # ID . ID
+                    var = ctx.objetoAux().ID()[0].getText()
+                    old_class_name = self.className
+                    self.className = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getType()
+                    attribute = ctx.objetoAux().ID()[1].getText()
+                    self.isAttributeDeclared(attribute)
+                    if not self.classes[self.className].getAttributes()[attribute].isAccessible():
+                        print("Can't access private attribute " + attribute + " from class " + self.className)
+                        sys.exit(0)
+                    var_address = self.functions_directory.getInfoDirectory(self.function_name).getContent(var).getAddress()
+                    attribute_address = self.classes[self.className].getAttributes()[attribute].getAddress()
+                    attribute_type = self.classes[self.className].getAttributes()[attribute].getType()
+                    self.className = old_class_name
+                    if attribute_type == 0:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_int_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    elif attribute_type == 1:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_float_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    elif attribute_type == 2:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_char_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    elif attribute_type == 3:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_string_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    elif attribute_type == 4:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_boolean_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    elif attribute_type == 5:
+                        quadruple = Quadruple(self.id, "attribute_access", var_address, attribute_address, self.current_temp_null_counter)
+                        self.id += 1
+                        self.cuadruplos.append(quadruple)
+                    self.saveReturnType(attribute_type, var_address, attribute_address)
+
+                elif self.className is None:
                     self.isVarDeclared(id)
                 else:
                     if self.function_name == self.className:

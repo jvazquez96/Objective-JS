@@ -10,6 +10,7 @@ Class Carro{
 	Methods {
 		public :
 			function getModelo () ;
+			function setAnio(int anio);
 		private :
 			function getAnio () ;
 	}
@@ -19,6 +20,10 @@ Carro() {
 }
 Carro(string marca) {
 	marca = marca;
+}
+
+function setAnio(int anio){
+	this.anio = anio;
 }
 function getModelo(){
 	var prueba : int;

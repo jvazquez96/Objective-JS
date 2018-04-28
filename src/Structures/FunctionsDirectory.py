@@ -14,7 +14,6 @@ class FunctionsDirectory(object):
 
 	def remove_info(self, id):
 		if id not in self.directory:
-			print("Error")
 			sys.exit(0)
 		else:
 			self.directory[id].deleteTable()
