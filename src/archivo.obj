@@ -1,36 +1,22 @@
-1,GO.TO,None,None,2
-2,read,7000,None,None
-3,%,7000,%5,13000
-4,==,13000,%0,17000
-5,GO.TOFALSE,17000,None,16
-6,==,7000,%5,17001
-7,GO.TOFALSE,17001,None,10
-8,print,%"es un cinco",None,None
-9,GO.TO,None,None,15
-10,==,7000,%10,17002
-11,GO.TOFALSE,17002,None,14
-12,print,%"es un 10",None,None
-13,GO.TO,None,None,15
-14,print,%"no es un cinco ni un 10",None,None
-15,GO.TO,None,None,37
-16,%,7000,%3,13001
-17,==,13001,%0,17003
-18,GO.TOFALSE,17003,None,25
-19,==,7000,%3,17004
-20,GO.TOFALSE,17004,None,23
-21,print,%"es un tres",None,None
-22,GO.TO,None,None,24
-23,print,%"no es un tres pero es un multiplo de 3",None,None
-24,GO.TO,None,None,37
-25,%,7000,%2,13002
-26,==,13002,%0,17005
-27,GO.TOFALSE,17005,None,37
-28,==,7000,%2,17006
-29,GO.TOFALSE,17006,None,32
-30,print,%"Es un dos",None,None
-31,GO.TO,None,None,37
-32,==,7000,%4,17007
-33,GO.TOFALSE,17007,None,36
-34,print,%"Es un cuatro",None,None
-35,GO.TO,None,None,37
-36,print,%"No es un dos ni un cuatro",None,None
+1,GO.TO,None,None,17
+2,=,%"20",None,4000
+3,endproc,None,None,None
+4,=,10000,None,10000
+5,endproc,None,None,None
+6,print,%"funcion de una clase",None,None
+7,endproc,None,None,None
+8,endproc,None,None,None
+9,endproc,None,None,None
+10,endproc,None,None,None
+11,return,4001,None,None
+12,endproc,None,None,None
+13,=,10000,None,4001
+14,endproc,None,None,None
+15,print,%"Something",None,None
+16,endproc,None,None,None
+17,ERA,setMarca,19000,None
+18,param,%"mm",1,10000
+19,GO.SUB,setMarca,None,13
+20,attribute_access,19000,4001,16000
+21,save_return,19000,4001,16000
+22,print,16000,None,None

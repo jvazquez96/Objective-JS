@@ -7,6 +7,7 @@ from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
 from Grammar.Objective_JSListener import Objective_JSListener
 from VirtualMachine import VirtualMachine
+import time
 
 def preprocess(fileName):
     with open(fileName, 'r') as original:
@@ -40,6 +41,7 @@ def preprocess(fileName):
         os.remove('temp_file.Objective_JS')
 
 def main(argv):
+    tic = time.clock()
     fileName = argv[1]
     preprocess(fileName)
     # with open(fileName, "r") as file:
@@ -70,7 +72,8 @@ def main(argv):
             file.write(str(quadruple.getId()) + "," + str(quadruple.getOperator()) + "," + str(quadruple.getOperand1()) + "," + str(quadruple.getOperand2()) + "," + str(quadruple.getResult()) + "\n")
 
     VirtualMachine()
-
+    toc = time.clock()
+    print(toc - tic)
     # function_directory = listener.getFunctionDirectory()
     # for key, value in function_directory.getDirectory().items():
     #     print("Function: " + str(key))

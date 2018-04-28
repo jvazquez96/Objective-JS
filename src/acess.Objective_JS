@@ -1,0 +1,10 @@
+import carro
+import avion
+
+Class Access {
+	main() {
+		var boeing : Avion;
+		boeing.setMarca("mm");
+		print(boeing.marca);
+	}
+}

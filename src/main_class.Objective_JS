@@ -32,5 +32,6 @@ Class Clases{
 		jugador2.printInfo();
 
 		jugador.printInfo();
+		print(jugador2.getDorsal());
 	}
 }
