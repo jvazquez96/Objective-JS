@@ -15,5 +15,6 @@ Class Clases{
 
 		jugador.setDorsal(10);
 		jugador.setNombre("Santiago");
+		jugador.printInfo();
 	}
 }

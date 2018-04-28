@@ -5,6 +5,6 @@ Class Access {
 	main() {
 		var boeing : Avion;
 		boeing.setMarca("mm");
-		print(boeing.marca);
+		print(boeing.getMarca());
 	}
 }
