@@ -90,7 +90,10 @@ pasteImports :
 	;
 
 clase :
-	CLASS CLASSNAME claseAux bloqueClase
+	CLASS CLASSNAME claseAux bloqueClase endClase
+	;
+
+endClase :
 	;
 
 imports :

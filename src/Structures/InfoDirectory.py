@@ -3,9 +3,9 @@ from Structures.Stack import Stack
 from Structures.ParamTable import ParamTable
 
 class InfoDirectory(object):
-	def __init__ (self, symbol_table=SymbolTable(), return_type=None):
+	def __init__ (self, return_type, symbol_table=SymbolTable()):
 		self.symbol_table = symbol_table
-		self.return_type = None
+		self.return_type = return_type
 		# Types of parameters [int, float, char, string, bool]
 		self.parameters = [0, 0, 0, 0, 0]
 		# Types of local variables [int, float, char, string, bool]

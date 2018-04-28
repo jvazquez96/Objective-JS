@@ -694,8 +694,11 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#clase.
     def exitClase(self, ctx:Objective_JSParser.ClaseContext):
+        pass
+
+
+    def exitEndClase(self, ctx):
         self.classes[self.className].updateMethods(self.methods)
-        #self.classes[self.className].printInfo()
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyMethods(self.classes[self.classes[self.className].getInherits()])
         self.methods = FunctionsDirectory()
@@ -703,7 +706,6 @@ class Objective_JSListener(ParseTreeListener):
         self.function_name = None
         self.attributes = dict()
         self.className = None
-
 
     # Enter a parse tree produced by Objective_JSParser#imports.
     def enterImports(self, ctx:Objective_JSParser.ImportsContext):
@@ -737,7 +739,7 @@ class Objective_JSListener(ParseTreeListener):
     def enterClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
         if ctx.CLASSNAME() is not None:
             self.function_name = ctx.CLASSNAME().getText()
-            self.functions_directory.create_table(self.function_name, InfoDirectory())
+            self.functions_directory.create_table(self.function_name, InfoDirectory(None))
             self.file_name = ctx.CLASSNAME().getText()
 
     # Exit a parse tree produced by Objective_JSParser#class_declaration.
@@ -749,7 +751,7 @@ class Objective_JSListener(ParseTreeListener):
     # Enter a parse tree produced by Objective_JSParser#main_header.
     def enterMain_header(self, ctx:Objective_JSParser.Main_headerContext):
         self.function_name = "main"
-        self.functions_directory.create_table("main", InfoDirectory())
+        self.functions_directory.create_table("main", InfoDirectory(None))
 
     # Exit a parse tree produced by Objective_JSParser#main_header.
     def exitMain_header(self, ctx:Objective_JSParser.Main_headerContext):
@@ -892,6 +894,9 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#metodos.
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
+        # for key, value in self.methods.getDirectory().items():
+        #     print("Key: " + str(key))
+        #     print("Return: " + str(value.getReturnType()))
         self.classes[self.className].addMethodsTable(self.methods)
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyAtts(self.classes[self.classes[self.className].getInherits()])
@@ -956,7 +961,7 @@ class Objective_JSListener(ParseTreeListener):
             print("Function already defined")
             sys.exit(0)
             
-        self.methods.create_table(self.function_name, InfoDirectory())
+        self.methods.create_table(self.function_name, InfoDirectory(None))
         self.methods.getTable(self.function_name).setParamTable(self.argumentos)
         self.methods.getTable(self.function_name).setAccessibility(self.accessible)
         if ctx.RETURNS() is None:
@@ -965,6 +970,8 @@ class Objective_JSListener(ParseTreeListener):
             self.does_returns = "returns"
             return_type = ctx.tipo_dato_no_list().getText()
             self.methods.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
+            # print("Function: " + str(self.function_name))
+            # print("Return type: " + str(self.normalizeTypes(return_type)))
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosDecl.
@@ -1841,14 +1848,9 @@ class Objective_JSListener(ParseTreeListener):
             self.id += 1
             self.current_param_counter = 0
             if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
-                quadruple = Quadruple(self.id, "save_return",self.current_method_name, None,self.current_temp_int_counter)
-                self.operandos.push(self.current_temp_int_counter)
-                self.id += 1
-                self.current_temp_int_counter += 1
-                self.cuadruplos.append(quadruple)
+                return_type =  self.functions_directory.getTable(self.current_method_name).getReturnType()
+                self.saveReturnType(return_type, self.current_method_name, None)
         elif self.current_method_name in self.classes[type].getMethods().getDirectory():
-            # pass
-            # Everything is going to be commented until issue 15 is resolved
             if self.current_param_counter != len(self.classes[type].getMethods().getTable(self.current_method_name).getParams()):
                 print("The function call: " + self.current_method_name + " doesn't have the same number of arguments")
                 print(str(self.current_param_counter) + " were given, but " + str(len(self.classes[type].getMethods().getTable(self.current_method_name).getParams())) + " were expected")
