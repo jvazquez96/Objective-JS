@@ -1,0 +1,44 @@
+Class Carro{
+	Carro();
+	Carro(string modelo);
+	Carro(int anio, string a, string modelo);
+	Carro(string a, string b, string modelo);
+	Attributes {
+		public : 
+			var modelo : string;
+		private : 
+			var anio : int;
+	}
+	Methods {
+		public :
+			function getModelo () returns string;
+			function setModelo (string modelo);
+			function setAnio(int anio);
+		private :
+			function getAnio () ;
+	}
+}
+Carro() {
+	this.modelo = "20";	
+}
+Carro(string modelo) {
+	this.modelo = modelo;
+}
+Carro (int anio, string a, string modelo) {
+	this.modelo = modelo;
+	this.anio = anio;
+}
+Carro(string a, string b, string modelo) {
+	this.modelo = modelo;
+}
+function getModelo() returns string {
+	return this.modelo;
+}
+
+function setModelo(string modelo) {
+	this.modelo = modelo;
+}
+
+function setAnio(int anio) {
+	this.anio = anio;
+}

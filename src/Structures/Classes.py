@@ -14,6 +14,7 @@ class Classes(object):
 		self.constructorsVerified = 0
 		self.attributes = None
 		self.methods = None
+		self.constructors_start_address = []
 
 	def setName(self, name):
 		self.name = name
@@ -35,6 +36,15 @@ class Classes(object):
 
 	def getMethods(self):
 		return self.methods
+
+	def getNumberOfConstructors(self):
+		return self.numberOfCons
+
+	def addConstructorStartAddress(self, address):
+		self.constructors_start_address.append(address)
+
+	def getStartAddress(self, pos):
+		return self.constructors_start_address[pos]
 
 	def addConstructorParams(self, ParamTable):
 		self.constructors.append(ParamTable)
@@ -71,6 +81,25 @@ class Classes(object):
 			iterator += 1
 
 		self.constructorsVerified += 1
+
+	def isConstructorCorrectlyImplemented(self, params, constructor_count):
+		constructor_params = self.constructors[constructor_count].getParameters().items()
+		if len(constructor_params) != len(params.getParameters()):
+			return False
+
+		for (key, paramInfo), (key2, constructorInfo) in zip(params.getParameters().items(), constructor_params):
+			if len(paramInfo.getDimensions()) != len(constructorInfo.getDimensions()):
+				return False
+			if paramInfo.getListSize() != constructorInfo.getListSize():
+				return False
+			if paramInfo.getType() != constructorInfo.getType():
+				return False
+			for dimP, dimC in zip(paramInfo.getDimensions(), constructorInfo.getDimensions()):
+				if dimP.getUpperBound() != dimC.getUpperBound():
+					return False
+		return True
+
+
 
 	def verifyMethod(self, function_name, argumentos, return_type):
 		if function_name in self.methods.getDirectory().keys():
@@ -136,6 +165,9 @@ class Classes(object):
 
 	def getConstructorParams(self):
 		return self.constructors
+
+	def getConstructorParam(self, id):
+		return self.constructors[id]
 
 	def printAtts(self):
 		for key, value in self.attributes.items():

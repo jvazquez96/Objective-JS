@@ -154,7 +154,6 @@ class VirtualMachine(object):
 					val = self.getValue(str(val))
 				else:
 					val = self.getValue(operand1)
-
 				if not self.is_int(address):
 					address = self.getValue(address)
 				if self.is_constant(address):
@@ -458,7 +457,20 @@ class VirtualMachine(object):
 							val = self.getValue(new_operand)
 						else:
 							val = self.getValue(operand1)
-						self.set_local(self.new_locals, address, val)
+						if self.is_local(address):
+							self.set_local(self.new_locals, address, val)
+						start = 1
+				elif self.is_constant(address):
+					start = 0;
+					for i in range(size):
+						address += start
+						if operand1[0] != '%':
+							new_operand = str(int(operand1) + i)
+							val = self.getValue(new_operand)
+						else:
+							val = self.getValue(operand1)
+						if self.is_constant(address):
+							self.set_constant(self.new_constants, address, val)
 						start = 1
 				elif self.is_temporal(address):
 					self.set_temporal(self.new_temps, address, val)

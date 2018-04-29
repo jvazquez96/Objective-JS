@@ -1,0 +1,15 @@
+import Seleccion
+import Futbolista
+import Entrenador
+
+Class Clases{
+	main(){
+		var jugador, jugador2: Futbolista;
+		var entrenador : Entrenador;
+
+		jugador.Futbolista("Santiago", "Sandoval", 23, "Defensa");
+		print("El nombre del futbolista es: ", jugador.getNombre());
+		jugador.setNombre("Miguel");
+		print("El nombre del futbolista es: ", jugador.getNombre());
+	}
+}

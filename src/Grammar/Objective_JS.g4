@@ -84,7 +84,7 @@ inicio:
 	;
 
 main :
-	(clase)* class_declaration
+	(clase)* init class_declaration
 	;
 
 pasteImports :
@@ -104,6 +104,9 @@ imports :
 
 class_declaration :
 	CLASS CLASSNAME LEFT_CURLY_BRACKET preVars impFunc main_header LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque RIGHT_CURLY_BRACKET
+	;
+
+init :
 	;
 
 main_header :
@@ -417,9 +420,18 @@ doAux :
 	;
 
 llamadaFunc :
-	((THIS | ID) DOT)? ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS
+	((THIS | ID) DOT)? ((ID LEFT_PARENTHESIS (argumentosLlamada)? RIGHT_PARENTHESIS) | (CLASSNAME LEFT_PARENTHESIS (argumentosConstructor)? RIGHT_PARENTHESIS verifyConstructor))
 	;
 
+argumentosConstructor : 
+	hyperExpresion storeParamConstructor (COMMA hyperExpresion storeParamConstructor)*
+	;
+
+verifyConstructor : 
+	;
+
+storeParamConstructor :
+	;
 
 argumentosLlamada :
 	hyperExpresion verifyArgument addArgument (COMMA hyperExpresion verifyArgument addArgument)*
