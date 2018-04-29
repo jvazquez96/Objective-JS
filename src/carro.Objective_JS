@@ -1,6 +1,8 @@
 Class Carro{
 	Carro();
-	Carro(string marca);
+	Carro(string modelo);
+	Carro(int anio, string a, string modelo);
+	Carro(string a, string b, string modelo);
 	Attributes {
 		public : 
 			var modelo : string;
@@ -9,18 +11,29 @@ Class Carro{
 	}
 	Methods {
 		public :
-			function getModelo () ;
+			function getModelo () returns string;
+			function setModelo (string modelo);
 		private :
 			function getAnio () ;
 	}
 }
 Carro() {
-	modelo = "20";	
+	this.modelo = "20";	
 }
-Carro(string marca) {
-	marca = marca;
+Carro(string modelo) {
+	this.modelo = modelo;
 }
-function getModelo(){
-	var prueba : int;
-	print("funcion de una clase");
+Carro (int anio, string a, string modelo) {
+	this.modelo = modelo;
+	this.anio = anio;
+}
+Carro(string a, string b, string modelo) {
+	this.modelo = modelo;
+}
+function getModelo() returns string {
+	return this.modelo;
+}
+
+function setModelo(string modelo) {
+	this.modelo = modelo;
 }

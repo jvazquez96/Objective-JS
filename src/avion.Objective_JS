@@ -1,5 +1,5 @@
 Class Avion Inherits Carro{
-	Avion(int asientos);
+	Avion(list [5][10] int asientos);
 	Avion(string marca, int serie);
 	Avion(string marca, string llantas, int asientos, int serie, int capacidad, float peso);
 	Attributes {
@@ -22,17 +22,27 @@ Class Avion Inherits Carro{
 			function getSerie (char doritos) returns int;
 	}
 }
-Avion(int asientos){
+Avion(list [5][10] int asientos){
+	this.asientos = asientos;
 }
 
 Avion(string marca, int serie){
+	this.marca = marca;
+	this.serie = serie;
 }
 
 Avion(string marca, string llantas, int asientos, int serie, int capacidad, float peso){
+	this.marca = marca;
+	this.llantas = llantas;
+	this.asientos = asientos;
 }
 
 function getMarca() returns string{
 	return this.marca;
+}
+
+function getSerie(char doritos) returns int {
+	return this.serie;
 }
 
 function setMarca(string marca){
