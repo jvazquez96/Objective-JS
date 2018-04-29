@@ -24,8 +24,9 @@ class Cube(object):
 	NOT_EQUAL = 11
 	AND = 12
 	OR = 13
+	ASSIGN = 14
 	def __init__(self):
-		self.cube = np.empty((6, 14, 6))
+		self.cube = np.empty((6, 15, 6))
 		# INT + Data types
 		self.cube[self.INT, self.SUM, self.INT] = self.INT
 		self.cube[self.INT, self.SUM, self.FLOAT] = self.FLOAT
@@ -89,13 +90,20 @@ class Cube(object):
 		self.cube[self.INT, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.INT, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.INT, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
-		# INT = Data types
+		# INT == Data types
 		self.cube[self.INT, self.EQUAL, self.INT] = self.BOOLEAN
 		self.cube[self.INT, self.EQUAL, self.FLOAT] = self.BOOLEAN
 		self.cube[self.INT, self.EQUAL, self.CHAR] = self.ERROR
 		self.cube[self.INT, self.EQUAL, self.STRING] = self.ERROR
 		self.cube[self.INT, self.EQUAL, self.BOOLEAN] = self.ERROR
-		self.cube[self.INT, self.EQUAL, self.NULL] = self.ERROR
+		self.cube[self.INT, self.EQUAL, self.NULL] = self.BOOLEAN
+		# INT = Data types
+		self.cube[self.INT, self.ASSIGN, self.INT] = self.INT
+		self.cube[self.INT, self.ASSIGN, self.FLOAT] = self.INT
+		self.cube[self.INT, self.ASSIGN, self.CHAR] = self.ERROR
+		self.cube[self.INT, self.ASSIGN, self.STRING] = self.ERROR
+		self.cube[self.INT, self.ASSIGN, self.BOOLEAN] = self.ERROR
+		self.cube[self.INT, self.ASSIGN, self.NULL] = self.ERROR
 		# INT != Data type
 		self.cube[self.INT, self.NOT_EQUAL, self.INT] = self.BOOLEAN
 		self.cube[self.INT, self.NOT_EQUAL, self.FLOAT] = self.ERROR
@@ -180,13 +188,20 @@ class Cube(object):
 		self.cube[self.FLOAT, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.FLOAT, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.FLOAT, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
-		# FLOAT = Data types
-		self.cube[self.FLOAT, self.EQUAL, self.INT] = self.INT
-		self.cube[self.FLOAT, self.EQUAL, self.FLOAT] = self.FLOAT
+		# FLOAT == Data types
+		self.cube[self.FLOAT, self.EQUAL, self.INT] = self.BOOLEAN
+		self.cube[self.FLOAT, self.EQUAL, self.FLOAT] = self.BOOLEAN
 		self.cube[self.FLOAT, self.EQUAL, self.CHAR] = self.ERROR
 		self.cube[self.FLOAT, self.EQUAL, self.STRING] = self.ERROR
 		self.cube[self.FLOAT, self.EQUAL, self.BOOLEAN] = self.ERROR
-		self.cube[self.FLOAT, self.EQUAL, self.NULL] = self.ERROR
+		self.cube[self.FLOAT, self.EQUAL, self.NULL] = self.BOOLEAN
+		# FLOAT = Data types
+		self.cube[self.FLOAT, self.ASSIGN, self.INT] = self.INT
+		self.cube[self.FLOAT, self.ASSIGN, self.FLOAT] = self.FLOAT
+		self.cube[self.FLOAT, self.ASSIGN, self.CHAR] = self.ERROR
+		self.cube[self.FLOAT, self.ASSIGN, self.STRING] = self.ERROR
+		self.cube[self.FLOAT, self.ASSIGN, self.BOOLEAN] = self.ERROR
+		self.cube[self.FLOAT, self.ASSIGN, self.NULL] = self.ERROR
 		# FLOAT != Data type
 		self.cube[self.FLOAT, self.NOT_EQUAL, self.INT] = self.ERROR
 		self.cube[self.FLOAT, self.NOT_EQUAL, self.FLOAT] = self.ERROR
@@ -278,13 +293,20 @@ class Cube(object):
 		self.cube[self.CHAR, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.CHAR, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.CHAR, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
-		# CHAR = Data types
+		# CHAR == Data types
 		self.cube[self.CHAR, self.EQUAL, self.INT] = self.ERROR
 		self.cube[self.CHAR, self.EQUAL, self.FLOAT] = self.ERROR
-		self.cube[self.CHAR, self.EQUAL, self.CHAR] = self.CHAR
-		self.cube[self.CHAR, self.EQUAL, self.STRING] = self.STRING
+		self.cube[self.CHAR, self.EQUAL, self.CHAR] = self.BOOLEAN
+		self.cube[self.CHAR, self.EQUAL, self.STRING] = self.ERROR
 		self.cube[self.CHAR, self.EQUAL, self.BOOLEAN] = self.ERROR
-		self.cube[self.CHAR, self.EQUAL, self.NULL] = self.ERROR
+		self.cube[self.CHAR, self.EQUAL, self.NULL] = self.BOOLEAN
+		# CHAR = Data types
+		self.cube[self.CHAR, self.ASSIGN, self.INT] = self.ERROR
+		self.cube[self.CHAR, self.ASSIGN, self.FLOAT] = self.ERROR
+		self.cube[self.CHAR, self.ASSIGN, self.CHAR] = self.CHAR
+		self.cube[self.CHAR, self.ASSIGN, self.STRING] = self.ERROR
+		self.cube[self.CHAR, self.ASSIGN, self.BOOLEAN] = self.ERROR
+		self.cube[self.CHAR, self.ASSIGN, self.NULL] = self.ERROR
 		# CHAR != Data types
 		self.cube[self.CHAR, self.NOT_EQUAL, self.INT] = self.ERROR
 		self.cube[self.CHAR, self.NOT_EQUAL, self.FLOAT] = self.ERROR
@@ -376,13 +398,20 @@ class Cube(object):
 		self.cube[self.STRING, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.STRING, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.STRING, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
-		#  STRING = Data types
+		#  STRING == Data types
 		self.cube[self.STRING, self.EQUAL, self.INT] = self.ERROR
 		self.cube[self.STRING, self.EQUAL, self.FLOAT] = self.ERROR
-		self.cube[self.STRING, self.EQUAL, self.CHAR] = self.STRING
-		self.cube[self.STRING, self.EQUAL, self.STRING] = self.STRING
+		self.cube[self.STRING, self.EQUAL, self.CHAR] = self.ERROR
+		self.cube[self.STRING, self.EQUAL, self.STRING] = self.BOOLEAN
 		self.cube[self.STRING, self.EQUAL, self.BOOLEAN] = self.ERROR
-		self.cube[self.STRING, self.EQUAL, self.NULL] = self.ERROR
+		self.cube[self.STRING, self.EQUAL, self.NULL] = self.BOOLEAN
+		# STRING = Data types
+		self.cube[self.STRING, self.ASSIGN, self.INT] = self.ERROR
+		self.cube[self.STRING, self.ASSIGN, self.FLOAT] = self.ERROR
+		self.cube[self.STRING, self.ASSIGN, self.CHAR] = self.STRING
+		self.cube[self.STRING, self.ASSIGN, self.STRING] = self.STRING
+		self.cube[self.STRING, self.ASSIGN, self.BOOLEAN] = self.ERROR
+		self.cube[self.STRING, self.ASSIGN, self.NULL] = self.ERROR
 		#  STRING != Data types
 		self.cube[self.STRING, self.NOT_EQUAL, self.INT] = self.ERROR
 		self.cube[self.STRING, self.NOT_EQUAL, self.FLOAT] = self.ERROR
@@ -474,13 +503,20 @@ class Cube(object):
 		self.cube[self.BOOLEAN, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.BOOLEAN, self.LESS_OR_EQUAL, self.BOOLEAN] = self.BOOLEAN
 		self.cube[self.BOOLEAN, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
-		# BOOLEAN = Data types
+		# BOOLEAN == Data types
 		self.cube[self.BOOLEAN, self.EQUAL, self.INT] = self.ERROR
 		self.cube[self.BOOLEAN, self.EQUAL, self.FLOAT] = self.ERROR
 		self.cube[self.BOOLEAN, self.EQUAL, self.CHAR] = self.ERROR
 		self.cube[self.BOOLEAN, self.EQUAL, self.STRING] = self.ERROR
 		self.cube[self.BOOLEAN, self.EQUAL, self.BOOLEAN] = self.BOOLEAN
-		self.cube[self.BOOLEAN, self.EQUAL, self.NULL] = self.ERROR
+		self.cube[self.BOOLEAN, self.EQUAL, self.NULL] = self.BOOLEAN
+		# BOOLEAN = Data types
+		self.cube[self.BOOLEAN, self.ASSIGN, self.INT] = self.ERROR
+		self.cube[self.BOOLEAN, self.ASSIGN, self.FLOAT] = self.ERROR
+		self.cube[self.BOOLEAN, self.ASSIGN, self.CHAR] = self.ERROR
+		self.cube[self.BOOLEAN, self.ASSIGN, self.STRING] = self.ERROR
+		self.cube[self.BOOLEAN, self.ASSIGN, self.BOOLEAN] = self.BOOLEAN
+		self.cube[self.BOOLEAN, self.ASSIGN, self.NULL] = self.ERROR
 		# BOOLEAN != Data types
 		self.cube[self.BOOLEAN, self.NOT_EQUAL, self.INT] = self.ERROR
 		self.cube[self.BOOLEAN, self.NOT_EQUAL, self.FLOAT] = self.ERROR
@@ -565,40 +601,40 @@ class Cube(object):
 		self.cube[self.NULL, self.LESS_OR_EQUAL, self.STRING] = self.ERROR
 		self.cube[self.NULL, self.LESS_OR_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.NULL, self.LESS_OR_EQUAL, self.NULL] = self.ERROR
+		# NULL == Data types
+		self.cube[self.NULL, self.EQUAL, self.INT] = self.ERROR
+		self.cube[self.NULL, self.EQUAL, self.FLOAT] = self.ERROR
+		self.cube[self.NULL, self.EQUAL, self.CHAR] = self.ERROR
+		self.cube[self.NULL, self.EQUAL, self.STRING] = self.ERROR
+		self.cube[self.NULL, self.EQUAL, self.BOOLEAN] = self.ERROR
+		self.cube[self.NULL, self.EQUAL, self.NULL] = self.BOOLEAN
 		# NULL = Data types
-		self.cube[self.NULL, self.EQUAL, self.INT] = self.INT
-		self.cube[self.NULL, self.EQUAL, self.FLOAT] = self.FLOAT
-		self.cube[self.NULL, self.EQUAL, self.CHAR] = self.CHAR
-		self.cube[self.NULL, self.EQUAL, self.STRING] = self.STRING
-		self.cube[self.NULL, self.EQUAL, self.BOOLEAN] = self.BOOLEAN
-		self.cube[self.NULL, self.EQUAL, self.NULL] = self.NULL
-		# NULL = Data types
-		self.cube[self.NULL, self.EQUAL, self.INT] = self.INT
-		self.cube[self.NULL, self.EQUAL, self.FLOAT] = self.FLOAT
-		self.cube[self.NULL, self.EQUAL, self.CHAR] = self.CHAR
-		self.cube[self.NULL, self.EQUAL, self.STRING] = self.STRING
-		self.cube[self.NULL, self.EQUAL, self.BOOLEAN] = self.BOOLEAN
-		self.cube[self.NULL, self.EQUAL, self.NULL] = self.NULL
+		self.cube[self.NULL, self.ASSIGN, self.INT] = self.INT
+		self.cube[self.NULL, self.ASSIGN, self.FLOAT] = self.FLOAT
+		self.cube[self.NULL, self.ASSIGN, self.CHAR] = self.CHAR
+		self.cube[self.NULL, self.ASSIGN, self.STRING] = self.STRING
+		self.cube[self.NULL, self.ASSIGN, self.BOOLEAN] = self.BOOLEAN
+		self.cube[self.NULL, self.ASSIGN, self.NULL] = self.NULL
 		# NULL != Data types
-		self.cube[self.NULL, self.NOT_EQUAL, self.INT] = self.BOOLEAN
-		self.cube[self.NULL, self.NOT_EQUAL, self.FLOAT] = self.BOOLEAN
-		self.cube[self.NULL, self.NOT_EQUAL, self.CHAR] = self.BOOLEAN
-		self.cube[self.NULL, self.NOT_EQUAL, self.STRING] = self.BOOLEAN
-		self.cube[self.NULL, self.NOT_EQUAL, self.BOOLEAN] = self.BOOLEAN
+		self.cube[self.NULL, self.NOT_EQUAL, self.INT] = self.ERROR
+		self.cube[self.NULL, self.NOT_EQUAL, self.FLOAT] = self.ERROR
+		self.cube[self.NULL, self.NOT_EQUAL, self.CHAR] = self.ERROR
+		self.cube[self.NULL, self.NOT_EQUAL, self.STRING] = self.ERROR
+		self.cube[self.NULL, self.NOT_EQUAL, self.BOOLEAN] = self.ERROR
 		self.cube[self.NULL, self.NOT_EQUAL, self.NULL] = self.BOOLEAN
 		# NULL AND Data types
 		self.cube[self.NULL, self.AND, self.INT] = self.ERROR
 		self.cube[self.NULL, self.AND, self.FLOAT] = self.ERROR
 		self.cube[self.NULL, self.AND, self.CHAR] = self.ERROR
 		self.cube[self.NULL, self.AND, self.STRING] = self.ERROR
-		self.cube[self.NULL, self.AND, self.BOOLEAN] = self.BOOLEAN
+		self.cube[self.NULL, self.AND, self.BOOLEAN] = self.ERROR
 		self.cube[self.NULL, self.AND, self.NULL] = self.ERROR
 		# NULL OR Data types
 		self.cube[self.NULL, self.OR, self.INT] = self.ERROR
 		self.cube[self.NULL, self.OR, self.FLOAT] = self.ERROR
 		self.cube[self.NULL, self.OR, self.CHAR] = self.ERROR
 		self.cube[self.NULL, self.OR, self.STRING] = self.ERROR
-		self.cube[self.NULL, self.OR, self.BOOLEAN] = self.BOOLEAN
+		self.cube[self.NULL, self.OR, self.BOOLEAN] = self.ERROR
 		self.cube[self.NULL, self.OR, self.NULL] = self.ERROR
 
 

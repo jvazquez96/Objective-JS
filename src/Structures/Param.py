@@ -15,6 +15,9 @@ class Param(object):
 	def getType(self):
 		return self.type
 
+	def setType(self, type):
+		self.type = type
+
 	def isList(self):
 		return self.isList
 

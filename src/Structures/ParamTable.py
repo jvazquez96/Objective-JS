@@ -14,6 +14,8 @@ class ParamTable(object):
 		return self.parameters
 	def getType(self, id):
 		return self.parameters[id].getType()
+	def setType(self, id, type):
+		self.parameters[id].setType(type)
 	def getAddress(self, id):
 		return self.parameters[id].getAddress()
 	def getDimensions(self, id):

@@ -6,12 +6,12 @@ class InfoDirectory(object):
 	def __init__ (self, return_type, symbol_table=SymbolTable()):
 		self.symbol_table = symbol_table
 		self.return_type = return_type
-		# Types of parameters [int, float, char, string, bool]
-		self.parameters = [0, 0, 0, 0, 0]
-		# Types of local variables [int, float, char, string, bool]
-		self.local_variables = [0, 0, 0, 0, 0]
-		# Types of tempral variables [int, float, char, string, bool]
-		self.temporal_variables = [0, 0, 0, 0, 0]
+		# Types of parameters [int, float, char, string, bool, null]
+		self.parameters = [0, 0, 0, 0, 0, 0]
+		# Types of local variables [int, float, char, string, bool, null]
+		self.local_variables = [0, 0, 0, 0, 0, 0]
+		# Types of tempral variables [int, float, char, string, bool, null]
+		self.temporal_variables = [0, 0, 0, 0, 0, 0]
 		#
 		self.parameters2 = []
 		# Param table
@@ -79,15 +79,21 @@ class InfoDirectory(object):
 
 	def addString(self, isParameter, n):
 		if isParameter:
-			self.parameters[2] += n
-		else:
-			self.local_variables[2] += n
-
-	def addBool(self, isParameter, n):
-		if isParameter:
 			self.parameters[3] += n
 		else:
 			self.local_variables[3] += n
+
+	def addBool(self, isParameter, n):
+		if isParameter:
+			self.parameters[4] += n
+		else:
+			self.local_variables[4] += n
+
+	def addNull(self, isParameter, n):
+		if isParameter:
+			self.parameters[5] += n
+		else:
+			self.local_variables[5] += n
 
 	def addTemporaryInt(self, n):
 		self.temporal_variables[0] += n

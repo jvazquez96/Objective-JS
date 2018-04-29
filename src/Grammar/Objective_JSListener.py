@@ -395,6 +395,23 @@ class Objective_JSListener(ParseTreeListener):
                 self.methods.addBool(self.function_name, False, 1)
                 self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_boolean_counter, id, type, isList, total_size, number_dimensions, dimensions)
                 self.current_local_boolean_counter += 1
+        elif type == "null" or type == 5 and not mat_or_arr:
+            number_dimensions += 1
+            if self.className is None:
+                self.functions_directory.addNull(self.function_name, False, 1)
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_null_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_global_null_counter += 1
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_null_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                    self.current_local_null_counter += 1
+            elif self.function_name is None:
+                self.attributes[id] = Atts(id, type, self.accessible, isList, total_size, number_dimensions, dimensions, self.current_global_null_counter)
+                self.current_global_null_counter += 1
+            else:
+                self.methods.addNull(self.function_name, False, 1)
+                self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_null_counter, id, type, isList, total_size, number_dimensions, dimensions)
+                self.current_local_null_counter += 1
         elif re.search("list(\[.*\])+int", self.type) is not None:
             total_size, number_dimensions, dimensions = self.parseList(self.type)
             isList = True
@@ -1527,7 +1544,7 @@ class Objective_JSListener(ParseTreeListener):
             variableType = self.getTypeFromVariable(id)
             variableType = self.convertTypeToInt(variableType)
 
-        new_type = np.int64(self.oraculo.getDataType(variableType, 10, possibleType))
+        new_type = np.int64(self.oraculo.getDataType(variableType, 14, possibleType))
         if new_type == -1:
             print("id: " + id)
             print("Data type mismatch")
@@ -2383,6 +2400,22 @@ class Objective_JSListener(ParseTreeListener):
             if new_type == -1.0:
                 print("Data type mismatch")
                 sys.exit(0)
+            elif tipo1 == 5 and number_op == 10:
+                self.operandos.push(self.current_temp_boolean_counter)
+                self.types.push(new_type)
+                cuadruplo = Quadruple(self.id, "isNull", operando1, None, self.current_temp_boolean_counter)
+                self.current_temp_boolean_counter += 1
+                self.cuadruplos.append(cuadruplo)
+                self.registros += 1
+                self.id += 1
+            elif tipo1 == 5 and number_op == 11:
+                self.operandos.push(self.current_temp_boolean_counter)
+                self.types.push(new_type)
+                cuadruplo = Quadruple(self.id, "isNotNull", operando1, None, self.current_temp_boolean_counter)
+                self.current_temp_boolean_counter += 1
+                self.cuadruplos.append(cuadruplo)
+                self.registros += 1
+                self.id += 1
             else:
                 self.operandos.push(self.current_temp_boolean_counter)
                 self.types.push(new_type)
@@ -2516,7 +2549,7 @@ class Objective_JSListener(ParseTreeListener):
                     type = self.attributes[value].getType()
                     type = self.convertTypeToInt(type)
                     address = self.attributes[value].getAddress()
-                elif self.className is not None and ctx.varCte().TYPE_INT() is None and ctx.varCte().TYPE_FLOAT() is None:
+                elif self.className is not None and ctx.varCte().TYPE_INT() is None and ctx.varCte().TYPE_FLOAT() is None and ctx.varCte().NULL() is None:
                     if self.function_name == self.className:
                         for paramTable in self.classes[self.function_name].getConstructorParams():
                             for param, info in paramTable.getParameters().items():
@@ -2545,6 +2578,8 @@ class Objective_JSListener(ParseTreeListener):
                         type = table[value].getType()
                         type = self.convertTypeToInt(type)
                         address = table[value].getAddress()
+                elif ctx.varCte().NULL() is not None:
+                    type = 5
                 else:
                     type = self.getTypeFromFactor(ctx, value)
                     type = self.convertTypeToInt(type)
@@ -2591,9 +2626,12 @@ class Objective_JSListener(ParseTreeListener):
                             self.operandos.push(address)
                             # self.current_local_boolean_counter += 1
                         elif type == 5:
-                            if address is None:
-                                address = self.getMemoryAddressFromVariable(value)
-                            self.operandos.push(address)
+                            if ctx.varCte().NULL() is None:
+                                if address is None:
+                                    address = self.getMemoryAddressFromVariable(value)
+                                self.operandos.push(address)
+                            else:
+                                self.operandos.push("null")
                             # self.current_local_null_counter += 1
                 self.types.push(type)
             elif ctx.factorParentesis() is not None:

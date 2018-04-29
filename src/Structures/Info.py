@@ -13,6 +13,8 @@ class Info(object):
 			return []
 		else:
 			return self._info[0]
+	def setType(self, type):
+		self._info[0] = type
 	def isList(self):
 		return self._info[1]
 	def getListSize(self):

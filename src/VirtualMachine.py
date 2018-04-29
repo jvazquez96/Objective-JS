@@ -404,6 +404,22 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
+			elif operator == "isNull":
+				isNull = self.isNull(operand1)
+				if self.is_constant(address):
+					self.set_constant(address, isNull)
+				elif self.is_local(address):
+					self.set_local(self.locals, address, isNull)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, isNull)
+			elif operator == "isNotNull":
+				isNull = not self.isNull(operand1)
+				if self.is_constant(address):
+					self.set_constant(address, isNull)
+				elif self.is_local(address):
+					self.set_local(self.locals, address, isNull)
+				elif self.is_temporal(address):
+					self.set_temporal(self.temps, address, isNull)
 			elif operator == "print":
 				if operand1[0] == '(':
 					val = self.getValue(operand1)
@@ -703,3 +719,10 @@ class VirtualMachine(object):
 			return True
 		else:
 			return False
+
+	def isNull(self, address):
+		address = int(address)
+		if address in self.constants[5] or address in self.locals[5]:
+			return False
+		else:
+			return True

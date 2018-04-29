@@ -68,6 +68,7 @@ FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
 BOOL : 'bool';
+NULL : 'null';
 // Classifiers
 CLASSNAME : [A-Z][a-zA-Z]*;
 ID : [a-zA-Z0-9]+;
@@ -323,6 +324,7 @@ tipo_dato_no_list:
 	| STRING
 	| BOOL
 	| CLASSNAME
+	| NULL
 	;
 
 tipo : 
@@ -536,6 +538,7 @@ varCte :
 	| TYPE_STRING
 	| TYPE_CHAR
 	| TYPE_BOOL
+	| NULL
 	| ID LEFT_SQUARE_BRACKET expresion RIGHT_SQUARE_BRACKET matrix
 	;
 

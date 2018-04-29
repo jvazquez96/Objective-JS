@@ -45,6 +45,9 @@ class FunctionsDirectory(object):
 	def addBool(self, id, isParameter, n):
 		self.directory[id].addBool(isParameter, n)
 
+	def addNull(self, id, isParameter, n):
+		self.directory[id].addNull(isParameter, n)
+
 	def addTempInt(self, id, n):
 		self.directory[id].addTemporaryInt(n)
 

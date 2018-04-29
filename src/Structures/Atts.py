@@ -13,6 +13,9 @@ class Atts(object):
 	def getType(self):
 		return self._info[1]
 
+	def setType(self, type):
+		self._info[1] = type
+
 	def isAccessible(self):
 		return self._info[2]
 
