@@ -7,6 +7,7 @@ from Grammar.Objective_JSLexer import Objective_JSLexer
 from Grammar.Objective_JSParser import Objective_JSParser
 from Grammar.Objective_JSListener import Objective_JSListener
 from VirtualMachine import VirtualMachine
+from Objective_JS_ErrorListener import Objective_JS_ErrorListener
 import time
 
 def preprocess(fileName):
@@ -15,19 +16,19 @@ def preprocess(fileName):
     for line in lines:
         if re.search("import\ [a-zA-Z]+", line) is not None:
             imported_class = "Tests/" + line[7:-1] + ".Objective_JS"
-            with open("temp_file.Objective_JS", "a") as temp_file:
+            with open("Tests/temp_file.Objective_JS", "a") as temp_file:
                 with open(imported_class, "r") as imported_class:
                     temp_file.write(imported_class.read())
                     temp_file.write("\n")
 
-    with open('temp_file.Objective_JS', 'a') as temp_file:
+    with open('Tests/temp_file.Objective_JS', 'a') as temp_file:
         with open(fileName, 'r') as init_file:
             temp_file.write(init_file.read())
 
-    with open('original_copy.Objective_JS', 'w') as output, open(fileName, 'r') as input:
+    with open('Tests/original_copy.Objective_JS', 'w') as output, open(fileName, 'r') as input:
         output.write(input.read())
 
-    with open(fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
+    with open(fileName, 'w+') as output, open('Tests/temp_file.Objective_JS', 'r') as input:
         datas = input.readlines()
     with open(fileName, 'w+') as output:
         for data in datas:
@@ -37,8 +38,8 @@ def preprocess(fileName):
     # with open(fileName, 'r') as file:
     #     print(file.read())
 
-    if os.path.exists('temp_file.Objective_JS'):
-        os.remove('temp_file.Objective_JS')
+    if os.path.exists('Tests/temp_file.Objective_JS'):
+        os.remove('Tests/temp_file.Objective_JS')
 
 def main(argv):
     tic = time.clock()
@@ -48,16 +49,19 @@ def main(argv):
     #     print(file.read())
     input = FileStream(fileName)
     lexer = Objective_JSLexer(input)
+    lexer.removeErrorListeners()
+    lexer._listeners = [Objective_JS_ErrorListener(fileName)]
     stream = CommonTokenStream(lexer)
     parser = Objective_JSParser(stream)
+    parser._listeners = [Objective_JS_ErrorListener(fileName)]
     tree = parser.inicio()
     listener = Objective_JSListener(fileName)
     walker = ParseTreeWalker()
-    if os.path.exists('original_copy.Objective_JS'):
-        with open('original_copy.Objective_JS','r') as input, open(fileName, 'w+') as output:
+    if os.path.exists('Tests/original_copy.Objective_JS'):
+        with open('Tests/original_copy.Objective_JS','r') as input, open(fileName, 'w+') as output:
             output.write(input.read())
-    if os.path.exists('original_copy.Objective_JS'):
-        os.remove('original_copy.Objective_JS')
+    if os.path.exists('Tests/original_copy.Objective_JS'):
+        os.remove('Tests/original_copy.Objective_JS')
     walker.walk(listener, tree)
     quadruples = listener.getQuadruples()
     # functions = listener.getFunctionDirectory()
