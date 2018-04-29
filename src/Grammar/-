@@ -609,8 +609,10 @@ class Objective_JSListener(ParseTreeListener):
                 print("Syntax error!! Function: " + self.function_name + " is already defined")
                 sys.exit(0)
         else:
+            print("Function: " + str(self.function_name))
             start_address = len(self.cuadruplos) + 1
             self.methods.getTable(self.function_name).setStartAddress(start_address)
+            print("Start address: " + str(start_address))
             for key, value in self.argumentos.getParameters().items():
                 if value.getType() == 0:
                     self.methods.addParam(self.function_name, key, "int", value.getListSize())
@@ -1802,9 +1804,13 @@ class Objective_JSListener(ParseTreeListener):
         if (ctx.THIS() is not None or len(ctx.ID()) == 1) and ctx.CLASSNAME() is None: #Local method
             self.current_method_name = ctx.ID()[0].getText()
             if self.className is None or self.is_main_file:
-                if self.current_method_name not in self.functions_directory.getDirectory():
-                    print("The function: " + str(self.current_method_name)+ " doesn't exist")
-                    sys.exit(0)
+                if self.is_main_file:
+                    print("heree")
+                    if self.current_method_name not in self.functions_directory.getDirectory():
+                        print("The function: " + str(self.current_method_name)+ " doesn't exist")
+                        sys.exit(0)
+                else:
+                    pass
             else:
                 if self.current_method_name not in self.methods.getDirectory():
                     print("The function: " + str(self.current_method_name)+ " doesn't exist")
@@ -1925,10 +1931,12 @@ class Objective_JSListener(ParseTreeListener):
                     print(str(self.current_param_counter) + " were given, but " + str(len(self.functions_directory.getTable(self.current_method_name).getParams())) + " were expected")
                     sys.exit(0)
                 start_address = self.functions_directory.getTable(self.current_method_name).getStartAddress()
+                print("here")
                 quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
                 self.cuadruplos.append(quadruple)
                 self.id += 1
                 self.current_param_counter = 0
+                sys.exit(0)
                 if self.functions_directory.getTable(self.current_method_name).getReturnType() is not None:
                     return_type =  self.functions_directory.getTable(self.current_method_name).getReturnType()
                     self.saveReturnType(return_type, self.current_method_name, "None")
@@ -1938,15 +1946,12 @@ class Objective_JSListener(ParseTreeListener):
                     print(str(self.current_param_counter) + " were given, but " + str(len(self.classes[type].getMethods().getTable(self.current_method_name).getParams())) + " were expected")
                     sys.exit(0)
                 start_address = self.classes[type].getMethods().getTable(self.current_method_name).getStartAddress()
-                if start_address is None:
-                    for name, info in self.methods.getDirectory().items():
-                        if name == self.current_method_name:
-                            start_address = info.getStartAddress()
-                            break
-
+                for name, info in self.classes.getMethods().getDirectory().items()
 
                 if self.object_address is None:
                     quadruple = Quadruple(self.id, GO.SUB, self.current_method_name, None, start_address)
+                    quadruple.print()
+                    sys.exit(0)
                 else:
                     quadruple = Quadruple(self.id, GO.SUB, self.className, None, start_address)
                 self.cuadruplos.append(quadruple)

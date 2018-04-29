@@ -1,0 +1,21 @@
+import Seleccion
+import Futbolista
+import Entrenador
+
+Class Clases{
+
+	function prueba(string hola){
+		print("HOLA");
+	}
+	main(){
+		var jugador, jugador2: Futbolista;
+		var entrenador : Entrenador;
+		var dorsal : int;
+		var nombre : string;
+
+		jugador.setDorsal(10);
+		jugador.setNombre("Santiago");
+		print("hola");
+		jugador.printInfo();
+	}
+}
