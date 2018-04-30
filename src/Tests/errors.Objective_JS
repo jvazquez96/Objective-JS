@@ -1,3 +1,6 @@
+import Seleccion
+import Futbolista
+
 Class UndeclaredVariable{
 
 	function undeclaredVariables(){
@@ -29,5 +32,9 @@ Class UndeclaredVariable{
 	}
 
 	main(){
+		var jugador : Futbolista;
+		jugador.Futbolista("Santiago", "Sandoval", 23, "Defensa");
+		jugador.setDorsal(19);
+		print(jugador.dorsal);
 	}
 }
