@@ -1109,6 +1109,7 @@ class Objective_JSListener(ParseTreeListener):
             self.methods.create_table(self.function_name, InfoDirectory(SymbolTable()))
             self.methods.getTable(self.function_name).setParamTable(self.argumentos)
             self.methods.getTable(self.function_name).setAccessibility(acc)
+            self.methods.getTable(self.function_name).setReturnType(return_type)
             self.newFunction()
 
     # Exit a parse tree produced by Objective_JSParser#impFuncAux2.
