@@ -4,9 +4,9 @@ Class Fibonacci{
 		first = 0;
 		second = 1;
 		read >> n;
-		c = 0;
+		c = 1;
 
-		while(c < n){
+		while(c <= n){
 			if(c <= 1){
 				next = c;
 			}else{
@@ -14,9 +14,9 @@ Class Fibonacci{
 				first = second;
 				second = next;
 			}
-			print(next);
 			c++;
 		}
+		print(next);
 
 	}
 }
