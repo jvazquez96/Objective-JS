@@ -1,0 +1,33 @@
+Class UndeclaredVariable{
+
+	function undeclaredVariables(){
+		var a, b, d : int;
+		a = 5;
+		b = 74;
+		d = a + b;
+	}
+
+	function differentTypes(){
+		var a, b, d: int;
+		var c : bool;
+		a = 5;
+		d = 10;
+		c = true;
+		b = a + d;
+	}
+
+	function arrayWrongAccess(){
+		var a : list[3] int;
+		a[3] = 5;
+	}
+
+	function undeclaredFunction(){
+	}
+
+	function errorInArguments(int a, int b){
+		print("errorInArguments");
+	}
+
+	main(){
+	}
+}

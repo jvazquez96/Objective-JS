@@ -2048,7 +2048,7 @@ class Objective_JSListener(ParseTreeListener):
 
         all_dimensions_param = table.getParamTable().getParam(parameter).getDimensions()
         if argument_type != parameter_type:
-            print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received an " + str(self.convertIntToStringType(argument_type)) + " at: " + str(argument))
+            print("The function " + str(self.current_method_name) + " was expecting an " + str(self.convertIntToStringType(parameter_type)) + " but received a " + str(self.convertIntToStringType(argument_type)))
             sys.exit(0)
 
         if dimensions_param != dimensions_argument:
