@@ -1,0 +1,65 @@
+Class Math{
+	Math();
+	Attributes{
+	}
+	Methods{
+		public:
+			function sqrt(float x) returns float;
+			function floor(float x) returns int;
+			function ceil(float x) returns int;
+			function abs(float x) returns float;
+			function max(int m, int n) returns int;
+			function min(int m, int n) returns int;
+	}
+}
+
+Math(){
+}
+
+function sqrt(float x) returns float{
+	return x ^ 0.5;
+}
+
+function floor(float x) returns int{
+	return x - (x % 1);
+}
+
+function ceil(float x) returns int{
+	var i : float;
+	var j : int;
+	j = 1 - 2;
+	i = x * j;
+	return ((i - (i % 1)) * j);
+}
+
+function abs(float x) returns float{
+	var i : int;
+	var j : float;
+	i = 1 - 2;
+	if(x < 0.0){
+		j = x * i;
+	}else{
+		j = x;
+	}
+	return j;
+}
+
+function max(int m, int n) returns int{
+	var max : int;
+	if (m > n){
+		max = m;
+	}else{
+		max = n;
+	}
+	return max;
+}
+
+function min(int m, int n) returns int{
+	var min : int;
+	if (m < n){
+		min = m;
+	}else{
+		min = n;
+	}
+	return min;
+}

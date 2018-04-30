@@ -975,6 +975,7 @@ class Objective_JSListener(ParseTreeListener):
 
     # Exit a parse tree produced by Objective_JSParser#func.
     def exitFunc(self, ctx:Objective_JSParser.FuncContext):
+        self.resetMemoryAddresses()
         pass
 
 
@@ -2357,9 +2358,15 @@ class Objective_JSListener(ParseTreeListener):
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
 
             if new_type == 0:
-                self.functions_directory.addTempInt(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempInt(self.function_name, 1)
+                else:
+                    self.methods.addTempInt(self.function_name, 1)
             elif new_type == 1:
-                self.functions_directory.addTempFloat(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempFloat(self.function_name, 1)
+                else:
+                    self.methods.addTempFloat(self.function_name, 1)
             if new_type == -1:
                 print("Data type mismatch")
                 sys.exit(0)
@@ -2402,10 +2409,15 @@ class Objective_JSListener(ParseTreeListener):
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
             if new_type == 0:
-                self.functions_directory.addTempInt(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempInt(self.function_name, 1)
+                else:
+                    self.methods.addTempInt(self.function_name, 1)
             elif new_type == 1:
-                self.functions_directory.addTempFloat(self.function_name, 1)
-
+                if self.className is None:
+                    self.functions_directory.addTempFloat(self.function_name, 1)
+                else:
+                    self.methods.addTempFloat(self.function_name, 1)
 
             if new_type == -1.0:
                 print("Data type mismatch")
@@ -2467,7 +2479,10 @@ class Objective_JSListener(ParseTreeListener):
                 number_op = 11
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
-            self.functions_directory.addTempBool(self.function_name, 1)
+            if self.className is None:
+                self.functions_directory.addTempBool(self.function_name, 1)
+            else:
+                self.methods.addTempBool(self.function_name, 1)
             if new_type == -1.0:
                 print("Data type mismatch")
                 sys.exit(0)
@@ -2537,9 +2552,15 @@ class Objective_JSListener(ParseTreeListener):
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
             if new_type == 0:
-                self.functions_directory.addTempInt(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempInt(self.function_name, 1)
+                else:
+                    self.methods.addTempInt(self.function_name, 1)
             elif new_type == 1:
-                self.functions_directory.addTempFloat(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempFloat(self.function_name, 1)
+                else:
+                    self.methods.addTempFloat(self.function_name, 1)
 
             if new_type == -1.0:
                 print("Data type mismatch")
@@ -2656,6 +2677,7 @@ class Objective_JSListener(ParseTreeListener):
                             address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value).getAddress()
                         else:
                             table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
+                            table2 = self.classes[self.className].getMethodTable(self.function_name).getSymbolTable().getSymbols()
                             if table == {}:
                                 for attribute, info in self.classes[self.className].getAttributes().items():
                                     if attribute == value:
@@ -2663,9 +2685,14 @@ class Objective_JSListener(ParseTreeListener):
                                         type = self.convertTypeToInt(type)
                                         address = info.getAddress()
                             else:
-                                type = table[value].getType()
+                                if value in table:
+                                    type = table[value].getType()
+                                    address = table[value].getAddress()
+                                else:
+                                    type = table2[value].getType()
+                                    address = table2[value].getAddress()
+
                                 type = self.convertTypeToInt(type)
-                                address = table[value].getAddress()
                 elif ctx.varCte().NULL() is not None:
                     type = 5
                 else:
@@ -2751,9 +2778,15 @@ class Objective_JSListener(ParseTreeListener):
 
             new_type = np.int64(self.oraculo.getDataType(tipo1, number_op, tipo2))
             if new_type == 0:
-                self.functions_directory.addTempInt(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempInt(self.function_name, 1)
+                else:
+                    self.methods.addTempInt(self.function_name, 1)
             elif new_type == 1:
-                self.functions_directory.addTempFloat(self.function_name, 1)
+                if self.className is None:
+                    self.functions_directory.addTempFloat(self.function_name, 1)
+                else:
+                    self.methods.addTempFloat(self.function_name, 1)
             if new_type == -1:
                 print("Data type mismatch")
                 sys.exit(0)
