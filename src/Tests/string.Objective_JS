@@ -1,0 +1,18 @@
+Class String{
+	String();
+	Attributes{
+	}
+	Methods{
+		public:
+			function len(string word) returns int;
+	}
+}
+
+String(){
+}
+
+function len(string word) returns int{
+	var length : int;
+	length = 1;
+	return length;
+}

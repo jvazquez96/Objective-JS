@@ -1,20 +1,11 @@
 import Math
+import String
 
 Class Libraries{
 	main(){
-		var math : Math;
-		var a : float;
-		var m, n : int;
-		read >> a;
-		print("Sqrt", math.sqrt(a));
-		read >> a;
-		print("Floor", math.floor(a));
-		print("Ceil", math.ceil(a));
-		read >> a;
-		print("Abs", math.abs(a));
-		read >> m >> n;
-		print("Max", math.max(m, n));
-		read >> m >> n;
-		print("Min", math.min(m, n));
+		var str : String;
+		var word : string;
+		read >> word;
+		print("Len", str.len(word));
 	}
 }
