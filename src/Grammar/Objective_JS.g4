@@ -179,7 +179,7 @@ metodos :
 
 metodosPublicos :
 	PUBLIC COLON func SEMICOLON metodosPublicosAux
-	| PUBLIC SEMICOLON
+	| 
 	;
 
 metodosPublicosAux :
@@ -189,7 +189,7 @@ metodosPublicosAux :
 
 metodosPrivados :
 	PRIVATE COLON func SEMICOLON metodosPrivadosAux
-	| PRIVATE SEMICOLON
+	| 
 	;
 
 metodosPrivadosAux :

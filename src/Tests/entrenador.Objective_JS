@@ -9,7 +9,6 @@ Class Entrenador Inherits Seleccion{
 		public :
 			function getEquipo() returns string;
 			function setEquipo(string equipo);
-		private ;
 	}
 }
 

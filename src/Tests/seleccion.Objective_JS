@@ -18,7 +18,6 @@ Class Seleccion{
 			function setNombre(string nombre);
 			function setApellidos(string apellidos);
 			function setEdad(int edad);
-		private ;
 	}
 }
 Seleccion(){
