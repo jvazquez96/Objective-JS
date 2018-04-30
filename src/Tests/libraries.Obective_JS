@@ -1,11 +1,33 @@
 import Math
-import String
 
 Class Libraries{
 	main(){
-		var str : String;
-		var word : string;
-		read >> word;
-		print("Len", str.len(word));
+		var n : float;
+		var a, b : int;
+		var math : Math;
+
+		print("N for sqrt");
+		read >> n;
+		print(math.sqrt(n));
+
+		print("N for floor and ceil");
+		read >> n;
+		print(math.floor(n));
+		print(math.ceil(n));
+
+		print("N for abs");
+		read >> n;
+		print(math.abs(n));
+
+		print("N and M for max");
+		read >> a;
+		read >> b;
+		print(math.max(a, b));
+
+		print("N and M for min");
+		read >> a;
+		read >> b;
+		print(math.min(a, b));
+
 	}
 }
