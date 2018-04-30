@@ -1,0 +1,22 @@
+Class Fibonacci{
+	main(){
+		var n, c, first, second, next : int;
+		first = 0;
+		second = 1;
+		read >> n;
+		c = 0;
+
+		while(c < n){
+			if(c <= 1){
+				next = c;
+			}else{
+				next = first + second;
+				first = second;
+				second = next;
+			}
+			print(next);
+			c++;
+		}
+
+	}
+}
