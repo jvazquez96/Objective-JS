@@ -74,9 +74,8 @@
 74,ERA,setNombre,19000,None
 75,param,%"Miguel",1,10000
 76,GO.SUB,setNombre,None,18
-77,save_return,setNombre,None,13001
-78,print,%"El nombre del futbolista es: ",None,None
-79,ERA,getNombre,19000,None
-80,GO.SUB,getNombre,None,10
-81,save_return,getNombre,None,13002
-82,print,13002,None,None
+77,print,%"El nombre del futbolista es: ",None,None
+78,ERA,getNombre,19000,None
+79,GO.SUB,getNombre,None,10
+80,save_return,getNombre,None,13001
+81,print,13001,None,None
