@@ -46,6 +46,10 @@ CONST_TEMPORAL_TOP_STRING = 16999
 CONST_TEMPORAL_TOP_BOOLEAN = 17999
 CONST_TEMPORAL_TOP_NULL = 17999
 
+"""
+Clase Memory que almacena los 3 diccionarios utilizados
+para separar la memoria en constantes, locales y temporales
+"""
 class Memory():
 
 	def __init__(self, locals, temps, constants):
@@ -62,9 +66,17 @@ class Memory():
 	def getMemory(self):
 		return self.locals, self.temps, self.constants
 
-
+	"""
+	Clase VirtualMachine, esta clase itera sobre todos los cuadruplos
+	que lee desde un archivo.obj y realiza acciones dependiendo
+	de la operacion.
+	"""
 class VirtualMachine(object):
 
+	"""
+	Función que almacena todos los cuadruplos en un arreglo
+	e inicializa la memoria inicial.
+	"""
 	def __init__(self):
 		self.quadruples = []
 		with open ('archivo.obj', 'r') as file:
@@ -87,11 +99,10 @@ class VirtualMachine(object):
 		self.return_values = Stack()
 		self.start()
 
-	def resetMemory(self):
-		for localMemory, tempMemory in zip(self.locals, self.temps):
-			localMemory.clear()
-			tempMemory.clear()
-
+	"""
+	Función que itera sobre todos los cuadruplos y realiza una accion
+	dependiendo del operador
+	"""
 	def start(self):
 		while (self.quadruple_pointer < len(self.quadruples)):
 			next_quadruple = self.quadruples[self.quadruple_pointer]
@@ -517,11 +528,12 @@ class VirtualMachine(object):
 				self.return_values.push(value)
 				mem = self.context_stack.pop()
 				self.locals, self.temps, self.constatns = mem.getMemory()
-
-
-
 			self.quadruple_pointer += 1
 
+
+	"""
+	Funcion que obteniene el valor literal de la variable
+	"""
 	def get_actual_value(self, value):
 		if self.is_int(value):
 			return int(value)
@@ -533,6 +545,11 @@ class VirtualMachine(object):
 			return False
 		return value
 
+	"""
+	Funcion que intenta castear un parametro a int.
+	El parametro es posiblemente int.
+	Regresa un booleano
+	"""
 	def is_int(self, num):
 		try:
 			int(num)
@@ -540,6 +557,11 @@ class VirtualMachine(object):
 		except ValueError:
 			return False
 
+	"""
+	Funcion que intenta castear un parametro a float.
+	El parametro es posiblemente float.
+	Regresa un booleano
+	"""
 	def is_float(self, num):
 		try:
 			float(num)
@@ -547,6 +569,11 @@ class VirtualMachine(object):
 		except ValueError:
 			return False
 
+	"""
+	Funcion que obtiene el valor de una direccion. Dependiendo
+	de la direccion y del formato va a ser el valor de retorno
+	Regresa un el valor de la variable apuntado por la direccion
+	"""
 	def getValue(self, address):
 		if self.is_actual_value(address):
 			address = address[1:]
@@ -560,21 +587,57 @@ class VirtualMachine(object):
 		elif self.is_temporal(int(address)):
 			return self.get_temporal(int(address))
 
+	"""
+	Función que verifica si la direccion inicia con un %.
+	El parametro es de tipo String.
+	Regresa un booleano
+	"""
 	def is_actual_value(self, address):
 		return address.find("%") != -1
 
+	"""
+	Función que verifica si la direccion que se 
+	recibe es un apuntador a otra direccion.
+	El parametro es de tipo string.
+	Regresa un booleano
+	"""
 	def is_address(self, address):
 		return address[0] == '('
 
+	"""
+	Función que verifica si la direccion esta dentro
+	del rango de constantes
+	El parametro es de tipo int.
+	Regresa un booleano
+	"""
 	def is_constant(self, address):
 		return CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_NULL
 
+	"""
+	Función que verifica si la direccion esta dentro
+	del rango de locales
+	El parametro es de tipo int.
+	Regresa un booleano
+	"""
 	def is_local(self, address):
 		return CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_NULL
 
+	"""
+	Función que verifica si la direccion esta dentro
+	del rango de temporales
+	El parametro es de tipo int.
+	Regresa un booleano
+	"""
 	def is_temporal(self, address):
 		return CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_NULL
 
+
+	"""
+	Función que obtiene una direccion la cual
+	es apuntada por el parametro
+	El parametro es de tipo int.
+	Regresa un int
+	"""
 	def get_value_pointed_by_address(self, address):
 		new_address = address[1:-1]
 		if self.is_constant(int(new_address)):
@@ -586,6 +649,12 @@ class VirtualMachine(object):
 
 		return new_address_2
 
+	"""
+	Función que obtiene el valor apuntado por una direccion
+	global. Si no existe la direccion regresa un mensaje de error
+	El parametro es de tipo int.
+	Regresa un int
+	"""
 	def get_constant(self, address):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
 			if address not in self.constants[0]:
@@ -624,6 +693,12 @@ class VirtualMachine(object):
 			else:
 				return self.constants[5][address]
 
+	"""
+	Función que obtiene almacena un valor en una la direccion que se recibe
+	como parametro
+	El parametro address es de tipo int.
+	El parametro value puede ser de cualquier tipo
+	"""
 	def set_constant(self, address, value):
 		if CONST_GLOBAL_BOTTOM_INT <= address <= CONST_GLOBAL_TOP_INT:
 			self.constants[0][address] = value
@@ -638,6 +713,12 @@ class VirtualMachine(object):
 		elif CONST_GLOBAL_BOTTOM_NULL <= address <= CONST_GLOBAL_TOP_NULL:
 			self.constants[5][address] = value
 
+	"""
+	Función que obtiene el valor apuntado por una direccion
+	local. Si no existe la direccion regresa un mensaje de error
+	El parametro es de tipo int.
+	Regresa un int
+	"""
 	def get_local(self, address):
 		if CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_INT:
 			if address not in self.locals[0]:
@@ -670,6 +751,12 @@ class VirtualMachine(object):
 			else:
 				return self.locals[5][address]
 
+	"""
+	Función que obtiene almacena un valor en una la direccion que se recibe
+	como parametro
+	El parametro address es de tipo int.
+	El parametro value puede ser de cualquier tipo
+	"""
 	def set_local(self, context, address, value):
 		if CONST_LOCAL_BOTTOM_INT <= address <= CONST_LOCAL_TOP_INT:
 			context[0][address] = value
@@ -684,6 +771,12 @@ class VirtualMachine(object):
 		elif CONST_LOCAL_BOTTOM_NULL <= address <= CONST_LOCAL_TOP_NULL:
 			context[5][address] = value
 
+	"""
+	Función que obtiene almacena un valor en una la direccion que se recibe
+	como parametro
+	El parametro address es de tipo int.
+	El parametro value puede ser de cualquier tipo
+	"""
 	def set_temporal(self, context, address, value):
 		if CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_INT:
 			context[0][address] = value
@@ -698,6 +791,12 @@ class VirtualMachine(object):
 		elif CONST_TEMPORAL_BOTTOM_NULL <= address <= CONST_TEMPORAL_TOP_NULL:
 			context[5][address] = value
 
+	"""
+	Función que obtiene el valor apuntado por una direccion
+	local. Si no existe la direccion regresa un mensaje de error
+	El parametro es de tipo int.
+	Regresa un int
+	"""
 	def get_temporal(self, address):
 		if CONST_TEMPORAL_BOTTOM_INT <= address <= CONST_TEMPORAL_TOP_INT:
 			return self.temps[0][address]
@@ -712,14 +811,12 @@ class VirtualMachine(object):
 		elif CONST_TEMPORAL_BOTTOM_NULL <= address <= CONST_TEMPORAL_TOP_NULL:
 			return self.temps[5][address]
 
-
-
-	def get_value_from_memory(self, address):
-		if self.is_constant(address):
-			value = self.get_constant(address)
-
-		return value
-
+	"""
+	Funcion que verifica si la direccion que se recibe
+	como parametro apunta a algun entero.
+	El parametro es de tipo int.
+	Regresa un booleano
+	"""
 	def is_int_address(self, address):
 		if address >= CONST_GLOBAL_BOTTOM_INT or address <= CONST_GLOBAL_TOP_INT:
 			return True
@@ -730,6 +827,11 @@ class VirtualMachine(object):
 		else:
 			return False
 
+	"""
+	Funcion que verifica si la direccion se encuentra en el rango de 
+	nullos
+	Regresa un booleano
+	"""
 	def isNull(self, address):
 		address = int(address)
 		if address in self.constants[5] or address in self.locals[5]:
