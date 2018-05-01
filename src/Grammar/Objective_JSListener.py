@@ -1242,7 +1242,7 @@ class Objective_JSListener(ParseTreeListener):
 
     def enterGetReturnType(self, ctx):
         return_value = self.operandos.pop()
-        if (return_value == [] or return_value == "null") or return_value >= 12000:
+        if (return_value == [] or return_value == "null") or 12000 <=return_value <= 12999:
             print("Sorry, we don't support that datat type as return value")
             sys.exit()
         quadruple = Quadruple(self.id, "return", return_value, None, None)
