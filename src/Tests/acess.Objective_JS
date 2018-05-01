@@ -5,7 +5,11 @@ Class Access {
 	function test() {
 		var audi : Carro;
 		audi.Carro("a4");
-		print("el modelo de mi carro es:",audi.getModelo());
+		print("el modelo de mi carro es en la funcion: ",audi.getModelo());
+	}
+
+	function suma(int a, int b){
+		print(a+b);
 	}
 
 	main() {
@@ -13,8 +17,8 @@ Class Access {
 		doritos = "a";
 		test();
 		var serie335 : Carro;
-		audi.Carro("bwm");
-		print("el modelo de mi carro es:",audi.getModelo());
+		serie335.Carro("bmw");
+		print("el modelo de mi carro es:",serie335.getModelo());
 		var embraer175 : Avion;
 		embraer175.Avion("embraer", 2012);
 		print("Serie de mi avion", embraer175.getSerie(doritos));

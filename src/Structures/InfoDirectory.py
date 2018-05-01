@@ -8,11 +8,6 @@ class InfoDirectory(object):
 		self.return_type = return_type
 		# Types of parameters [int, float, char, string, bool, null]
 		self.parameters = [0, 0, 0, 0, 0, 0]
-		# Types of local variables [int, float, char, string, bool, null]
-		self.local_variables = [0, 0, 0, 0, 0, 0]
-		# Types of tempral variables [int, float, char, string, bool, null]
-		self.temporal_variables = [0, 0, 0, 0, 0, 0]
-		#
 		self.parameters2 = []
 		# Param table
 		self.param_table = ParamTable()
@@ -42,15 +37,11 @@ class InfoDirectory(object):
 	def getStartAddress(self):
 		return self.start_address
 
-	def getText(self):
-		return self.text
-
 	def setParamTable(self, paramTable):
 		self.param_table = paramTable
 
 	def setStartAddress(self, address):
 		self.start_address = address
-		self.text = "I'm being set"
 
 	def deleteTable(self):
 		self.symbol_table = SymbolTable()
@@ -61,9 +52,6 @@ class InfoDirectory(object):
 
 	def getParameters(self):
 		return self.parameters
-
-	def getVariables(self):
-		return self.local_variables
 
 	def setAccessibility(self, accessibility):
 		self.accessible = accessibility  

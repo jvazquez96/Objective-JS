@@ -315,7 +315,7 @@ class Objective_JSListener(ParseTreeListener):
         number_dimensions = 0
         if type == "int" or type == 0 and not mat_or_arr:
             number_dimensions += 1
-            if self.className is None:
+            if self.className is None or self.is_main_file:
                 if self.isGlobalVar:
                     self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_int_counter, id, type, isList, total_size, number_dimensions, dimensions)
                     self.current_global_int_counter += 1
@@ -460,6 +460,22 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_global_float_counter += (dimensions[0].getUpperBound())
+            elif self.is_main_file:
+                if self.isGlobalVar:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_global_float_counter, id, self.type, isList, total_size, number_dimensions, dimensions)
+                else:
+                    self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, self.type, isList, total_size, number_dimensions, dimensions)
+
+                if len(dimensions) == 2:
+                    if self.isGlobalVar:
+                        self.current_global_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                    else:
+                        self.current_local_float_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
+                else:
+                    if self.isGlobalVar:
+                        self.current_global_float_counter += (dimensions[0].getUpperBound())
+                    else:
+                        self.current_local_float_counter += (dimensions[0].getUpperBound())
             else:
                 self.methods.getInfoDirectory(self.function_name).push_frame(self.current_local_float_counter, id, self.type, isList, total_size, number_dimensions, dimensions)
                 if len(dimensions) == 2:
@@ -565,7 +581,9 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_boolean_counter += (dimensions[0].getUpperBound())
-
+        elif re.search("list(\[[0-9]+\])+[A-Z][a-z]*", self.type) is not None:
+            print("Sorry we don't support list of objects as parameters")
+            sys.exit()
         else: # It's an object
             number_dimensions += 1
             if self.className is None:
@@ -584,6 +602,26 @@ class Objective_JSListener(ParseTreeListener):
         Adds a new function into the function directory
         """
         if self.className is None and self.is_main_file:
+            if self.function_name not in self.functions_directory.getDirectory():
+                self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
+                self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
+                start_address = len(self.cuadruplos) + 1
+                self.functions_directory.getTable(self.function_name).setStartAddress(start_address)
+                for key, value in self.argumentos.getParameters().items():
+                    if value.getType() == 0:
+                        self.functions_directory.addParam(self.function_name, key, "int", value.getListSize())
+                    elif value.getType() == 1:
+                        self.functions_directory.addParam(self.function_name, key, "float", value.getListSize())
+                    elif value.getType() == 2:
+                        self.functions_directory.addParam(self.function_name, key, "char", value.getListSize())
+                    elif value.getType() == 3:
+                        self.functions_directory.addParam(self.function_name, key, "string", value.getListSize())
+                    elif value.getType() == 4:
+                        self.functions_directory.addParam(self.function_name, key, "bool", value.getListSize())
+            else:
+                print("Syntax error!! Function: " + self.function_name + " is already defined")
+                sys.exit(0)
+        elif self.is_main_file:
             if self.function_name not in self.functions_directory.getDirectory():
                 self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
                 self.functions_directory.getTable(self.function_name).setParamTable(self.argumentos)
@@ -975,6 +1013,9 @@ class Objective_JSListener(ParseTreeListener):
         else:
             self.does_returns = "returns"
             return_type = ctx.tipo_dato_no_list().getText()
+            if return_type[0].isupper():
+                print("Sorry we don't support returning objects")
+                sys.exit()
             self.methods.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
             # print("Function: " + str(self.function_name))
             # print("Return type: " + str(self.normalizeTypes(return_type)))
@@ -985,6 +1026,9 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
+            if self.type[0].isupper():
+                print("Sorry we don't support Objects as parameters")
+                sys.exit()
             self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosDecl.
@@ -1002,6 +1046,9 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
+            if self.type[0].isupper():
+                print("Sorry we don't support Objects as parameters")
+                sys.exit()
             self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosDeclAux.
@@ -1065,10 +1112,26 @@ class Objective_JSListener(ParseTreeListener):
             elif self.className is None:
                 self.does_returns = "returns"
                 return_type = ctx.tipo_dato_no_list().getText()
+                if return_type[0].isupper():
+                    print("Sorry we don't support returning objects")
+                    sys.exit()
+                self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
+            else:
                 self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
             # quadruple = Quadruple(self.id, "endproc", None, None)
             # self.id += 1
             # self.cuadruplos.append(quadruple)
+        elif self.is_main_file:
+            self.newFunction()
+            if ctx.RETURNS() is None:
+                self.does_returns = None
+            elif self.className is None:
+                self.does_returns = "returns"
+                return_type = ctx.tipo_dato_no_list().getText()
+                if return_type[0].isupper():
+                    print("Sorry we don't support returning objects")
+                    sys.exit()
+                self.functions_directory.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
         else:
             if self.function_name in self.methods.getDirectory().keys():
                 print("Function " + self.function_name + " already implemented")
@@ -1082,6 +1145,9 @@ class Objective_JSListener(ParseTreeListener):
             else:
                 self.does_returns = "returns"
                 return_type = ctx.tipo_dato_no_list().getText()
+                if return_type[0].isupper():
+                    print("Sorry we don't support returning objects")
+                    sys.exit()
                 return_type = self.normalizeTypes(return_type)
             self.classes[self.className].verifyMethod(self.function_name, self.argumentos, return_type)
             self.methods.create_table(self.function_name, InfoDirectory(SymbolTable()))
@@ -1100,6 +1166,9 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
+            if self.type[0].isupper():
+                print("Sorry we don't support Objects as parameters")
+                sys.exit()
             self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentos.
@@ -1112,6 +1181,9 @@ class Objective_JSListener(ParseTreeListener):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
             self.type = ctx.tipo_dato().getText()
+            if self.type[0].isupper():
+                print("Sorry we don't support Objects as parameters")
+                sys.exit()
             self.newArgument(id, self.type)
 
     # Exit a parse tree produced by Objective_JSParser#argumentosAux.
@@ -1170,6 +1242,9 @@ class Objective_JSListener(ParseTreeListener):
 
     def enterGetReturnType(self, ctx):
         return_value = self.operandos.pop()
+        if (return_value == [] or return_value == "null") or return_value >= 12000:
+            print("Sorry, we don't support that datat type as return value")
+            sys.exit()
         quadruple = Quadruple(self.id, "return", return_value, None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
@@ -1315,6 +1390,9 @@ class Objective_JSListener(ParseTreeListener):
                     self.current_local_boolean_counter += (dimensions[0].getUpperBound()) * (dimensions[1].getUpperBound())
                 else:
                     self.current_local_boolean_counter += (dimensions[0].getUpperBound())
+            elif re.search("list(\[[0-9]+\])+[A-Z][a-z]*", type) is not None:
+                print("Sorry we don't support list of objects as parameters")
+                sys.exit()
 
     # Exit a parse tree produced by Objective_JSParser#vars_.
     def exitVars_(self, ctx:Objective_JSParser.Vars_Context):
@@ -1532,7 +1610,6 @@ class Objective_JSListener(ParseTreeListener):
 
         new_type = np.int64(self.oraculo.getDataType(variableType, 14, possibleType))
         if new_type == -1:
-            print("id: " + id)
             print("Data type mismatch")
             sys.exit(0)
 
@@ -2616,9 +2693,17 @@ class Objective_JSListener(ParseTreeListener):
                             address = table[value].getAddress()
                     else:
                         if self.function_name in self.functions_directory.getDirectory():
-                            type = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value).getType()
-                            type = self.convertTypeToInt(type)
-                            address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value).getAddress()
+                            if self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value) != []:
+                                type = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value).getType()
+                                type = self.convertTypeToInt(type)
+                                address = self.functions_directory.getTable(self.function_name).getSymbolTable().getContent(value).getAddress()
+                            elif self.functions_directory.getTable(self.function_name).getParamTable().getParam(value) != []:
+                                type = self.functions_directory.getTable(self.function_name).getParamTable().getParam(value).getType()
+                                type = self.convertTypeToInt(type)
+                                address =self.functions_directory.getTable(self.function_name).getParamTable().getParam(value).getAddress()
+                            else:
+                                print("Var " + value + " used but not defined")
+                                sys.exit(0)
                         else:
                             table = self.classes[self.className].getMethodTable(self.function_name).getParamTable().getParameters()
                             table2 = self.classes[self.className].getMethodTable(self.function_name).getSymbolTable().getSymbols()
