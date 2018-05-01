@@ -106,7 +106,6 @@ def main(argv):
 
     VirtualMachine()
     toc = time.clock()
-    print(toc - tic)
 
 if __name__ == '__main__':
     main(sys.argv) 
