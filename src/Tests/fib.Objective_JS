@@ -1,0 +1,16 @@
+Class Sum {
+	function fib(int x) returns int {		
+		if (x <= 2) {
+			x = 1;
+		} else {
+			x = fib(x-1) + fib(x-2);
+		}
+		return x;
+	}
+	main() {
+		var n, z : int;
+		read >> n;
+		z = fib(n);
+		print(z);
+	}
+}

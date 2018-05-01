@@ -1,0 +1,15 @@
+Class Factorial{
+	main(){
+		var i, x, n : int;
+		i = 1;
+		x = 1;
+		read >> n;
+
+		while(i <= n){
+			x = x * i;
+			i++;
+		}
+		print(x);
+
+	}
+}
