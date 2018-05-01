@@ -96,7 +96,7 @@ class VirtualMachine(object):
 		while (self.quadruple_pointer < len(self.quadruples)):
 			next_quadruple = self.quadruples[self.quadruple_pointer]
 			address = next_quadruple.getResult()
-			operator = next_quadruple.getOperator()
+			operator = int(next_quadruple.getOperator())
 			operand1 = next_quadruple.getOperand1()
 			operand2 = next_quadruple.getOperand2()
 
@@ -104,15 +104,13 @@ class VirtualMachine(object):
 			if (address != "None" and address[0] != '(') and address[0] != '%':
 				address = int(address)
 
-			if operator == "GO.TO":
+			if operator == 1: # GOTO
 				self.quadruple_pointer = int(address) - 2
-			elif operator == "GO.TOFALSE":
+			elif operator == 2: # GOTO False
 				value = self.getValue(operand1)
 				if not value:
 					self.quadruple_pointer = int(address)-2
-			elif operator == "resetAddress":
-				self.resetMemory()
-			elif operator == "+":
+			elif operator == 3: # SUM
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -130,7 +128,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "-":
+			elif operator == 4: # Substraction
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -148,7 +146,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "=":
+			elif operator == 5: # igual
 				if operand1[0] == '(':
 					val = self.getValue(operand1)
 					val = self.getValue(str(val))
@@ -162,7 +160,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, val)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, val)
-			elif operator == "read":
+			elif operator == 6: # read
 				val = input("")
 				val = self.get_actual_value(val)
 					
@@ -179,7 +177,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, val)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, val)
-			elif operator == "/":
+			elif operator == 7: # division
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -202,7 +200,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "*":
+			elif operator == 8: # multiplicacion
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -220,7 +218,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "%":
+			elif operator == 9: # modulo
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -239,7 +237,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "^":
+			elif operator == 10: # power ^
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -257,7 +255,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "!=":
+			elif operator == 11: # not equal
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -275,7 +273,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "&&":
+			elif operator == 12: # and
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -293,7 +291,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "||":
+			elif operator == 13: # or
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -311,7 +309,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == ">":
+			elif operator == 14: # > (mayor que)
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -331,7 +329,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "<":
+			elif operator == 15: # < (menor que)
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -349,7 +347,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == ">=":
+			elif operator == 16: # >= mayor o igual
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -367,7 +365,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "<=":
+			elif operator == 17: # menor o igual
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -385,7 +383,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "==":
+			elif operator == 18: # igual
 				if operand1[0] == '(':
 					val1 = self.getValue(operand1)
 					val1 = self.getValue(str(val1))
@@ -403,7 +401,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, res)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, res)
-			elif operator == "isNull":
+			elif operator == 19: # isNull
 				isNull = self.isNull(operand1)
 				if self.is_constant(address):
 					self.set_constant(address, isNull)
@@ -411,7 +409,7 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, isNull)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, isNull)
-			elif operator == "isNotNull":
+			elif operator == 20: # isNotNull
 				isNull = not self.isNull(operand1)
 				if self.is_constant(address):
 					self.set_constant(address, isNull)
@@ -419,14 +417,14 @@ class VirtualMachine(object):
 					self.set_local(self.locals, address, isNull)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, isNull)
-			elif operator == "print":
+			elif operator == 21: # print
 				if operand1[0] == '(':
 					val = self.getValue(operand1)
 					print(str(self.getValue(str(val))))
 				else:
 					val = self.getValue(operand1)
 					print(str(val))
-			elif operator == "ERA":
+			elif operator == 22: # era
 				if operand2 != "None": # We have an object context
 					context = int(operand2)
 					if context in self.object_contexts.keys():
@@ -446,7 +444,7 @@ class VirtualMachine(object):
 					self.new_locals = [dict(), dict(), dict(), dict(), dict(), dict()]
 					self.new_temps = [dict(), dict(), dict(), dict(), dict(), dict()]
 					self.new_constants = self.constants
-			elif operator == "param":
+			elif operator == 23: # param
 				size = int(operand2)
 				if self.is_local(address):
 					start = 0;
@@ -474,27 +472,27 @@ class VirtualMachine(object):
 						start = 1
 				elif self.is_temporal(address):
 					self.set_temporal(self.new_temps, address, val)
-			elif operator == "GO.SUB":
+			elif operator == 24: # GO.SUB
 				self.locals = self.new_locals
 				self.temps = self.new_temps
 				self.constants = self.new_constants
 				self.pointer.push(self.quadruple_pointer + 1)
 				self.quadruple_pointer = address - 2
-			elif operator == "endproc":
+			elif operator == 25: #endproc
 				mem = self.context_stack.pop()
 				self.locals, self.temps, self.constants = mem.getMemory()
 				return_address = self.pointer.pop() - 1
 				self.quadruple_pointer = return_address
-			elif operator == "return":
+			elif operator == 26: #return
 				return_value = self.getValue(operand1)
 				self.return_values.push(return_value)
-			elif operator == "save_return":
+			elif operator == 27: # save_return
 				return_value = self.return_values.pop()
 				if self.is_local(address):
 					self.set_local(self.locals, address, return_value)
 				elif self.is_temporal(address):
 					self.set_temporal(self.temps, address, return_value)
-			elif operator == "VER":
+			elif operator == 28: # ver
 				val = self.getValue(operand1)
 				if not self.is_int(val):
 					print("The indices of a list must be an integer")
@@ -504,7 +502,7 @@ class VirtualMachine(object):
 				if val < lowerBound or val >= upperBound:
 					print("The indices must be between the boundaries")
 					sys.exit(0)
-			elif operator == "attribute_access":
+			elif operator == 29: # attribute_access
 				object_address = int(operand1)
 				attribute_address = operand2
 				dest_address = int(address)

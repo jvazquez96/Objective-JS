@@ -27,3 +27,6 @@ class Quadruple(object):
 
 	def print(self):
 		print(str(self.id) + " " + str(self.operator) + " " + str(self.operand1) + " " + str(self.operand2) + " " + str(self.result))
+
+	def setOperator(self, operator):
+		self.operator = operator

@@ -9,6 +9,39 @@ from Grammar.Objective_JSListener import Objective_JSListener
 from VirtualMachine import VirtualMachine
 from Objective_JS_ErrorListener import Objective_JS_ErrorListener
 import time
+from Structures.GO import GO
+
+codes = {
+    "GO.TO" : 1,
+    "GO.TOFALSE" : 2,
+    "+" : 3,
+    "-" : 4,
+    "=" : 5,
+    "read": 6,
+    "/": 7,
+    "x": 8,
+    "%": 9,
+    "^": 10,
+    "!=": 11,
+    "&&": 12,
+    "||": 13,
+    ">": 14,
+    "<": 15,
+    ">=": 16,
+    "<=": 17,
+    "==": 18,
+    "isNull": 19,
+    "isNotNull": 20,
+    "print": 21,
+    "ERA": 22,
+    "param": 23,
+    "GO.SUB": 24,
+    "endproc": 25,
+    "return": 26,
+    "save_return": 27,
+    "VER": 28,
+    "attribute_access": 29
+}
 
 def preprocess(fileName):
     with open(fileName, 'r') as original:
@@ -64,13 +97,9 @@ def main(argv):
         os.remove('Tests/original_copy.Objective_JS')
     walker.walk(listener, tree)
     quadruples = listener.getQuadruples()
-    # functions = listener.getFunctionDirectory()
-    # for key, value in functions.getDirectory().items():
-    #     print("Function: " + str(key))
-    #     for key2, value2 in value.getSymbolTable().getSymbols().items():
-    #         print("Var: " + str(key2))
-    #         print("Address: " + str(value2.getAddress()))
 
+    for quadruple in quadruples:
+        quadruple.setOperator(codes[str(quadruple.getOperator())])
     with open ('archivo.obj', 'w') as file:
         for quadruple in quadruples:
             file.write(str(quadruple.getId()) + "," + str(quadruple.getOperator()) + "," + str(quadruple.getOperand1()) + "," + str(quadruple.getOperand2()) + "," + str(quadruple.getResult()) + "\n")
@@ -78,45 +107,6 @@ def main(argv):
     VirtualMachine()
     toc = time.clock()
     print(toc - tic)
-    # function_directory = listener.getFunctionDirectory()
-    # for key, value in function_directory.getDirectory().items():
-    #     print("Function: " + str(key))
-    #     parameters = value.getParams()
-    #     for parameter in parameters:
-    #         print("Parameter: " + str(parameter[0]))
-    #         print("Value: " + str(parameter[1]))
-    #         print("Size: " + str(parameter[2]))
-    #     print("Parameters: " + str(value.numberOfParameters()))
-    #     print("Local variables: " + str(value.numberOfLocalVariables()))
-    #     print("Temporary variables: " + str(value.numberofTemporaryVariables()))
 
-    #     # Variables
-    #     print("Variables")
-    #     print("Number int of variables: " + str(value.numberOfVariablesInt()))
-    #     print("Number float of variables: " + str(value.numberOfVariablesFloat()))
-    #     print("Number char of variables: " + str(value.numberOfVariablesChar()))
-    #     print("Number string of variables: " + str(value.numberOfVariablesString()))
-    #     print("Number bool of variables: " + str(value.numberOfVariablesBool()))
-    #     # Parameters
-    #     print("Parameters")
-    #     print("Number int of parameters: " + str(value.numberOfParametersInt()))
-    #     print("Number float of parameters: " + str(value.numberOfParametersFloat()))
-    #     print("Number char of parameters: " + str(value.numberOfParametersChar()))
-    #     print("Number string of parameters: " + str(value.numberOfParametersString()))
-    #     print("Number bool of parameters: " + str(value.numberOfParametersBool()))
-    #     # Temporaries
-    #     print("Temporal")
-    #     print("Number int of temporary: " + str(value.numberOfTemporaryInt()))
-    #     print("Number float of temporary: " + str(value.numberOfTemporaryFloat()))
-    #     print("Number char of temporary: " + str(value.numberOfTemporaryChar()))
-    #     print("Number string of temporary: " + str(value.numberOfTemporaryString()))
-    #     print("Number bool of temporary: " + str(value.numberOfTemporaryBool()))
-    # for i in quadruples:
-    #     i.print()
-    # for key, value in listener.getFunctionDirectory().getDirectory().items():
-    #   print("Function name: " + str(key))
-    #   print("Symbol table: "  + str(len(value.getSymbolTable().getTable())))
-    #   print("Returns?: " + str(value.getReturnType()))
- 
 if __name__ == '__main__':
     main(sys.argv) 
