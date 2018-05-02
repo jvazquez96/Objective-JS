@@ -70,8 +70,48 @@ CONST_OBJECTS_START_ADDRESS = 19000
 
 
 # This class defines a complete listener for a parse tree produced by Objective_JSParser.
+"""
+Esta clase pasa a traves de cada regla de la gramatica y genera 2 funciones (enter y exit de la regla). A traves de cada realizamos la verificacion semantica.
+Esta clase contiene:
+fileName: string
+functions_directory : FunctionsDirectory
+type : int
+accessible : boolean
+does_returns : string
+arguments : ParamTable()
+constructores : int
+cuadruplos : list
+operadores : stack
+operandos : stack
+types : stack
+while_jumps : stack
+registros : int
+oraculo : Cube
+isListDeclared : boolean
+pending_jumps : Stack
+id : int
+do_object : boolean
+current_param_counter : int
+isGlobalVar : boolean
+dims : Stack
+ids : Stack
+imports : list
+only_class : Boolean
+is_arr_or_mat : boolean
+clasess : dict
+className : string
+class_from_instance : boolean
+attributes : dict
+methods : FunctionDirectory()
+object_counter : int
+is_main_file : boolean
+object_access : int
+"""
 class Objective_JSListener(ParseTreeListener):
 
+    """
+    Inicializa los atributos de la clase, recibe como parametro el nombre del archivo
+    """
     def __init__(self, fileName):
         self.fileName = fileName
         self.functions_directory = FunctionsDirectory()
@@ -112,6 +152,9 @@ class Objective_JSListener(ParseTreeListener):
         self.object_address = None
 
 
+    """
+    Reinicia las memorias locales y temporales
+    """
     def resetMemoryAddresses(self):
         self.current_local_int_counter = CONST_LOCAL_BOTTOM_INT
         self.current_local_float_counter = CONST_LOCAL_BOTTOM_FLOAT
@@ -126,6 +169,9 @@ class Objective_JSListener(ParseTreeListener):
         self.current_temp_boolean_counter = CONST_TEMPORAL_BOTTOM_BOOLEAN
         self.current_temp_null_counter = CONST_TEMPORAL_BOTTOM_NULL
 
+    """
+    Inicializa las direcciones de memoria
+    """
     def initMemoryAddresses(self):
         self.current_global_int_counter = CONST_GLOBAL_BOTTOM_INT
         self.current_global_float_counter = CONST_GLOBAL_BOTTOM_FLOAT
@@ -264,6 +310,10 @@ class Objective_JSListener(ParseTreeListener):
             self.classes[className].setName(className)
 
 
+    """
+    Parsea la informacion de una lista que recibe como parametro
+    regresa el tamano total, el numero de dimensiones y una lista de Dimensiones
+    """
     def parseList(self, type):
         totalSize = 1
         number_dimensions = 0
@@ -292,10 +342,10 @@ class Objective_JSListener(ParseTreeListener):
             dimensions[0].setM(0)
         return totalSize, number_dimensions, dimensions
 
+    """
+    Agrega una nueva variable al directorio de funciones o a la tabla de atributos de una clase
+    """
     def newVars(self, id, type, mat_or_arr):
-        """
-        Adds a new variable into the function_directory
-        """
         if self.className is None and self.is_main_file:
             if id in self.functions_directory.getTable(self.function_name).getSymbolTable().getSymbols().items():
                 print("Syntax error!! Variable: " + id + " is already defined")
@@ -597,10 +647,10 @@ class Objective_JSListener(ParseTreeListener):
                 self.functions_directory.getInfoDirectory(self.function_name).push_frame(self.object_counter, id, type, isList, total_size, number_dimensions, dimensions)
                 self.object_counter += 1
 
+    """
+    Agrega una nueva funcion al directorio de funciones de clases o de la clase principal
+    """
     def newFunction(self):
-        """
-        Adds a new function into the function directory
-        """
         if self.className is None and self.is_main_file:
             if self.function_name not in self.functions_directory.getDirectory():
                 self.functions_directory.create_table(self.function_name, InfoDirectory(SymbolTable()))
@@ -656,6 +706,9 @@ class Objective_JSListener(ParseTreeListener):
                 elif value.getType() == 4:
                     self.methods.addParam(self.function_name, key, "bool", value.getListSize())
 
+    """
+    Convierte un tipo de dato string a int
+    """
     def convertIntToStringType(self, type):
         if type == 0:
             return "int"
@@ -670,6 +723,9 @@ class Objective_JSListener(ParseTreeListener):
         elif type == 5:
             return "null"
 
+    """
+    Convierte un tipo de dato o lista a int
+    """
     def getTypeFromFactor(self, ctx, value):
         if ctx.varCte().TYPE_INT() is not None or re.search("list(\[.*\])+int", value) is not None:
             return 0
@@ -684,6 +740,9 @@ class Objective_JSListener(ParseTreeListener):
         else:
             return self.getTypeFromVariable(value)
 
+    """
+    Convierte un tipo de dato o lista a int
+    """
     def convertTypeToInt(self, type):
         if type is not None and not isinstance(type, int):
             if type == "int" or re.search("list(\[.*\])+int", type) is not None:
@@ -701,17 +760,26 @@ class Objective_JSListener(ParseTreeListener):
         return type
 
     # Enter a parse tree produced by Objective_JSParser#inicio.
+    """
+    Marca el inicio de una clase y noe l main
+    """
     def enterInicio(self, ctx:Objective_JSParser.InicioContext):
         if ctx.main() is None:
             self.only_class = True
 
     # Exit a parse tree produced by Objective_JSParser#inicio.
+    """
+    Marca el inicio de la clase
+    """
     def exitInicio(self, ctx:Objective_JSParser.InicioContext):
         if  self.only_class:
             end = self.pending_jumps.pop()
             self.fill(end, len(self.cuadruplos) + 1)
 
     # Enter a parse tree produced by Objective_JSParser#main.
+    """
+    Genera el cuadruplo para ir a la funcion principal
+    """
     def enterMain(self, ctx:Objective_JSParser.MainContext):
         quadruple = Quadruple(self.id, GO.TO, None, None, None)
         self.cuadruplos.append(quadruple)
@@ -719,10 +787,16 @@ class Objective_JSListener(ParseTreeListener):
         self.pending_jumps.push(len(self.cuadruplos) - 1)
 
     # Exit a parse tree produced by Objective_JSParser#main.
+    """
+    Marca el fin de la funcion principal
+    """
     def exitMain(self, ctx:Objective_JSParser.MainContext):
         self.is_main_file = True
 
     # Enter a parse tree produced by Objective_JSParser#clase.
+    """
+    Genera el cuadruplo para el inicio de una clase
+    """
     def enterClase(self, ctx:Objective_JSParser.ClaseContext):
         if self.only_class:
             quadruple = Quadruple(self.id, GO.TO, None, None, None)
@@ -738,7 +812,9 @@ class Objective_JSListener(ParseTreeListener):
         # self.is_main_file = True
         pass
 
-
+    """
+    Al final de cada clase, agrega los metodos y atributos a su diccionario corresponiente
+    """
     def exitEndClase(self, ctx):
         self.classes[self.className].updateMethods(self.methods)
         if self.classes[self.className].getInherits() is not None:
@@ -751,26 +827,10 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#imports.
     def enterImports(self, ctx:Objective_JSParser.ImportsContext):
-        # if ctx.IMPORT() is not None:
-        #     file_name = ctx.ID().getText() + ".Objective_JS"
-        #     self.imports.append(file_name)
         pass
 
     def enterPasteImports(self, ctx):
         pass
-        # with open("temp_file.Objective_JS", "a") as temp_file:
-        #     for file in self.imports:
-        #         with open(file, "r") as imported_file:
-        #             temp_file.write(imported_file.read())
-
-        #     with open(self.fileName, 'r') as init_file:
-        #         temp_file.write(init_file.read())
-
-        # with open('original_copy.Objective_JS', 'w') as output, open(self.fileName, 'r') as input:
-        #     output.write(input.read())
-
-        # with open(self.fileName, 'w+') as output, open('temp_file.Objective_JS', 'r') as input:
-        #     output.write(input.read())
 
     # Exit a parse tree produced by Objective_JSParser#imports.
     def exitImports(self, ctx:Objective_JSParser.ImportsContext):
@@ -786,15 +846,19 @@ class Objective_JSListener(ParseTreeListener):
     # Exit a parse tree produced by Objective_JSParser#class_declaration.
     def exitClass_declaration(self, ctx:Objective_JSParser.Class_declarationContext):
         pass
-        # with open('original_copy.Objective_JS','r') as input, open(self.fileName, 'w+') as output:
-        #     output.write(input.read())
-        # os.remove('original_copy.Objective_JS')
+
+    """
+    MArca el inicio de la funcion main, inicia la tabla de funciones de la clase
+    """
     # Enter a parse tree produced by Objective_JSParser#main_header.
     def enterMain_header(self, ctx:Objective_JSParser.Main_headerContext):
         self.is_main_file = True
         self.function_name = "main"
         self.functions_directory.create_table("main", InfoDirectory(None))
 
+    """
+    MArca el inicio de la clase main
+    """
     # Exit a parse tree produced by Objective_JSParser#main_header.
     def exitMain_header(self, ctx:Objective_JSParser.Main_headerContext):
         self.registros = 1
@@ -820,6 +884,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    """
+    Verifica la herencia de una clase
+    """
     # Enter a parse tree produced by Objective_JSParser#claseAux.
     def enterClaseAux(self, ctx:Objective_JSParser.ClaseAuxContext):
         if ctx.INHERITS() is not None:
@@ -847,6 +914,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    """
+    Verifica que el constructor tenga el mismo nombre de la clase
+    """
     # Enter a parse tree produced by Objective_JSParser#constructor.
     def enterConstructor(self, ctx:Objective_JSParser.ConstructorContext):
         if ctx.CLASSNAME().getText() != self.className:
@@ -881,11 +951,17 @@ class Objective_JSListener(ParseTreeListener):
     def enterAtributos(self, ctx:Objective_JSParser.AtributosContext):
         self.function_name = None
 
+    """
+    Agrega todos los atributos a la clase y reinicia las direcciones
+    """
     # Exit a parse tree produced by Objective_JSParser#atributos.
     def exitAtributos(self, ctx:Objective_JSParser.AtributosContext):
         self.classes[self.className].setAttributes(self.attributes)
         self.resetMemoryAddresses()
 
+    """
+    Marca la visibilidad como verdadera
+    """
     # Enter a parse tree produced by Objective_JSParser#atributosPublic.
     def enterAtributosPublic(self, ctx:Objective_JSParser.AtributosPublicContext):
         self.accessible = True
@@ -903,7 +979,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitAtributosPublicAux(self, ctx:Objective_JSParser.AtributosPublicAuxContext):
         pass
 
-
+    """
+    Marca la visibilidad como falsa
+    """
     # Enter a parse tree produced by Objective_JSParser#atributosPrivate.
     def enterAtributosPrivate(self, ctx:Objective_JSParser.AtributosPrivateContext):
         self.accessible = False
@@ -935,11 +1013,11 @@ class Objective_JSListener(ParseTreeListener):
     def enterMetodos(self, ctx:Objective_JSParser.MetodosContext):
         pass
 
+    """
+    Agrega los metodos de una clase a su directorio de funciones
+    """
     # Exit a parse tree produced by Objective_JSParser#metodos.
     def exitMetodos(self, ctx:Objective_JSParser.MetodosContext):
-        # for key, value in self.methods.getDirectory().items():
-        #     print("Key: " + str(key))
-        #     print("Return: " + str(value.getReturnType()))
         self.classes[self.className].addMethodsTable(self.methods)
         if self.classes[self.className].getInherits() is not None:
             self.classes[self.className].copyAtts(self.classes[self.classes[self.className].getInherits()])
@@ -949,6 +1027,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#metodosPublicos.
+    """
+    Marca la visibildad de los metodos como publica
+    """
     def enterMetodosPublicos(self, ctx:Objective_JSParser.MetodosPublicosContext):
         self.accessible = True
 
@@ -965,7 +1046,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitMetodosPublicosAux(self, ctx:Objective_JSParser.MetodosPublicosAuxContext):
         pass
 
-
+    """
+    Marca la visibilidad de los metodos como privada
+    """
     # Enter a parse tree produced by Objective_JSParser#metodosPrivados.
     def enterMetodosPrivados(self, ctx:Objective_JSParser.MetodosPrivadosContext):
         self.accessible = False
@@ -984,11 +1067,17 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
 
+    """
+    Crea un nuevo directorio de funciones para la funcion
+    """
     # Enter a parse tree produced by Objective_JSParser#func.
     def enterFunc(self, ctx:Objective_JSParser.FuncContext):
         self.function_name = ctx.ID().getText()
         self.argumentos = ParamTable()
 
+    """
+    Al final de la funcion reinicia las direcciones
+    """
     # Exit a parse tree produced by Objective_JSParser#func.
     def exitFunc(self, ctx:Objective_JSParser.FuncContext):
         self.resetMemoryAddresses()
@@ -999,6 +1088,9 @@ class Objective_JSListener(ParseTreeListener):
     def enterFuncAux(self, ctx:Objective_JSParser.FuncAuxContext):
         pass
 
+    """
+    Almacena toda la informacion de la informacion al termino de su parseo.
+    """
     # Exit a parse tree produced by Objective_JSParser#funcAux.
     def exitFuncAux(self, ctx:Objective_JSParser.FuncAuxContext):
         if self.function_name in self.methods.getDirectory().keys():
@@ -1017,11 +1109,12 @@ class Objective_JSListener(ParseTreeListener):
                 print("Sorry we don't support returning objects")
                 sys.exit()
             self.methods.getTable(self.function_name).setReturnType(self.normalizeTypes(return_type))
-            # print("Function: " + str(self.function_name))
-            # print("Return type: " + str(self.normalizeTypes(return_type)))
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosDecl.
+    """
+    Guarda los argumentos de una funcion un lugar correspondiente. Actualmente no soportamos objetos como argumentos
+    """
     def enterArgumentosDecl(self, ctx:Objective_JSParser.ArgumentosDeclContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1035,6 +1128,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitArgumentosDecl(self, ctx:Objective_JSParser.ArgumentosDeclContext):
         pass
 
+    """
+    Agrega los argumentos de un constructor a la lista y reinicia las direcciones
+    """
     def enterAddConsTable(self,  ctx:Objective_JSParser.AddConsTableContext):
         self.classes[self.className].addConstructorParams(self.argumentos)
         self.resetMemoryAddresses()
@@ -1042,6 +1138,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosDeclAux.
+    """
+    Verifica los tipos de los argumentos, actualmente no soportamos Objetos
+    """
     def enterArgumentosDeclAux(self, ctx:Objective_JSParser.ArgumentosDeclAuxContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1057,15 +1156,24 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#impConstructores.
+    """
+    Agrega la direccion de inicio de cada constructor
+    """
     def enterImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
         self.classes[self.className].addConstructorStartAddress(len(self.cuadruplos)+1)
 
     # Exit a parse tree produced by Objective_JSParser#impConstructores.
+    """
+    Limpia la tabla de funciones al termino de los constructor
+    """
     def exitImpConstructores(self, ctx:Objective_JSParser.ImpConstructoresContext):
         self.methods = FunctionsDirectory()
 
 
     # Enter a parse tree produced by Objective_JSParser#impConstructor.
+    """
+    Verifica el nombre del constructor
+    """
     def enterImpConstructor(self, ctx:Objective_JSParser.ImpConstructorContext):
         self.function_name = self.className
         if ctx.CLASSNAME().getText() != self.className:
@@ -1090,6 +1198,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Enter a parse tree produced by Objective_JSParser#impFunc.
+    """
+    Guarda el nombre de la funcion
+    """
     def enterImpFunc(self, ctx:Objective_JSParser.ImpFuncContext):
         if ctx.FUNCTION() is not None:
             self.function_name = ctx.ID().getText()
@@ -1099,11 +1210,13 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     def exitDeleteFunctions(self, ctx:Objective_JSParser.DeleteFunctionsContext):
-        # self.methods = FunctionsDirectory()
         pass
 
 
     # Enter a parse tree produced by Objective_JSParser#impFuncAux2.
+    """
+    Obten el el valor de retorno de una funcion. Actualmente no soportamos objetos
+    """
     def enterImpFuncAux2(self, ctx:Objective_JSParser.ImpFuncAux2Context):
         if self.className is None and self.is_main_file:
             self.newFunction()
@@ -1162,6 +1275,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentos.
+    """
+    Agrega los argumentos de los constructores. Actualmente no soportamos objetos
+    """
     def enterArgumentos(self, ctx:Objective_JSParser.ArgumentosContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1177,6 +1293,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosAux.
+    """
+    Agrega los argumentos de los constructores. Actualmente no soportamos objetos
+    """
     def enterArgumentosAux(self, ctx:Objective_JSParser.ArgumentosAuxContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1196,6 +1315,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#bloqueConstructor.
+    """
+    Genera el cuadruplo para la terminacion de los constructores
+    """
     def exitBloqueConstructor(self, ctx:Objective_JSParser.BloqueConstructorContext):
         if ctx.SEMICOLON() is None:
             self.classes[self.className].verifyConstructorParams(self.argumentos)
@@ -1212,6 +1334,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#bloqueFunc.
+    """
+    Genera el cuadruplo para la terminacion de funciones
+    """
     def exitBloqueFunc(self, ctx:Objective_JSParser.BloqueFuncContext):
         self.argumentos = ParamTable()
         quadruple = Quadruple(self.id, "endproc", None, None, None)
@@ -1235,11 +1360,17 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#bloqueFuncAux2.
+    """
+    Remueve la informacion de la funcion al termino de su parseo. No es necesario almacenarla
+    """
     def exitBloqueFuncAux2(self, ctx:Objective_JSParser.BloqueFuncAux2Context):
         if self.className is None:
             self.functions_directory.remove_info(self.function_name)
         self.function_name = None
 
+    """
+    Obten el valor de retorno de una funcion. Actualmetne no soportamos clases o nulos como valores de retornos
+    """
     def enterGetReturnType(self, ctx):
         return_value = self.operandos.pop()
         if isinstance(return_value, str):
@@ -1267,6 +1398,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#vars_.
+    """
+    Obten el tipo de dato de una variabel
+    """
     def enterVars_(self, ctx:Objective_JSParser.Vars_Context):
         id = ctx.ID().getText()
         self.type = ctx.tipo_dato().getText() 
@@ -1306,6 +1440,9 @@ class Objective_JSListener(ParseTreeListener):
 
         self.newVars(id, type_number, self.is_arr_or_mat)
 
+    """
+    Agrega los argumentos de funciones a su lugar correspondiente
+    """
     def newArgument(self, id, type):
         """
         Adds a new parameter into the parameter table
@@ -1406,6 +1543,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#varsAux.
+    """
+    Agrega una nueva variable al directorio de funciones o de atributos correspondiente
+    """
     def enterVarsAux(self, ctx:Objective_JSParser.VarsAuxContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1415,33 +1555,51 @@ class Objective_JSListener(ParseTreeListener):
     def exitVarsAux(self, ctx:Objective_JSParser.VarsAuxContext):
         self.is_arr_or_mat = False
 
+    """
+    Verifica si un tipo es lista
+    """
     def isList(self, string):
         pos = string.find('list')
         return pos >= 0
 
+    """
+    Verifica si un tipo es int
+    """
     def isInt(self, string):
         pos = string.find('int')
         return pos >= 0
-
+    """
+    Verifica si un tipo es float
+    """
     def isFloat(self, string):
         pos = string.find('float')
         return pos >= 0
-
+    """
+    Verifica si un tipo es char
+    """
     def isChar(self, string):
         pos = string.find('char')
         return pos >= 0
 
-
+    """
+    Verifica si un tipo es string
+    """
     def isString(self, string):
         pos = string.find('string')
         return pos >= 0
 
+    """
+    Verifica si un tipo es boolean
+    """
     def isBool(self, string):
         pos = string.find('bool')
         return pos >= 0
 
 
     # Enter a parse tree produced by Objective_JSParser#varsRepeated.
+    """
+    Verifica el tipo de datos de una variable
+    """
     def enterVarsRepeated(self, ctx:Objective_JSParser.VarsRepeatedContext):
         if ctx.ID() is not None:
             id = ctx.ID().getText()
@@ -1497,10 +1655,16 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#tipo_dato_list.
+    """
+    Set the variable, en este punto ya sabemos que es una lista
+    """
     def enterTipo_dato_list(self, ctx:Objective_JSParser.Tipo_dato_listContext):
         self.isListDeclared = True
 
     # Exit a parse tree produced by Objective_JSParser#tipo_dato_list.
+    """
+    Ya se acabo la lista
+    """
     def exitTipo_dato_list(self, ctx:Objective_JSParser.Tipo_dato_listContext):
         self.isListDeclared = False
 
@@ -1552,13 +1716,12 @@ class Objective_JSListener(ParseTreeListener):
 
     # Enter a parse tree produced by Objective_JSParser#asignacion.
     def enterAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
-        # id = self.getId(ctx.objeto().getText())
-        # address = self.getMemoryAddressFromVariable(id)
-        # self.operandos.push(address)
-        # self.operadores.push('=')
         pass
 
     # Exit a parse tree produced by Objective_JSParser#asignacion.
+    """
+    Obten el tipo de dato de la variable que queremos asignar y el del valor de la expresion si son posibles genera el cuadruplo correspondiente
+    """
     def exitAsignacion(self, ctx:Objective_JSParser.AsignacionContext):
         valor = self.operandos.pop()
         id = self.getId(ctx.objeto().getText())
@@ -1638,6 +1801,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#endIf.
+    """
+    Llena todos los cuadruplos pendientes para la terminacion del if
+    """
     def exitEndIf(self, ctx:Objective_JSParser.EndIfContext):
         end = self.pending_jumps.pop()
         while (end != -1):
@@ -1648,6 +1814,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#exitIfExpresion.
+    """
+    Inicio de una expresion de IFs, guarda el valor y genera el cuadruplo GO.TOFALSE
+    """
     def enterExitIfExpresion(self, ctx:Objective_JSParser.ExitIfExpresionContext):
         condition_type = self.types.pop()
         if condition_type != 4:
@@ -1688,6 +1857,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#enterElse.
+    """
+    Final de un bloque de if, sigue un ELSE, genera el cuadruplo GOTO para la terminacion del bloque.
+    """
     def exitEnterElse(self, ctx:Objective_JSParser.EnterElseContext):
         quadruple = Quadruple(self.id, GO.TO, None, None, None)
         self.id += 1
@@ -1701,8 +1873,10 @@ class Objective_JSListener(ParseTreeListener):
     def enterEscritura(self, ctx:Objective_JSParser.EscrituraContext):
         pass
 
+    """
+    Genera el cuadruplo para imprimr una expresion
+    """
     def enterPrintAfterExpresion(self, ctx:Objective_JSParser.EscrituraContext):
-        # print("PRINT: " + str(self.operandos.pop()))
         exp = self.operandos.pop()
         quadruple = Quadruple(self.id, "print", exp, None, None)
         self.id += 1
@@ -1717,9 +1891,10 @@ class Objective_JSListener(ParseTreeListener):
     def enterEscrituraAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
         pass
 
-
+    """
+    Genera el cuadruplo para imprimr una expresion
+    """
     def enterPrintAfterExpresionAux(self, ctx:Objective_JSParser.EscrituraAuxContext):
-        # print("PRINT aux: " + str(self.operandos.pop()))
         quadruple = Quadruple(self.id, "print",  self.operandos.pop(), None, None)
         self.id += 1
         self.cuadruplos.append(quadruple)
@@ -1742,6 +1917,9 @@ class Objective_JSListener(ParseTreeListener):
     def enterAfterDo(self, ctx:Objective_JSParser.AfterDoContext):
         pass
 
+    """
+    Asigna el cuadruplo del contador para el ciclo Do n times
+    """
     # Exit a parse tree produced by Objective_JSParser#afterDo.
     def exitAfterDo(self, ctx:Objective_JSParser.AfterDoContext):
         cuadruplo = Quadruple(self.id, '=', "%1", None, self.current_temp_int_counter)
@@ -1757,6 +1935,9 @@ class Objective_JSListener(ParseTreeListener):
     def enterAfterCondition(self, ctx:Objective_JSParser.AfterConditionContext):
         pass
 
+    """
+    Genera el cuadruplo para cuando sea el termino de la condicion de un ciclo
+    """
     # Exit a parse tree produced by Objective_JSParser#afterCondition.
     def exitAfterCondition(self, ctx:Objective_JSParser.AfterConditionContext):
         condition = self.operandos.pop()
@@ -1772,6 +1953,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#afterDoLoop.
+    """
+    Al final de cada ciclo incrementa el contador en + 1
+    """
     def exitAfterDoLoop(self, ctx:Objective_JSParser.AfterDoLoopContext):
         registro = "r" + str(self.registros)
         addressIter = self.operandos.pop()
@@ -1813,6 +1997,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#afterWhileExpression.
+    """
+    Compara el resultado de la expresion del ciclo. Si es booleana genera el cuadruplo apropiado, en caso contrario fin del programa.
+    """
     def enterAfterWhileExpression(self, ctx:Objective_JSParser.AfterWhileExpressionContext):
         condition = self.operandos.pop()
         exp_type = self.types.pop()
@@ -1831,6 +2018,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#exitWhile.
+    """
+    Genera el cuadruplo GO.TO para regresar a la verificacion del while
+    """
     def enterExitWhile(self, ctx:Objective_JSParser.ExitWhileContext):
         end = self.pending_jumps.pop()
         ret = self.pending_jumps.pop()
@@ -1845,6 +2035,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#doAux.
+    """
+    Genera el cuadruplo de comparacion para la terminacion del ciclo DO n TImes
+    """
     def enterDoAux(self, ctx:Objective_JSParser.DoAuxContext):
         if ctx.objeto() is not None:
             self.do_object = True
@@ -1871,6 +2064,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#llamadaFunc.
+    """
+    Verifica la llamada funcion, si la funcion existe, y si proviene de un objeto genera el ERA apropiado.
+    """
     def enterLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
         self.call_from_instance = False
         if (len(ctx.ID()) == 2): # Check if you are trying to call a class method from a primitive
@@ -1921,6 +2117,9 @@ class Objective_JSListener(ParseTreeListener):
                 sys.exit()
             self.argumentos = ParamTable()
 
+    """
+    Almacena los argumentos de la llamada a constructores y obten su tipo
+    """
     def exitStoreParamConstructor(self, ctx):
         id = self.operandos.pop()
         if self.function_name in self.functions_directory.getDirectory():
@@ -1936,6 +2135,9 @@ class Objective_JSListener(ParseTreeListener):
                 var_type = self.convertIntToStringType(var_type)
         self.newArgument(id, var_type)
 
+    """
+    Verifica que el constructor que estamos llamando este implementado correctamente.Si es asi, genera los cuadruplos para mandar a llamar al constructor
+    """
     def exitVerifyConstructor(self, ctx):
         number_constructors = self.classes[self.className].getNumberOfConstructors()
         constructor = None
@@ -1964,7 +2166,9 @@ class Objective_JSListener(ParseTreeListener):
             self.id += 1
 
 
-
+    """
+    Convierte los tipos de datos Strings a Int
+    """
     def normalizeTypes(self, type):
         if isinstance(type, str):
             if type == "int":
@@ -1992,6 +2196,9 @@ class Objective_JSListener(ParseTreeListener):
         return type
 
     # Exit a parse tree produced by Objective_JSParser#llamadaFunc.
+    """
+    Al termino del parseo de una funcion verifica los parametros y si hay error termina el programa. Si no genera los cuadruplos correspondientes.
+    """
     def exitLlamadaFunc(self, ctx:Objective_JSParser.LlamadaFuncContext):
         var = ctx.ID()[0].getText()
         if self.object_address is None:
@@ -2043,10 +2250,16 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamada.
+    """
+    Agrega los fondos falsos para los parametros
+    """
     def enterArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
         self.operadores.push(')')
 
     # Exit a parse tree produced by Objective_JSParser#argumentosLlamada.
+    """
+    Elimina el fondo falso para los parametros
+    """
     def exitArgumentosLlamada(self, ctx:Objective_JSParser.ArgumentosLlamadaContext):
         self.operadores.pop()
 
@@ -2056,6 +2269,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#addArgument.
+    """
+    Actualiza el contador de parametros
+    """
     def exitAddArgument(self, ctx:Objective_JSParser.AddArgumentContext):
         self.current_param_counter += 1
 
@@ -2064,6 +2280,9 @@ class Objective_JSListener(ParseTreeListener):
     def enterVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
         pass
 
+    """
+    Obten el nombre de una variable dada su direccion
+    """
     def getVarNameFromMemoryAddress(self, address):
         for funtion_name, info in self.functions_directory.getDirectory().items():
             for var1, info2 in info.getSymbolTable().getSymbols().items():
@@ -2078,6 +2297,9 @@ class Objective_JSListener(ParseTreeListener):
             #         return var2
 
     # Exit a parse tree produced by Objective_JSParser#verifyArgument.
+    """
+    Verifica el argumento que se esta mandando a una funcion. Si no corresponden termina el programaen caso contrario genera el cuadruplo correspondiente.
+    """
     def exitVerifyArgument(self, ctx:Objective_JSParser.VerifyArgumentContext):
         if self.call_from_instance:
             table = self.classes[self.type].getMethods().getTable(self.current_method_name)
@@ -2138,11 +2360,17 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
+    """
+    Agrega un fondo falso para los parametros
+    """
     def enterArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
         pass
         self.operandos.push(')')
 
     # Exit a parse tree produced by Objective_JSParser#argumentosLlamadaAux.
+    """
+    Elimina el fondo falso de los parametros
+    """
     def exitArgumentosLlamadaAux(self, ctx:Objective_JSParser.ArgumentosLlamadaAuxContext):
         pass
         self.operandos.pop()
@@ -2153,6 +2381,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#lectura.
+    """
+    general el cuadruplo correspondient ede lectura
+    """
     def exitLectura(self, ctx:Objective_JSParser.LecturaContext):
         if self.operandos.empty():
             address = self.getMemoryAddressFromVariable(ctx.objeto().getText())
@@ -2173,6 +2404,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#lecturaAux.
+    """
+    Genera el cuadruplo correspondiente para lectura
+    """
     def exitLecturaAux(self, ctx:Objective_JSParser.LecturaAuxContext):
         if ctx.INPUT_STREAM() is not None:
             if self.operandos.empty():
@@ -2186,6 +2420,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#decInc.
+    """
+    Realiza la verificacion  para realizar la operacion ++ o -- de una variable entera. En caso de error termina el programa en caso contrario genera el cuadruplo correspondiente
+    """
     def enterDecInc(self, ctx:Objective_JSParser.DecIncContext):
         var = ctx.objeto().getText()
         if ctx.decIncAux().INCREMENT_OPERATOR() is not None:
@@ -2248,6 +2485,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitDecIncAux(self, ctx:Objective_JSParser.DecIncAuxContext):
         pass
 
+    """
+    Obten el Id de una lista o matriz
+    """
     def getId(self, id):
         size = len(id)
         i = 0
@@ -2262,10 +2502,15 @@ class Objective_JSListener(ParseTreeListener):
         return var
 
 
-
+    """
+    Verifica si un atributo existe
+    """
     def isAttributeDeclared(self, id):
         self.classes[self.className].isAttribute(id)
 
+    """
+    Genera el cuadruplo correspondiente para el valor de retorno de una funcion
+    """
     def saveReturnType(self, type, operand1, operand2):
         if type == 0: # int
             quadruple = Quadruple(self.id, "save_return", operand1, operand2, self.current_temp_int_counter)
@@ -2305,6 +2550,9 @@ class Objective_JSListener(ParseTreeListener):
             self.cuadruplos.append(quadruple)
 
     # Enter a parse tree produced by Objective_JSParser#objeto.
+    """
+    Genera el cuadruplo correspondiente para el acceso a objetos
+    """
     def enterObjeto(self, ctx:Objective_JSParser.ObjetoContext):
         if ctx.objetoAux() is not None:
             if ctx.objetoAux().LEFT_SQUARE_BRACKET() is not None:
@@ -2403,10 +2651,16 @@ class Objective_JSListener(ParseTreeListener):
     def exitMegaExpresion(self, ctx:Objective_JSParser.MegaExpresionContext):
         pass
 
+    """
+    Agrega ^ a la pila de operaadores
+    """
     def enterHyperExpresionAux(self, ctx):
         if ctx.POWER_OPERATOR() is not None:
             self.operadores.push('^')
 
+    """
+    Si hay una operacion ^ pendiente resolverla, si el tipo de dato no coresponde termina el programa
+    """
     def exitHyperExpresionAux(self, ctx):
         if self.operadores.top() == '^':
             operando2 = self.operandos.pop()
@@ -2440,6 +2694,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#megaExpresionAux.
+    """
+    Agrega && o || a la pila de operadoress
+    """
     def enterMegaExpresionAux(self, ctx:Objective_JSParser.MegaExpresionAuxContext):
         if ctx.LOGICAL_AND_OPERATOR() is not None:
             self.operadores.push('&&')
@@ -2447,6 +2704,9 @@ class Objective_JSListener(ParseTreeListener):
             self.operadores.push('||')
 
     # Exit a parse tree produced by Objective_JSParser#megaExpresionAux.
+    """
+    Si hay una operacion && o || pendiente resuelvela. Si hay un error termina la ejecuion del programa
+    """
     def exitMegaExpresionAux(self, ctx:Objective_JSParser.MegaExpresionAuxContext):
         if self.operadores.top() == '&&' or self.operadores.top() == '||':
             operando2 = self.operandos.pop()
@@ -2484,6 +2744,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#superExpresionOperadores.
+    """
+    Agrega el operador relacional correspondiente a la pila de operadores
+    """
     def enterSuperExpresionOperadores(self, ctx:Objective_JSParser.SuperExpresionOperadoresContext):
         if ctx.GREATER_THAN_OPERATOR() is not None:
             self.operadores.push('>')
@@ -2499,6 +2762,9 @@ class Objective_JSListener(ParseTreeListener):
             self.operadores.push('==')
 
     # Exit a parse tree produced by Objective_JSParser#superExpresionOperadores.
+    """
+    Si hay un operador relacional pendiente resuelvelo. Si hay un error termina el programa
+    """
     def exitSuperExpresionOperadores(self, ctx:Objective_JSParser.SuperExpresionOperadoresContext):
         if self.operadores.top() == '>' or self.operadores.top() == '>=' or self.operadores.top() == '<' or self.operadores.top() == '<=' or self.operadores.top() == '!=' or self.operadores.top() == '==':
             operando2 = self.operandos.pop()
@@ -2560,6 +2826,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#expresionOperadores.
+    """
+    Agrega el operador + o - a la pila de operadores
+    """
     def enterExpresionOperadores(self, ctx:Objective_JSParser.ExpresionOperadoresContext):
         if ctx.SUM_OPERATOR() is not None: 
             self.operadores.push('+')
@@ -2576,6 +2845,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#termino.
+    """
+    Si hay una + o una - pendiente resuelvela y agregala a la pila de operadores
+    """
     def exitTermino(self, ctx:Objective_JSParser.TerminoContext):
         if self.operadores.top() == '+' or self.operadores.top() == '-':
             operando2 = self.operandos.pop()
@@ -2619,6 +2891,9 @@ class Objective_JSListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by Objective_JSParser#terminoOperadores.
+    """
+    Si hay una *, / o % agregalo a la pila de operadores
+    """
     def enterTerminoOperadores(self, ctx:Objective_JSParser.TerminoOperadoresContext):
         if ctx.MULTIPLICATION_OPERATOR() is not None:
             self.operadores.push('*')
@@ -2632,6 +2907,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Enter a parse tree produced by Objective_JSParser#factor.
+    """
+    Verifica si el factor existe, y si lo podemos acceder
+    """
     def enterFactor(self, ctx:Objective_JSParser.FactorContext):
         address = None
         if ctx.varCte() is not None:
@@ -2796,6 +3074,9 @@ class Objective_JSListener(ParseTreeListener):
                 self.types.push(type)
 
     # Exit a parse tree produced by Objective_JSParser#factor.
+    """
+    Si hay un operador * o / pendiente resuelvelo. Si la operacion es incorrecta termina el programa.
+    """
     def exitFactor(self, ctx:Objective_JSParser.FactorContext):
         if self.operadores.top() == '/' or self.operadores.top() == '*' or self.operadores.top() == '%':
             operando2 = self.operandos.pop()
@@ -2839,6 +3120,9 @@ class Objective_JSListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by Objective_JSParser#factorParentesis.
+    """
+    Elimina el fondo falso
+    """
     def exitFactorParentesis(self, ctx:Objective_JSParser.FactorParentesisContext):
         self.operadores.pop()
 
@@ -2860,6 +3144,9 @@ class Objective_JSListener(ParseTreeListener):
     def exitMatrix(self, ctx:Objective_JSParser.MatrixContext):
         pass
 
+    """
+    Verifica si un ID es una matriz o lista
+    """
     def enterVerifica_id(self, ctx:Objective_JSParser.Verifica_idContext):
         id = ctx.ID().getText()
         self.isVarDeclared(id)
@@ -2876,6 +3163,9 @@ class Objective_JSListener(ParseTreeListener):
         self.types.push(type)
         self.operadores.push('[')
 
+    """
+    Verifica la primera indexacion de una lista o matriz
+    """
     def enterVerifica_dim1(self, ctx:Objective_JSParser.Verifica_dim1Context):
         id = self.ids.top()
         dim = self.dims.top()
@@ -2889,6 +3179,9 @@ class Objective_JSListener(ParseTreeListener):
         self.cuadruplos.append(cuadruplo)
         self.id += 1
 
+    """
+    Verifica un arreglo, si es correcto sumale la direccion base
+    """
     def enterVerifica_arreglo(self, ctx:Objective_JSParser.Verifica_arregloContext):
         id = self.ids.pop()
         dim = self.dims.pop()
@@ -2911,6 +3204,9 @@ class Objective_JSListener(ParseTreeListener):
 
         self.operadores.pop()
 
+    """
+    Verifica la indexacion de la matriz, y multiplicalo por el indice pasado para generar el salto.
+    """
     def enterMatriz_aux(self, ctx:Objective_JSParser.Matriz_auxContext):
         id = self.ids.pop()
         dim = self.dims.pop()
@@ -2934,6 +3230,9 @@ class Objective_JSListener(ParseTreeListener):
         self.ids.push(id)
         self.dims.push(dim)
 
+    """
+    Verifica la segunda dimension de una matriz
+    """
     def enterVerifica_dim2(self, ctx:Objective_JSParser.Verifica_dim2Context):
         id = self.ids.pop()
         dim = self.dims.pop()
@@ -2974,35 +3273,3 @@ class Objective_JSListener(ParseTreeListener):
 
     def exitGetValue(self, ctx):
         pass
-
-    def getTypeFromAddress(self, address):
-        if isinstance(address, str):
-            if address[0] == "%":
-                value = address[1:]
-                try:
-                    number = int(value)
-                    return 0
-                except ValueError:
-                    try:
-                        number = float(value)
-                        return 1
-                    except ValueError:
-                        if value == "true" or value == "false":
-                            return 4
-                        if len(address) > 1:
-                            return 3
-                        else:
-                            return 2
-        address = int(address)
-        if 7000 <= address <= 7999 or 13000 <= address <= 13999:
-            return 0
-        elif 8000 <= address <= 8999 or 14000 <= address <= 14999:
-            return 1
-        elif 9000 <= address <= 9999 or 15000 <= address <= 15999:
-            return 2
-        elif 10000 <= address <= 10999 or 16000 <= address <= 16999:
-            return 3
-        elif 11000 <= address <= 11999 or 17000 <= address <= 17999:
-            return 4
-        elif 12000 <= address <= 12999 or 18000 <= address <= 18999:
-            return 5
