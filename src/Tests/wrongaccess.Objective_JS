@@ -1,0 +1,6 @@
+Class WrongAccess {
+	main() {
+		var a : list[3] int;
+		a[3] = 5;
+	}
+}

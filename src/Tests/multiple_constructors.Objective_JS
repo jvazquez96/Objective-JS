@@ -1,0 +1,14 @@
+import seleccion
+import entrenador
+
+Class MultipleConstructores {
+	main() {
+		var tuca : Entrenador;
+		var mohamed : Entrenador;
+		tuca.Entrenador();
+		mohamed.Entrenador("Ricardo Antonio", " Mohamed Matijevich", 48, "Rayados");
+		print(tuca.getEquipo());
+		print(mohamed.getEquipo());
+
+	}
+}

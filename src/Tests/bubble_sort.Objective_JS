@@ -1,4 +1,4 @@
-Class Merge {
+Class Bubble {
 	var array, aux1, aux2 : list[6] int;
 
 	function printArray(int size) {
@@ -48,7 +48,7 @@ Class Merge {
 
 		bubbleSort(size);
 
-		print("Despues del merge");
+		print("Despues del bubble");
 		printArray(size);
 	}
 }

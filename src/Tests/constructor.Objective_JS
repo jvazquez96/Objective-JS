@@ -8,10 +8,6 @@ Class Access {
 		print("el modelo de mi carro es en la funcion: ",audi.getModelo());
 	}
 
-	function suma(int a, int b){
-		print(a+b);
-	}
-
 	main() {
 		var doritos : char;
 		doritos = "a";

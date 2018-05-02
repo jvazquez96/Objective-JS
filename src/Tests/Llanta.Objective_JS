@@ -1,0 +1,25 @@
+Class Llanta {
+	Llanta();
+	Llanta(string marca);
+	Attributes {
+		public :
+			var marca : string;
+	}
+	Methods {
+		public:
+			function setLlantas(string marca);
+			function getMarcaLlantas() returns string;
+	}
+}
+Llanta() {
+	this.marca = "Pirelli";
+}
+Llanta(string marca) {
+	this.marca = marca;
+}
+function getMarcaLlantas() returns string {
+	return this.marca;
+}
+function setLlantas(string marca) {
+	this.marca = marca;
+}

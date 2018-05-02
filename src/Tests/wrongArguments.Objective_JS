@@ -1,0 +1,10 @@
+Class WrongArguments {
+	function errorInArguments(int a, list [10] int b){
+		print("errorInArguments");
+	}
+	main() {
+		var a : int;
+		var b : list [9][19] int;
+		errorInArguments(a, b);
+	}
+}

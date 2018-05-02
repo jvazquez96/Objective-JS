@@ -1,0 +1,9 @@
+Class UndeclaredVariables{
+	main() {
+		var a, b, d : int;
+		a = 5;
+		b = 74;
+		d = a + b;
+		c = a + b;
+	}
+}

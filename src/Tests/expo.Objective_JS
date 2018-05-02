@@ -1,0 +1,16 @@
+import Llanta
+import camioneta
+import jeep
+Class Expo {
+	main() {
+		var miCamioneta : Jeep;
+		miCamioneta.Jeep();
+		miCamioneta.setModelo("Fiat");
+		miCamioneta.setLlantas("Bimbo");
+		print(miCamioneta.getModelo());
+		print(miCamioneta.getColor());
+		miCamioneta.setColor("Cafe");
+		print(miCamioneta.getColor());
+		print(miCamioneta.getMarcaLlantas());
+	}
+}

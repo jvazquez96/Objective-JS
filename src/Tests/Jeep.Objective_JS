@@ -1,0 +1,25 @@
+Class Jeep Inherits Camioneta {
+	Jeep();
+	Jeep(string color);
+	Attributes {
+		public :
+			var color : string;
+	}
+	Methods {
+		public :
+			function getColor() returns string;
+			function setColor(string color);
+	}
+}
+Jeep() {
+	this.color = "Azul";
+}
+Jeep(string color) {
+	this.color = color;
+}
+function getColor() returns string {
+	return this.color;
+}
+function setColor(string color) {
+	this.color = color;
+}

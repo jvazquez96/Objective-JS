@@ -1,4 +1,4 @@
-Class Sum {
+Class Fib {
 	function fib(int x) returns int {		
 		if (x <= 2) {
 			x = 1;

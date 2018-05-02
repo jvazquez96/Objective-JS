@@ -1,0 +1,33 @@
+Class Camioneta Inherits Llanta {
+	Camioneta();
+	Camioneta(string modelo, int anio);
+	Attributes {
+		public :
+			var modelo : string;
+			var anio : int;
+
+	}
+	Methods {
+		public :
+			function getModelo() returns string;
+			function getAnio() returns int;
+			function setModelo(string modelo);
+	}
+}
+Camioneta() {
+	this.modelo = "Chrysler";
+	this.anio = 2018;
+}
+Camioneta(string modelo, int anio) {
+	this.modelo = modelo;
+	this.anio = anio;
+}
+function setModelo(string modelo) {
+	this.modelo = modelo;
+}
+function getModelo() returns string {
+	return this.modelo;
+}
+function getAnio() returns int {
+	return this.anio;
+}

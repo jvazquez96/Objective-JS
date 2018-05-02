@@ -1,0 +1,5 @@
+Class UndeclaredFunction {
+	main() {
+		hola();
+	}
+}
