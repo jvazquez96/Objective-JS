@@ -216,7 +216,6 @@ class Objective_JSListener(ParseTreeListener):
     def isVarDeclared(self, var):
         """
         Check if the variable is already declared
-        (I don't understand this function Santiago did it)
         """
         table = self.functions_directory.getTable(self.function_name).getParamTable()
         exist = False
