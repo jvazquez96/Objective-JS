@@ -3,3 +3,6 @@ Jorge Armando Vázquez Ortiz A01196160
 Santiago Sandoval Treviño A00816927
 Objective-JS
 Lengua de programación orientado a objetos
+Para correlo tenemos que estar dentro de la carpta src
+$ python3 Objective-JS.py Tests/NombeDeArchivo.Objective_JS
+Todos los archivos a correr tienen que estar dentro de la carpeta Tests!!
