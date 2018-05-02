@@ -11,6 +11,9 @@ from Objective_JS_ErrorListener import Objective_JS_ErrorListener
 import time
 from Structures.GO import GO
 
+"""
+Remplaza todos los codigos Strings por Ints
+"""
 codes = {
     "GO.TO" : 1,
     "GO.TOFALSE" : 2,
@@ -43,6 +46,10 @@ codes = {
     "attribute_access": 29
 }
 
+
+"""
+Obten el nombre de todos los archivos imports. Copia su informacion en un archivo temporal junto con el principal y luego pegalo en el archivo original
+"""
 def preprocess(fileName):
     with open(fileName, 'r') as original:
         lines = original.readlines()
@@ -67,19 +74,16 @@ def preprocess(fileName):
         for data in datas:
             if re.search("import\ [a-zA-Z]+", data) is None:
                 output.write(data)
-    # debuging the new file
-    # with open(fileName, 'r') as file:
-    #     print(file.read())
 
     if os.path.exists('Tests/temp_file.Objective_JS'):
         os.remove('Tests/temp_file.Objective_JS')
 
+"""
+Manda a llamar al lexer, parser y maquina virtual con el contenido de nuestro archivo. Antes de mandar a llamar a la maquina vitual regresa el archivo con imports a su estado original para que el usuario no vea lo que se hizo con los imports.
+"""
 def main(argv):
-    tic = time.clock()
     fileName = argv[1]
     preprocess(fileName)
-    # with open(fileName, "r") as file:
-    #     print(file.read())
     input = FileStream(fileName)
     lexer = Objective_JSLexer(input)
     lexer.removeErrorListeners()
@@ -107,5 +111,8 @@ def main(argv):
     VirtualMachine()
     toc = time.clock()
 
+"""
+Punto de inicio del compilador
+"""
 if __name__ == '__main__':
     main(sys.argv) 
