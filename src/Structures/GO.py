@@ -1,4 +1,7 @@
 from enum import Enum
+"""
+ENUM que encapsula todos los posibles saltos
+"""
 class GO(Enum):
 	TOFALSE = 1
 	TOTRUE = 2

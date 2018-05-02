@@ -1,5 +1,8 @@
 import numpy as np
-
+"""
+Clase Cubo que contiene todas las posibles operaciones posibles en nuestro
+lenguaje junto con el tipo de dato de resultado. En caso de error regresa un -1
+"""
 class Cube(object):
 	# Data types
 	ERROR = -1
